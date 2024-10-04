@@ -1,7 +1,7 @@
 ﻿using MyLibrary.Entities;
 using MyLibrary.Repositories;
 
-var peterBooksRepository = new GenericRepositories<PeterBooks>();
+var peterBooksRepository = new GenericRepository<PeterBooks, int>();
 peterBooksRepository.Add(new PeterBooks { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
 peterBooksRepository.Add(new PeterBooks { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
 peterBooksRepository.Add(new PeterBooks { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
