@@ -2,10 +2,8 @@
 
 namespace MyLibrary.Entities;
 
-public class PeterBooks
+public class PeterBooks : EntityBase
 {
-    public int Id { get; set; }
-
     public string? AuthorName { get; set; }
 
     public string? AuthorSurname { get; set; }

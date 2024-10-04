@@ -2,9 +2,9 @@
 
 namespace MyLibrary.Repositories;
 
-public class PeterBooksRepository
+public class PeterBooksRepositories
 {
-    private List<PeterBooks> _peterBooks = new ();
+    private readonly List<PeterBooks> _peterBooks = new ();
 
     public void Add(PeterBooks peterBook) 
     {
