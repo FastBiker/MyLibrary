@@ -3,9 +3,14 @@
 namespace MyLibrary.Repositories;
 
 public class GenericRepository<TEntity, TKey> 
-    where TEntity : class, IEntity
+    where TEntity : class, IEntity, new()
     where TKey : struct
 {
+    public TEntity CreateNewItem()
+    {
+       return new TEntity();
+    }
+
     public TKey Key { get; set; }
 
     protected readonly List<TEntity> _items = new ();

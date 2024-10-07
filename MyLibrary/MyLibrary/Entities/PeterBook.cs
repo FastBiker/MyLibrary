@@ -4,6 +4,15 @@ namespace MyLibrary.Entities;
 
 public class PeterBook : EntityBase
 {
+    public PeterBook()
+    {
+
+    }
+
+    public PeterBook(string name) 
+    {
+
+    }
     public string? AuthorName { get; set; }
 
     public string? AuthorSurname { get; set; }
