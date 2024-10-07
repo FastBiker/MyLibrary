@@ -3,7 +3,8 @@
 namespace MyLibrary.Repositories;
 
 public class GenericRepository<TEntity, TKey> 
-    where TEntity : IEntity
+    where TEntity : class, IEntity
+    where TKey : struct
 {
     public TKey Key { get; set; }
 
@@ -17,14 +18,15 @@ public class GenericRepository<TEntity, TKey>
 
     public TEntity GetById(int id)
     {
-        return _items.Single(item => item.Id == id);
+        return default(TEntity);
+        //return _items.Single(item => item.Id == id);
     }
 
     public void Save() 
     {
-        foreach(var peterBook in _items) 
+        foreach(var item in _items) 
         {
-            Console.WriteLine(peterBook);
+            Console.WriteLine(item);
         }
     }
 }

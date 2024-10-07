@@ -1,12 +1,12 @@
 ﻿using MyLibrary.Entities;
 using MyLibrary.Repositories;
 
-var peterBooksRepository = new GenericRepository<PeterBooks, int>();
-peterBooksRepository.Add(new PeterBooks { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
-peterBooksRepository.Add(new PeterBooks { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
-peterBooksRepository.Add(new PeterBooks { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
-peterBooksRepository.Add(new PeterBooks { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22" });
-peterBooksRepository.Add(new PeterBooks { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
+var peterBooksRepository = new GenericRepository<PeterBook, int>();
+peterBooksRepository.Add(new PeterBook { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
+peterBooksRepository.Add(new PeterBook { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
+peterBooksRepository.Add(new PeterBook { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
+peterBooksRepository.Add(new PeterBook { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22" });
+peterBooksRepository.Add(new PeterBook { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
 peterBooksRepository.Save();
 
 

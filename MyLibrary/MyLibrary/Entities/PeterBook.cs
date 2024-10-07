@@ -2,7 +2,7 @@
 
 namespace MyLibrary.Entities;
 
-public class PeterBooks : EntityBase
+public class PeterBook : EntityBase
 {
     public string? AuthorName { get; set; }
 
