@@ -1,14 +1,24 @@
-﻿using MyLibrary.Entities;
+﻿using MyLibrary.Data;
+using MyLibrary.Entities;
 using MyLibrary.Repositories;
 
-var peterBooksRepository = new GenericRepository<Book>();
-peterBooksRepository.Add(new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
-peterBooksRepository.Add(new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
-peterBooksRepository.Add(new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
-peterBooksRepository.Add(new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22" });
-peterBooksRepository.Add(new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
-peterBooksRepository.Save();
+//var peterBooksRepository = new GenericRepository<Book>();
+//peterBooksRepository.Add(new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
+//peterBooksRepository.Add(new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
+//peterBooksRepository.Add(new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
+//peterBooksRepository.Add(new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22" });
+//peterBooksRepository.Add(new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
+//peterBooksRepository.Save();
 
+var sqlRepository = new SqlRepository(new MyLibraryDbContext());
+sqlRepository.Add(new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
+sqlRepository.Add(new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
+sqlRepository.Add(new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
+sqlRepository.Add(new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22" });
+sqlRepository.Add(new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
+sqlRepository.Save();
+var book = sqlRepository.GetById(4);
+Console.WriteLine(book.ToString());
 
 
 
