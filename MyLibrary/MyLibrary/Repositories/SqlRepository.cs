@@ -3,30 +3,34 @@ using MyLibrary.Entities;
 
 namespace MyLibrary.Repositories;
 
-public class SqlRepository
+public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
-    private readonly DbSet<Book> _dbset;
+    private readonly DbSet<T> _dbSet;
     private readonly DbContext _dbContext;
 
     public SqlRepository(DbContext dbContext) 
     {
         _dbContext = dbContext;
-        _dbset = _dbContext.Set<Book>();
+        _dbSet = _dbContext.Set<T>();
     }
 
-    public Book? GetById(int id) 
+    public IEnumerable<T> GetAll() 
     {
-        return _dbset.Find(id);
+        return _dbSet.ToList();
+    }
+    public T GetById(int id) 
+    {
+        return _dbSet.Find(id);
     }
 
-    public void Add(Book item) 
+    public void Add(T item) 
     {
-        _dbset.Add(item);
+        _dbSet.Add(item);
     }
 
-    public void Remove(Book item) 
+    public void Remove(T item) 
     {
-        _dbset.Remove(item);
+        _dbSet.Remove(item);
     }
 
     public void Save() 
