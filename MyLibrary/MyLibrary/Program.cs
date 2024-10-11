@@ -5,43 +5,24 @@ using MyLibrary.Repositories;
 
 var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext());
 AddBooks(bookRepository);
-AddPeterBooks(bookRepository);
-AddJowiBooks(bookRepository);
-AddChildrenBooks(bookRepository);
 WriteAllToConsole(bookRepository);
 
 static void AddBooks(IRepository<Book> bookRepository)
 {
     bookRepository.Add(new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
     bookRepository.Add(new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
+    bookRepository.Add(new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22", Owner = "Peter" });
+    bookRepository.Add(new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
+    bookRepository.Add(new Book { AuthorName = "Lee", AuthorSurname = "Harper", Title = "Zabić drozda" });
+    bookRepository.Add(new Book { AuthorName = "Lew", AuthorSurname = "Tołstoj", Title = "Anna Karenina" });
+    bookRepository.Add(new Book { AuthorName = "Gabriel García", AuthorSurname = "Márquez", Title = "Sto lat samotności" });
+    bookRepository.Add(new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
+    bookRepository.Add(new Book { AuthorName = "Caroll", AuthorSurname = "Lewis", Title = "Alicja w Krainie Czarów" });
+    bookRepository.Add(new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Kubuś Puchatek" });
+    bookRepository.Add(new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Chatka Puchatka" });
+    bookRepository.Add(new Book { AuthorName = "Hans Christian", AuthorSurname = "Andersen", Title = "Baśnie" });
+    bookRepository.Add(new Book { AuthorName = "Henryk", AuthorSurname = "Sienkiewicz", Title = "W pustyni i w puszczy", IsBorrowed = true });
     bookRepository.Save();
-}
-
-static void AddPeterBooks(IWriteRepository<PeterBook> peterBookRepository)
-{
-    peterBookRepository.Add(new PeterBook { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
-    peterBookRepository.Add(new PeterBook { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22" });
-    peterBookRepository.Add(new PeterBook { AuthorName = "Lee", AuthorSurname = "Harper", Title = "Zabić drozda" });
-    peterBookRepository.Save();
-}
-
-static void AddJowiBooks(IWriteRepository<JowiBook> jowiBookRepository)
-{
-    jowiBookRepository.Add(new JowiBook { AuthorName = "Lew", AuthorSurname = "Tołstoj", Title = "Anna Karenina" });
-    jowiBookRepository.Add(new JowiBook { AuthorName = "Gabriel García", AuthorSurname = "Márquez", Title = "Sto lat samotności" });
-    jowiBookRepository.Add(new JowiBook { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
-    jowiBookRepository.Save();
-}
-
-static void AddChildrenBooks(IWriteRepository<ChildrenBook> chlidrenRepository)
-{
-    chlidrenRepository.Add(new ChildrenBook { AuthorName = "Caroll", AuthorSurname = "Lewis", Title = "Alicja w Krainie Czarów" });
-    chlidrenRepository.Add(new ChildrenBook { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Kubuś Puchatek" });
-    chlidrenRepository.Add(new ChildrenBook { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Chatka Puchatka" });
-    chlidrenRepository.Add(new ChildrenBook { AuthorName = "Hans Christian", AuthorSurname = "Andersen", Title = "Baśnie" });
-    chlidrenRepository.Add(new ChildrenBook { AuthorName = "Henryk", AuthorSurname = "Sienkiewicz", Title = "W pustyni i w puszczy" });
-    chlidrenRepository.Save();
-
 }
 
 static void WriteAllToConsole(IReadRepository<IEntity> repository)

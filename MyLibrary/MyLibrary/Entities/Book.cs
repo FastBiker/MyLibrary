@@ -4,11 +4,11 @@ namespace MyLibrary.Entities;
 
 public class Book : EntityBase
 {
-    public string? AuthorName { get; set; }
+    public string AuthorName { get; set; }
 
-    public string? AuthorSurname { get; set; }
+    public string AuthorSurname { get; set; }
 
-    public string? Title { get; set; }
+    public string Title { get; set; }
 
     public string? PublishingHouse { get; set; }
 
@@ -26,9 +26,18 @@ public class Book : EntityBase
 
     public string? OwnComments { get; set; } // np. (nie)przeczytana, (nie)polecana itp.
 
-    public string? BookStatus { get; set; } // w bibliotece; wypożyczona; do sprzedaży
+    public string? BookStatus { get; set; } // is lent; for sale; 
+
+    public string? Owner {  get; set; }
 
     public decimal? Price { get; set; }
 
-    public override string ToString() => $"Id: {Id}, Author: {AuthorName} {AuthorSurname}, Title: {Title}";
+    public bool IsBorrowed { get; set; }
+
+    public string? BorrowedBookOwner { get; set; }
+
+    public DateTime? DateOfBorrowed { get; set; }
+
+    public override string ToString()
+        => $"Id: {Id}, Author: {AuthorName} {AuthorSurname}, Title: {Title}, Owner: {Owner}, IsBorrowed: {IsBorrowed}";
 }
