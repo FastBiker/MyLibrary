@@ -4,9 +4,17 @@ using MyLibrary.Repositories;
 using MyLibrary.Repositories.Extensions;
 using MyLibrary.Entities.Extensions;
 
-var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext());
+var itemAdded = new ItemAdded(BookAdded);
+
+var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), itemAdded);
 AddBooks(bookRepository);
 WriteAllToConsole(bookRepository);
+
+static void BookAdded(object item)
+{
+    var book = (Book)item;
+    Console.WriteLine($"{book.Title} (ADDED)");
+}
 
 static void AddBooks(IRepository<Book> bookRepository)
 {
