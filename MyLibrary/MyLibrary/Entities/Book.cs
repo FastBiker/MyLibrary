@@ -1,6 +1,4 @@
-﻿using System.ComponentModel;
-
-namespace MyLibrary.Entities;
+﻿namespace MyLibrary.Entities;
 
 public class Book : EntityBase
 {

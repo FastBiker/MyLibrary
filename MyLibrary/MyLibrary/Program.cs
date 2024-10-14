@@ -1,7 +1,8 @@
 ﻿using MyLibrary.Data;
 using MyLibrary.Entities;
 using MyLibrary.Repositories;
-
+using MyLibrary.Repositories.Extensions;
+using MyLibrary.Entities.Extensions;
 
 var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext());
 AddBooks(bookRepository);
@@ -9,20 +10,24 @@ WriteAllToConsole(bookRepository);
 
 static void AddBooks(IRepository<Book> bookRepository)
 {
-    bookRepository.Add(new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" });
-    bookRepository.Add(new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" });
-    bookRepository.Add(new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22", Owner = "Peter" });
-    bookRepository.Add(new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" });
-    bookRepository.Add(new Book { AuthorName = "Lee", AuthorSurname = "Harper", Title = "Zabić drozda" });
-    bookRepository.Add(new Book { AuthorName = "Lew", AuthorSurname = "Tołstoj", Title = "Anna Karenina" });
-    bookRepository.Add(new Book { AuthorName = "Gabriel García", AuthorSurname = "Márquez", Title = "Sto lat samotności" });
-    bookRepository.Add(new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" });
-    bookRepository.Add(new Book { AuthorName = "Caroll", AuthorSurname = "Lewis", Title = "Alicja w Krainie Czarów" });
-    bookRepository.Add(new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Kubuś Puchatek" });
-    bookRepository.Add(new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Chatka Puchatka" });
-    bookRepository.Add(new Book { AuthorName = "Hans Christian", AuthorSurname = "Andersen", Title = "Baśnie" });
-    bookRepository.Add(new Book { AuthorName = "Henryk", AuthorSurname = "Sienkiewicz", Title = "W pustyni i w puszczy", IsBorrowed = true });
-    bookRepository.Save();
+    var books = new[]
+    {
+        new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" },
+        new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" },
+        new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22", Owner = "Peter" },
+        new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" },
+        new Book { AuthorName = "Lee", AuthorSurname = "Harper", Title = "Zabić drozda" },
+        new Book { AuthorName = "Lew", AuthorSurname = "Tołstoj", Title = "Anna Karenina" },
+        new Book { AuthorName = "Gabriel García", AuthorSurname = "Márquez", Title = "Sto lat samotności" },
+        new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" },
+        new Book { AuthorName = "Caroll", AuthorSurname = "Lewis", Title = "Alicja w Krainie Czarów" },
+        new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Kubuś Puchatek" },
+        new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Chatka Puchatka" },
+        new Book { AuthorName = "Hans Christian", AuthorSurname = "Andersen", Title = "Baśnie" },
+        new Book { AuthorName = "Henryk", AuthorSurname = "Sienkiewicz", Title = "W pustyni i w puszczy", IsBorrowed = true }
+    };
+
+    bookRepository.AddBatch(books);
 }
 
 static void WriteAllToConsole(IReadRepository<IEntity> repository)
@@ -34,9 +39,9 @@ static void WriteAllToConsole(IReadRepository<IEntity> repository)
     }
 }
 
-
-
-
+var originalBook = new Book {Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
+var copyBook = originalBook.Copy();
+Console.WriteLine(copyBook);
 
 //1.   „Władca pierścieni” , John Ronald Reuel Tolkien  
 //2.   „Buszujący w zbożu” , Jerome David Salinger
