@@ -6,6 +6,13 @@ using MyLibrary.Entities.Extensions;
 
 
 var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), BookAdded);
+bookRepository.ItemAdded += BookRepositoryOnItemAdded;
+
+void BookRepositoryOnItemAdded(object? sender, Book e)
+{
+    Console.WriteLine($"Book added => {e.Title} from {sender?.GetType().Name}");
+}
+
 AddBooks(bookRepository);
 WriteAllToConsole(bookRepository);
 
