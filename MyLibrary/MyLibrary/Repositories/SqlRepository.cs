@@ -3,15 +3,15 @@ using MyLibrary.Entities;
 
 namespace MyLibrary.Repositories;
 
-public delegate void ItemAdded(object item);
+public delegate void ItemAdded<in T>(T item);
 
 public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
     private readonly DbSet<T> _dbSet;
     private readonly DbContext _dbContext;
-    private readonly ItemAdded _itemAddedCallback;
+    private readonly ItemAdded<T>? _itemAddedCallback;
 
-    public SqlRepository(DbContext dbContext, ItemAdded? itemAddedCallback = null) 
+    public SqlRepository(DbContext dbContext, ItemAdded<T>? itemAddedCallback = null) 
     {
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<T>();
