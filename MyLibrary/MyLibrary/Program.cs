@@ -3,44 +3,67 @@ using MyLibrary.Entities;
 using MyLibrary.Repositories;
 using MyLibrary.Repositories.Extensions;
 using MyLibrary.Entities.Extensions;
+using MyLibrary.Components;
 
+
+Console.WriteLine("Witamy w aplikacji 'MyLibrary', która pomoże Ci uporządkować Twój domowy zbiór książek");
+Console.WriteLine("======================================================================================");
+Console.WriteLine();
 
 var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), BookAdded);
-bookRepository.ItemAdded += BookRepositoryOnItemAdded;
+bookRepository.ItemAdded += BookOnItemAdded;
 
-void BookRepositoryOnItemAdded(object? sender, Book e)
+var bookInFile = new BookInFile<Book>(BookAdded);
+bookInFile.ItemAdded += BookOnItemAdded;
+
+static void BookAdded(Book item)
+{
+    Console.WriteLine($"The new book '{item.Title}' has been added to your library");
+}
+
+void BookOnItemAdded(object? sender, Book e)
 {
     Console.WriteLine($"Book added => {e.Title} from {sender?.GetType().Name}");
 }
 
-AddBooks(bookRepository);
-WriteAllToConsole(bookRepository);
 
-static void BookAdded(Book item)
+while (true)
 {
-    Console.WriteLine($"{item.Title} (ADDED)");
-}
-
-static void AddBooks(IRepository<Book> bookRepository)
-{
-    var books = new[]
+    Console.WriteLine("(1) wyświetl wszystkie ksiązki; (2) dodaj nową książkę; (3) usuń książkę (q) opuść aplikację");
+    var input = Console.ReadLine();
+    if (input == "q")
     {
-        new Book { AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" },
-        new Book { AuthorName = "Jerome David", AuthorSurname = "Salinger", Title = "Buszujący w zbożu" },
-        new Book { AuthorName = "Joseph", AuthorSurname = "Heller", Title = "Paragraf 22", Owner = "Peter" },
-        new Book { AuthorName = "Jane", AuthorSurname = "Austen", Title = "Duma i uprzedzenie" },
-        new Book { AuthorName = "Lee", AuthorSurname = "Harper", Title = "Zabić drozda" },
-        new Book { AuthorName = "Lew", AuthorSurname = "Tołstoj", Title = "Anna Karenina" },
-        new Book { AuthorName = "Gabriel García", AuthorSurname = "Márquez", Title = "Sto lat samotności" },
-        new Book { AuthorName = "Fitzgerald Francis", AuthorSurname = "Scott", Title = "Wielki Gatsby" },
-        new Book { AuthorName = "Caroll", AuthorSurname = "Lewis", Title = "Alicja w Krainie Czarów" },
-        new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Kubuś Puchatek" },
-        new Book { AuthorName = "Alan Alexander", AuthorSurname = "Milne", Title = "Chatka Puchatka" },
-        new Book { AuthorName = "Hans Christian", AuthorSurname = "Andersen", Title = "Baśnie" },
-        new Book { AuthorName = "Henryk", AuthorSurname = "Sienkiewicz", Title = "W pustyni i w puszczy", IsBorrowed = true }
-    };
+        break;
+    }
+    switch (input)
+    {
+        case "1":
+            Console.WriteLine("Lista książek z Twojej biblioteki domowej:");
+            Console.WriteLine("==========================================");
+            Console.WriteLine();
+            WriteAllToConsole(bookRepository);
+            break;
+        case "2":
+            Console.WriteLine("Dodaj nową książkę, podając kolejno informacje o niej; '*' oznacza konieczność wpisania danych; " +
+                "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
+            try
+            {
+                AddBooks(bookRepository);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Exception catched: {e.Message}");
+            }
+            break;
+        case "3":
+            Console.WriteLine("Usuń książkę");
+            //RemoveBook(bookRepository);
+            break;
+        default: 
+            Console.WriteLine("Wrong input value");
+            break;
+    }
 
-    bookRepository.AddBatch(books);
 }
 
 static void WriteAllToConsole(IReadRepository<IEntity> repository)
@@ -52,9 +75,213 @@ static void WriteAllToConsole(IReadRepository<IEntity> repository)
     }
 }
 
-var originalBook = new Book {Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
+void AddBooks(IRepository<Book> bookRepository)
+{
+    while (true)
+    {
+        var inf1 = "Informacja obowiązkowa; wypełnij pole";
+        var inf2 = "jeśli nie chcesz podać danych nie wpisuj nic";
+
+        Console.WriteLine("Wpisz imię/imiona autora(*)");
+        var input = Console.ReadLine();
+        var _authorName = InputIsNullOrEmpty(input, inf1);
+
+        Console.WriteLine("Wpisz nazwisko autora(*)");
+        input = Console.ReadLine();
+        var _authorSurname = InputIsNullOrEmpty(input, inf1);
+
+        Console.WriteLine("Wpisz tytuł książki(*)");
+        input = Console.ReadLine();
+        var _title = InputIsNullOrEmpty(input, inf1);
+
+        Console.WriteLine("Wpisz nazwę wydawnictwa");
+        input = Console.ReadLine();
+        var _publishingHouse = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Wpisz miejsce wydania");
+        input = Console.ReadLine();
+        var _placeOfPublication = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Wpisz rok wydania (rrrr)");
+        input = Console.ReadLine();
+        int? _yearOfPublication;
+        if (int.TryParse(input, out int result) && result > 999 && result < 10000)
+        {           
+            _yearOfPublication = result;
+        }
+        else if (InputIsNullOrEmpty(input, inf2) == null)
+        {
+            _yearOfPublication = null;
+        }
+        else
+        {
+            throw new Exception("Podane dane w 'rok wydania' mają niewłaściwą wartość; wpisz liczbę czterocyfrową dodatnią (rrrr)");
+        }
+
+        Console.WriteLine("Wpisz liczbę stron");
+        input = Console.ReadLine();
+        int? _pageNumber;
+        if (int.TryParse(input, out int result2) && result2 > 0)
+        {
+            _pageNumber = result2;
+        }
+        else if (InputIsNullOrEmpty(input, inf2) == null)
+        {
+            _pageNumber = null;
+        }
+        else
+        {
+            throw new Exception("Podane dane w 'liczba stron' mają niewłaściwą wartość; wpisz liczbę całkowitą dodatnią");
+        }
+
+        Console.WriteLine("Wpisz ISBN");
+        input = Console.ReadLine();
+        var _iSBN = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Podaj lokalizację książki w twojwj bibliotece");
+        input = Console.ReadLine();
+        var _placeInLibrary = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Opis książki");
+        input = Console.ReadLine();
+        var _description = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Dodaj własny komentarz odnośnie książki (np. nie/przeczyna, wypożyczona, pożyczona, na sprzedaż)");
+        input = Console.ReadLine();
+        var _bookstatus = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Podaj właściciela książki");
+        input = Console.ReadLine();
+        var _owner = InputIsNullOrEmpty(input, inf2);
+
+        Console.WriteLine("Wpisz cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
+        input = Console.ReadLine();
+        decimal? _price;
+        if (decimal.TryParse(input, out decimal result3) && result3 > 0)
+        {
+            _price = result3;
+        }
+        else if (InputIsNullOrEmpty(input, inf2) == null)
+        {
+            _price = null;
+        }
+        else
+        {
+            throw new Exception("Podana liczba w 'cena książki' ma niewłaściwą wartość; wpisz dowolną liczbę większą od 0 (00,00)");
+        }
+
+
+        Console.WriteLine("Wpisz '+', jeśli książka jest wyżyczona, '-' jeśli nie jest, albo zostaw pole puste");
+        input = Console.ReadLine();
+        if (input == "+")
+        {
+            input = "true";
+        }
+        else if (input == "-" || InputIsNullOrEmpty(input, inf2) == null)
+        {
+            input = "false";
+        }
+        else
+        {
+            throw new Exception("Podane dane w 'książka jest wypożyczona' mają niewłaściwą wartość;" +
+                "wpisz wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+        }
+
+        var _isBorrowed = bool.Parse(input);
+
+        Console.WriteLine("Podaj datę wypożyczenia wg wzoru: dd.mm.rrrr");
+        input = Console.ReadLine();
+        DateTime? _dateOfBorrowed;
+        if (DateTime.TryParse(input, out DateTime result4))
+        {
+            _dateOfBorrowed = result4;
+        }
+        else if (InputIsNullOrEmpty(input, inf2) == null)
+        {
+            _dateOfBorrowed = null;
+        }
+        else
+        {
+            throw new Exception("Podane dane w 'data wypożyczenia' mają niewłaściwą wartość; " +
+                "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+        }
+
+        Console.WriteLine("Wpisz 'q', żeby zapisać książkę i powrócić do menu albo wciśnij Enter, aby zapisać książkę i dodać kolejną");
+        var inputBreak = Console.ReadLine();
+
+        var books = new[]
+        {
+            new Book
+            {
+                AuthorName = _authorName,
+                AuthorSurname = _authorSurname,
+                Title = _title,
+                PublishingHouse = _publishingHouse,
+                PlaceOfPublication = _placeOfPublication,
+                YearOfPublication = _yearOfPublication,
+                PageNumber = _pageNumber,
+                ISBN = _iSBN,
+                PlaceInLibrary = _placeInLibrary,
+                Description = _description,
+                Bookstatus = _bookstatus,
+                Owner = _owner,
+                Price = _price,
+                IsBorrowed = _isBorrowed,
+                DateOfBorrowed = _dateOfBorrowed,
+            }
+        };
+
+        bookRepository.AddBatch(books);
+        //bookInFile.AddBatch(books);
+
+        if (inputBreak == "q")
+        {
+            break;
+        }
+        else
+        {
+            Console.WriteLine("Dodaj nową książkę:" + Environment.NewLine + "==================");
+        }
+    }
+}
+
+static void RemoveBook(IRepository<Book> bookRepository)
+{
+    var books = bookRepository.GetAll();
+    foreach (var book in books)
+    {
+        books.Select(x => x.Title);
+        bookRepository.Remove(book);
+    }
+}
+
+var originalBook = new Book { Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
 var copyBook = originalBook.Copy();
 Console.WriteLine(copyBook);
+
+static string InputIsNullOrEmpty(string? input, string inf)
+{
+    switch (inf)
+    {
+        case "Informacja obowiązkowa; wypełnij pole":
+            while (string.IsNullOrEmpty(input))
+            {
+                Console.WriteLine(inf);
+                input = Console.ReadLine();
+            }
+            break;
+        case "jeśli nie chcesz podać danych nie wpisuj nic":
+            if (string.IsNullOrEmpty(input))
+            {
+                input = null;
+                Console.WriteLine("Podana wartość jest null");
+            }
+            break;
+    }
+
+    return input;
+}
+
 
 //1.   „Władca pierścieni” , John Ronald Reuel Tolkien  
 //2.   „Buszujący w zbożu” , Jerome David Salinger
