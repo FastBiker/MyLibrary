@@ -8,6 +8,7 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 {
     private const string fileName = "mylibrary.json";
     private readonly Action<T>? _itemAddedCallback;
+    private static int lastId = 0;
 
     public BookInFile(Action<T>? itemAddedCallback = null)
     {
@@ -21,11 +22,11 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
         if (File.Exists(fileName))
         {
             var jsonString = File.ReadAllText(fileName);
-            return JsonSerializer.Deserialize<List<T>>(jsonString)?? new List<T>();
+            return JsonSerializer.Deserialize<List<T>>(jsonString) ?? new List<T>();
         }
         else
         {
-            Console.WriteLine("File doesn't exist");
+            new Exception("File doesn't exist or is corrupt");
             return new List<T>();
         }
     }
@@ -37,8 +38,28 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 
     public void Add(T item)
     {
-        var json = JsonSerializer.Serialize<T>(item);
-        File.AppendAllText(fileName, json + Environment.NewLine);
+        List<T> items;
+        if (File.Exists(fileName))
+        {
+            var json = File.ReadAllText(fileName);
+            items = string.IsNullOrWhiteSpace(json)
+                ? new List<T>()
+                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();           
+        }
+        else
+        {
+            items = new List<T>();
+        }
+
+        lastId = items.Count > 0
+            ? items.Max(x => x.Id)
+            : 0;
+
+        item.Id = ++lastId;
+
+        items.Add(item);
+        var newJson = JsonSerializer.Serialize(items);
+        File.WriteAllText(fileName, newJson);
         _itemAddedCallback?.Invoke(item);
         ItemAdded?.Invoke(this, item);
     }
@@ -50,6 +71,38 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 
     public void Save()
     {
-        throw new NotImplementedException();
+        Console.WriteLine("Książka została zapisana w pliku 'mylirary.json'");
+        // Save is not required with List
     }
 }
+
+//Oto zmodyfikowana wersja metody `Add` i przykładowa implementacja:
+
+//```csharp
+//private static int lastId = 0; // Do przechowywania ostatniego Id
+
+//public void Add(Book item)
+//{
+//    List<Book> items;
+//    if (File.Exists(fileName))
+//    {
+//        var json = File.ReadAllText(fileName);
+//        items = string.IsNullOrWhiteSpace(json)
+//            ? new List<Book>()
+//            : JsonSerializer.Deserialize<List<Book>>(json) ?? new List<Book>();
+//    }
+//    else
+//    {
+//        items = new List<Book>();
+//    }
+
+//    // Ustaw nowe Id
+//    lastId = items.Count > 0 ? items.Max(b => b.Id) : 0;
+//    item.Id = ++lastId; // Zwiększ Id i przypisz do item
+
+//    items.Add(item);
+//    var newJson = JsonSerializer.Serialize(items);
+//    File.WriteAllText(fileName, newJson);
+//    _itemAddedCallback?.Invoke(item);
+//    ItemAdded?.Invoke(this, item);
+//}

@@ -41,20 +41,30 @@ while (true)
             Console.WriteLine("Lista książek z Twojej biblioteki domowej:");
             Console.WriteLine("==========================================");
             Console.WriteLine();
-            WriteAllToConsole(bookRepository);
-            break;
-        case "2":
-            Console.WriteLine("Dodaj nową książkę, podając kolejno informacje o niej; '*' oznacza konieczność wpisania danych; " +
-                "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
             try
             {
-                AddBooks(bookRepository);
+                WriteAllToConsole(bookRepository);
+                WriteAllToConsole(bookInFile);
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Exception catched: {e.Message}");
             }
             break;
+
+        case "2":
+            Console.WriteLine("Dodaj nową książkę, podając kolejno informacje o niej; '*' oznacza konieczność wpisania danych; " +
+                "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
+            try
+            {
+                AddBooks(bookRepository, bookInFile);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Exception catched: {e.Message}");
+            }
+            break;
+
         case "3":
             Console.WriteLine("Usuń książkę");
             //RemoveBook(bookRepository);
@@ -75,7 +85,7 @@ static void WriteAllToConsole(IReadRepository<IEntity> repository)
     }
 }
 
-void AddBooks(IRepository<Book> bookRepository)
+void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
 {
     while (true)
     {
@@ -231,8 +241,8 @@ void AddBooks(IRepository<Book> bookRepository)
             }
         };
 
-        bookRepository.AddBatch(books);
-        //bookInFile.AddBatch(books);
+        //bookRepository.AddBatch(books);
+        bookInFile.AddBatch(books);
 
         if (inputBreak == "q")
         {
@@ -245,15 +255,15 @@ void AddBooks(IRepository<Book> bookRepository)
     }
 }
 
-static void RemoveBook(IRepository<Book> bookRepository)
-{
-    var books = bookRepository.GetAll();
-    foreach (var book in books)
-    {
-        books.Select(x => x.Title);
-        bookRepository.Remove(book);
-    }
-}
+//static void RemoveBook(IRepository<Book> bookRepository)
+//{
+//    var books = bookRepository.GetAll();
+//    foreach (var book in books)
+//    {
+//        books.Select(x => x.Title);
+//        bookRepository.Remove(book);
+//    }
+//}
 
 var originalBook = new Book { Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
 var copyBook = originalBook.Copy();
