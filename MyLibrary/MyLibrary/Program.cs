@@ -13,8 +13,14 @@ Console.WriteLine();
 var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), BookAdded);
 bookRepository.ItemAdded += BookOnItemAdded;
 
-var bookInFile = new BookInFile<Book>(BookAdded);
+var bookInFile = new BookInFile<Book>(BookAdded, BookRemoved);
 bookInFile.ItemAdded += BookOnItemAdded;
+bookInFile.ItemRemoved += BookOnItemRemoved;
+
+static void BookRemoved(Book item)
+{
+    Console.WriteLine($"The new book '{item.Title}' has been removed from your library");
+}
 
 static void BookAdded(Book item)
 {
@@ -24,6 +30,11 @@ static void BookAdded(Book item)
 void BookOnItemAdded(object? sender, Book e)
 {
     Console.WriteLine($"Book added => {e.Title} from {sender?.GetType().Name}");
+}
+
+void BookOnItemRemoved(object? sender, Book e)
+{
+    Console.WriteLine($"Book removed => {e.Title} from {sender?.GetType().Name}");
 }
 
 
@@ -272,11 +283,10 @@ static void RemoveBook(IRepository<Book> bookInFile)
     if (bookToRemove != null)
     {
         bookInFile.Remove(bookToRemove);
-        Console.WriteLine($"Książka {input} została usunięta");
     }
     else
     {
-        Console.WriteLine($"Książka {input} nie została znaleziona w twojej bibliotece");
+        Console.WriteLine($"Book {input} hasn't found in your library");
     }
 }
 

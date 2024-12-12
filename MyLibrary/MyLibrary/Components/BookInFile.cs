@@ -9,48 +9,39 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 {
     private const string fileName = "mylibrary.json";
     private readonly Action<T>? _itemAddedCallback;
+    private readonly Action<T>? _itemRemovedCallback;
     private static int lastId = 0;
-    public int idRemove;
-    protected List<T> _items = new(); //????
+    protected List<T> _items = new(); 
 
-    public BookInFile(Action<T>? itemAddedCallback = null)
+    public BookInFile(Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
     {
         _itemAddedCallback = itemAddedCallback;
+        _itemRemovedCallback = itemRemovedCallback;
     }
 
     public event EventHandler<T> ItemAdded;
+    public event EventHandler<T> ItemRemoved;
 
     public IEnumerable<T> GetAll()
     {
-        if(File.Exists(fileName))
+        if (File.Exists(fileName))
         {
             var json = File.ReadAllText(fileName);
-            return string.IsNullOrWhiteSpace(json)
-                ? new List<T>()
-                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                Console.WriteLine("You haven't got any books in your library");
+                return Enumerable.Empty<T>();
+            }
+            else
+            {
+                return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+            }
         }
         else
         {
+            new Exception("File doesn't exist");
             return new List<T>();
         }
-        //if (File.Exists(fileName))
-        //{
-        //    var json = File.ReadAllText(fileName);
-        //    if (string.IsNullOrWhiteSpace(json))
-        //    {
-        //        Console.WriteLine("Nie masz żadnych książek w bibliotece");
-        //        return new List<T>(); //Enumerable.Empty<T>();
-        //    }
-        //    else
-        //    {
-        //        return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
-        //    }
-        //}
-        //else
-        //{
-        //    new Exception("File doesn't exist or is corrupt");
-        //    return new List<T>();
-        //}
     }
 
     public T? GetById(int id)
@@ -101,20 +92,15 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
         }
         foreach(var _item in _items)
         {
-            if(_item == item)
+            if(_item.Id == item.Id)
             {
-                _items.Remove(item);
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Nie masz takiej książki w bibliotece");
+                _items.Remove(_item);
+                _itemRemovedCallback?.Invoke(item);
+                ItemRemoved?.Invoke(this, item);
                 break;
             }
             
         }
-        
-        
 
         var newJson = JsonSerializer.Serialize(_items);
         File.WriteAllText(fileName, newJson);
