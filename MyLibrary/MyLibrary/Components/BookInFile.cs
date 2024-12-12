@@ -1,5 +1,6 @@
 ﻿using MyLibrary.Entities;
 using MyLibrary.Repositories;
+using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
 namespace MyLibrary.Components;
@@ -9,6 +10,8 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
     private const string fileName = "mylibrary.json";
     private readonly Action<T>? _itemAddedCallback;
     private static int lastId = 0;
+    public int idRemove;
+    protected List<T> _items = new(); //????
 
     public BookInFile(Action<T>? itemAddedCallback = null)
     {
@@ -19,16 +22,35 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 
     public IEnumerable<T> GetAll()
     {
-        if (File.Exists(fileName))
+        if(File.Exists(fileName))
         {
-            var jsonString = File.ReadAllText(fileName);
-            return JsonSerializer.Deserialize<List<T>>(jsonString) ?? new List<T>();
+            var json = File.ReadAllText(fileName);
+            return string.IsNullOrWhiteSpace(json)
+                ? new List<T>()
+                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
         }
         else
         {
-            new Exception("File doesn't exist or is corrupt");
             return new List<T>();
         }
+        //if (File.Exists(fileName))
+        //{
+        //    var json = File.ReadAllText(fileName);
+        //    if (string.IsNullOrWhiteSpace(json))
+        //    {
+        //        Console.WriteLine("Nie masz żadnych książek w bibliotece");
+        //        return new List<T>(); //Enumerable.Empty<T>();
+        //    }
+        //    else
+        //    {
+        //        return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+        //    }
+        //}
+        //else
+        //{
+        //    new Exception("File doesn't exist or is corrupt");
+        //    return new List<T>();
+        //}
     }
 
     public T? GetById(int id)
@@ -38,27 +60,26 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 
     public void Add(T item)
     {
-        List<T> items;
         if (File.Exists(fileName))
         {
             var json = File.ReadAllText(fileName);
-            items = string.IsNullOrWhiteSpace(json)
+            _items = string.IsNullOrWhiteSpace(json)
                 ? new List<T>()
                 : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();           
         }
         else
         {
-            items = new List<T>();
+            _items = new List<T>();
         }
 
-        lastId = items.Count > 0
-            ? items.Max(x => x.Id)
+        lastId = _items.Count > 0
+            ? _items.Max(x => x.Id)
             : 0;
 
         item.Id = ++lastId;
 
-        items.Add(item);
-        var newJson = JsonSerializer.Serialize(items);
+        _items.Add(item);
+        var newJson = JsonSerializer.Serialize(_items);
         File.WriteAllText(fileName, newJson);
         _itemAddedCallback?.Invoke(item);
         ItemAdded?.Invoke(this, item);
@@ -66,7 +87,37 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 
     public void Remove(T item)
     {
-        throw new NotImplementedException();
+        if (File.Exists(fileName))
+        {
+            var json = File.ReadAllText(fileName);
+            _items = string.IsNullOrWhiteSpace(json)
+                ? new List<T>()
+                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+        }
+        else
+        {
+            new Exception("File doesn't exist");
+            _items = new List<T>();
+        }
+        foreach(var _item in _items)
+        {
+            if(_item == item)
+            {
+                _items.Remove(item);
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Nie masz takiej książki w bibliotece");
+                break;
+            }
+            
+        }
+        
+        
+
+        var newJson = JsonSerializer.Serialize(_items);
+        File.WriteAllText(fileName, newJson);
     }
 
     public void Save()
@@ -106,3 +157,6 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
 //    _itemAddedCallback?.Invoke(item);
 //    ItemAdded?.Invoke(this, item);
 //}
+
+
+//Environment.NewLine

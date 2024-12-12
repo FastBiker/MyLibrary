@@ -66,8 +66,8 @@ while (true)
             break;
 
         case "3":
-            Console.WriteLine("Usuń książkę");
-            //RemoveBook(bookRepository);
+            Console.WriteLine("Usuń książkę, wpisując jej tytuł:");
+            RemoveBook(bookInFile);
             break;
         default: 
             Console.WriteLine("Wrong input value");
@@ -255,15 +255,30 @@ void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
     }
 }
 
-//static void RemoveBook(IRepository<Book> bookRepository)
-//{
-//    var books = bookRepository.GetAll();
-//    foreach (var book in books)
-//    {
-//        books.Select(x => x.Title);
-//        bookRepository.Remove(book);
-//    }
-//}
+static void RemoveBook(IRepository<Book> bookInFile)
+{
+    var input = Console.ReadLine();
+    var books = bookInFile.GetAll();
+    Book bookToRemove = null;
+    foreach (var book in books)
+    {
+        if (book.Title == input)
+        {
+            bookToRemove = book;
+            break;
+        }
+        //var book = books.Select(x => x.Title == input);
+    }
+    if (bookToRemove != null)
+    {
+        bookInFile.Remove(bookToRemove);
+        Console.WriteLine($"Książka {input} została usunięta");
+    }
+    else
+    {
+        Console.WriteLine($"Książka {input} nie została znaleziona w twojej bibliotece");
+    }
+}
 
 var originalBook = new Book { Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
 var copyBook = originalBook.Copy();
