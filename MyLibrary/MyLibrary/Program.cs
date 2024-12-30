@@ -5,10 +5,13 @@ using MyLibrary.Repositories.Extensions;
 using MyLibrary.Entities.Extensions;
 using MyLibrary.Components;
 
-
+Console.ForegroundColor = ConsoleColor.Red;
 Console.WriteLine("Witamy w aplikacji 'MyLibrary', która pomoże Ci uporządkować Twój domowy zbiór książek");
 Console.WriteLine("======================================================================================");
+Console.ResetColor();
 Console.WriteLine();
+
+string auditFileName = "audit_library.txt";
 
 var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), BookAdded);
 bookRepository.ItemAdded += BookOnItemAdded;
@@ -19,28 +22,34 @@ bookInFile.ItemRemoved += BookOnItemRemoved;
 
 static void BookRemoved(Book item)
 {
-    Console.WriteLine($"The new book '{item.Title}' has been removed from your library");
+    Console.ForegroundColor = ConsoleColor.Magenta;
+    Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[BookDeleted]-[{item.Title} (Id: {item.Id})]");
+    Console.ResetColor();
 }
 
 static void BookAdded(Book item)
 {
-    Console.WriteLine($"The new book '{item.Title}' has been added to your library");
+    Console.ForegroundColor = ConsoleColor.Magenta;
+    Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[BookAdded]-[{item.Title} (Id: {item.Id})]");
+    Console.ResetColor();
 }
 
 void BookOnItemAdded(object? sender, Book e)
 {
-    Console.WriteLine($"Book added => {e.Title} from {sender?.GetType().Name}");
+    WriteAuditInfoToFileAndConsole(sender, e, auditFileName, "BookAdded");
 }
 
 void BookOnItemRemoved(object? sender, Book e)
 {
-    Console.WriteLine($"Book removed => {e.Title} from {sender?.GetType().Name}");
+    WriteAuditInfoToFileAndConsole(sender, e, auditFileName, "BookDeleted");
 }
 
 
 while (true)
 {
-    Console.WriteLine("(1) wyświetl wszystkie ksiązki; (2) dodaj nową książkę; (3) usuń książkę (q) opuść aplikację");
+    Console.ForegroundColor = ConsoleColor.Yellow;
+    Console.WriteLine("(1) wyświetl wszystkie książki; (2) dodaj nową książkę; (3) usuń książkę (q) opuść aplikację");
+    Console.ResetColor();
     var input = Console.ReadLine();
     if (input == "q")
     {
@@ -49,8 +58,10 @@ while (true)
     switch (input)
     {
         case "1":
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Lista książek z Twojej biblioteki domowej:");
             Console.WriteLine("==========================================");
+            Console.ResetColor ();
             Console.WriteLine();
             try
             {
@@ -59,29 +70,49 @@ while (true)
             }
             catch (Exception e)
             {
+                Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"Exception catched: {e.Message}");
+                Console.ResetColor();
             }
             break;
 
         case "2":
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Dodaj nową książkę, podając kolejno informacje o niej; '*' oznacza konieczność wpisania danych; " +
                 "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
+            Console.ResetColor ();
             try
             {
                 AddBooks(bookRepository, bookInFile);
             }
             catch (Exception e)
             {
+                Console.ForegroundColor= ConsoleColor.Red;
                 Console.WriteLine($"Exception catched: {e.Message}");
+                Console.ResetColor();
             }
             break;
 
         case "3":
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Usuń książkę, wpisując jej tytuł:");
-            RemoveBook(bookInFile);
+            Console.ResetColor ();
+            try
+            {
+                RemoveBook(bookInFile);
+            }
+            catch (Exception e)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Exception catched: {e.Message}");
+                Console.ResetColor();
+            }
+            
             break;
-        default: 
+        default:
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine("Wrong input value");
+            Console.ResetColor ();
             break;
     }
 
@@ -100,34 +131,46 @@ void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
 {
     while (true)
     {
-        var inf1 = "Informacja obowiązkowa; wypełnij pole";
-        var inf2 = "jeśli nie chcesz podać danych nie wpisuj nic";
+        var inf1 = "Informacja obowiązkowa; dane muszą być wprowadzone";
+        var inf2 = "Podana wartość jest null / informacja opcjonalana";
 
-        Console.WriteLine("Wpisz imię/imiona autora(*)");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz imię/imiona autora(*)");
+        Console.ResetColor();
         var input = Console.ReadLine();
         var _authorName = InputIsNullOrEmpty(input, inf1);
 
-        Console.WriteLine("Wpisz nazwisko autora(*)");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz nazwisko autora(*)");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _authorSurname = InputIsNullOrEmpty(input, inf1);
 
-        Console.WriteLine("Wpisz tytuł książki(*)");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz tytuł książki(*)");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _title = InputIsNullOrEmpty(input, inf1);
 
-        Console.WriteLine("Wpisz nazwę wydawnictwa");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz nazwę wydawnictwa");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _publishingHouse = InputIsNullOrEmpty(input, inf2);
 
-        Console.WriteLine("Wpisz miejsce wydania");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz miejsce wydania");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _placeOfPublication = InputIsNullOrEmpty(input, inf2);
 
-        Console.WriteLine("Wpisz rok wydania (rrrr)");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz rok wydania (rrrr)");
+        Console.ResetColor();
         input = Console.ReadLine();
         int? _yearOfPublication;
         if (int.TryParse(input, out int result) && result > 999 && result < 10000)
-        {           
+        {
             _yearOfPublication = result;
         }
         else if (InputIsNullOrEmpty(input, inf2) == null)
@@ -136,10 +179,12 @@ void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
         }
         else
         {
-            throw new Exception("Podane dane w 'rok wydania' mają niewłaściwą wartość; wpisz liczbę czterocyfrową dodatnią (rrrr)");
+            throw new Exception("\nPodane dane w 'rok wydania' mają niewłaściwą wartość; wpisz liczbę czterocyfrową dodatnią (rrrr)");
         }
 
-        Console.WriteLine("Wpisz liczbę stron");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz liczbę stron");
+        Console.ResetColor();
         input = Console.ReadLine();
         int? _pageNumber;
         if (int.TryParse(input, out int result2) && result2 > 0)
@@ -152,82 +197,94 @@ void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
         }
         else
         {
-            throw new Exception("Podane dane w 'liczba stron' mają niewłaściwą wartość; wpisz liczbę całkowitą dodatnią");
+            throw new Exception("\nPodane dane w 'liczba stron' mają niewłaściwą wartość; wpisz liczbę całkowitą dodatnią");
         }
 
-        Console.WriteLine("Wpisz ISBN");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nWpisz ISBN");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _iSBN = InputIsNullOrEmpty(input, inf2);
 
-        Console.WriteLine("Podaj lokalizację książki w twojwj bibliotece");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nPodaj lokalizację książki w twojwj bibliotece");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _placeInLibrary = InputIsNullOrEmpty(input, inf2);
 
-        Console.WriteLine("Opis książki");
-        input = Console.ReadLine();
-        var _description = InputIsNullOrEmpty(input, inf2);
-
-        Console.WriteLine("Dodaj własny komentarz odnośnie książki (np. nie/przeczyna, wypożyczona, pożyczona, na sprzedaż)");
-        input = Console.ReadLine();
-        var _bookstatus = InputIsNullOrEmpty(input, inf2);
-
-        Console.WriteLine("Podaj właściciela książki");
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("\nPodaj właściciela książki");
+        Console.ResetColor();
         input = Console.ReadLine();
         var _owner = InputIsNullOrEmpty(input, inf2);
 
-        Console.WriteLine("Wpisz cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
-        input = Console.ReadLine();
+        bool _isForSale;
+        const string propertyForSale = "książka jest na sprzedaż";
+        BoolValidation(out input, out _isForSale, propertyForSale);
+
         decimal? _price;
-        if (decimal.TryParse(input, out decimal result3) && result3 > 0)
+        if (_isForSale == true)
         {
-            _price = result3;
-        }
-        else if (InputIsNullOrEmpty(input, inf2) == null)
-        {
-            _price = null;
-        }
-        else
-        {
-            throw new Exception("Podana liczba w 'cena książki' ma niewłaściwą wartość; wpisz dowolną liczbę większą od 0 (00,00)");
-        }
-
-
-        Console.WriteLine("Wpisz '+', jeśli książka jest wyżyczona, '-' jeśli nie jest, albo zostaw pole puste");
-        input = Console.ReadLine();
-        if (input == "+")
-        {
-            input = "true";
-        }
-        else if (input == "-" || InputIsNullOrEmpty(input, inf2) == null)
-        {
-            input = "false";
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("\nWpisz cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
+            Console.ResetColor();
+            input = Console.ReadLine();
+            if (decimal.TryParse(input, out decimal result3) && result3 > 0)
+            {
+                _price = result3;
+            }
+            else if (InputIsNullOrEmpty(input, inf2) == null)
+            {
+                _price = null;
+            }
+            else
+            {
+                throw new Exception("Podana liczba w 'cena książki' ma niewłaściwą wartość; wpisz dowolną liczbę większą od 0 (00,00)");
+            }
         }
         else
         {
-            throw new Exception("Podane dane w 'książka jest wypożyczona' mają niewłaściwą wartość;" +
-                "wpisz wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+            _price= null;
         }
 
-        var _isBorrowed = bool.Parse(input);
 
-        Console.WriteLine("Podaj datę wypożyczenia wg wzoru: dd.mm.rrrr");
-        input = Console.ReadLine();
+        bool _isLent;
+        const string propertyIsLent = "książka jest komuś pożyczona";
+        BoolValidation(out input, out _isLent, propertyIsLent);
+
+        bool _isBorrowed;
+        const string propertyIsBorrowed = "książka jest wypożyczona";
+        BoolValidation(out input, out _isBorrowed, propertyIsBorrowed);
+
         DateTime? _dateOfBorrowed;
-        if (DateTime.TryParse(input, out DateTime result4))
+        if (_isBorrowed == true || _isLent == true) 
         {
-            _dateOfBorrowed = result4;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("\nPodaj datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
+            Console.ResetColor();
+            input = Console.ReadLine();
+            if (DateTime.TryParse(input, out DateTime result4))
+            {
+                _dateOfBorrowed = result4;
+            }
+            else if (InputIsNullOrEmpty(input, inf2) == null)
+            {
+                _dateOfBorrowed = null;
+            }
+            else
+            {
+                throw new Exception("Podane dane w 'data wypożyczenia' mają niewłaściwą wartość; " +
+                    "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+            }
         }
-        else if (InputIsNullOrEmpty(input, inf2) == null)
+        else
         {
             _dateOfBorrowed = null;
         }
-        else
-        {
-            throw new Exception("Podane dane w 'data wypożyczenia' mają niewłaściwą wartość; " +
-                "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
-        }
 
-        Console.WriteLine("Wpisz 'q', żeby zapisać książkę i powrócić do menu albo wciśnij Enter, aby zapisać książkę i dodać kolejną");
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine("\nWpisz 'q', żeby zapisać książkę i powrócić do menu albo wciśnij Enter, aby zapisać książkę i dodać kolejną");
+        Console.ResetColor();
         var inputBreak = Console.ReadLine();
 
         var books = new[]
@@ -243,10 +300,10 @@ void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
                 PageNumber = _pageNumber,
                 ISBN = _iSBN,
                 PlaceInLibrary = _placeInLibrary,
-                Description = _description,
-                Bookstatus = _bookstatus,
                 Owner = _owner,
+                IsForSale = _isForSale,
                 Price = _price,
+                IsLent = _isLent,
                 IsBorrowed = _isBorrowed,
                 DateOfBorrowed = _dateOfBorrowed,
             }
@@ -261,7 +318,9 @@ void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
         }
         else
         {
-            Console.WriteLine("Dodaj nową książkę:" + Environment.NewLine + "==================");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("\nDodaj nową książkę:" + Environment.NewLine + "==================");
+            Console.ResetColor();
         }
     }
 }
@@ -270,23 +329,15 @@ static void RemoveBook(IRepository<Book> bookInFile)
 {
     var input = Console.ReadLine();
     var books = bookInFile.GetAll();
-    Book bookToRemove = null;
-    foreach (var book in books)
-    {
-        if (book.Title == input)
-        {
-            bookToRemove = book;
-            break;
-        }
-        //var book = books.Select(x => x.Title == input);
-    }
+    var bookToRemove = books.FirstOrDefault(x => x.Title == input);
+ 
     if (bookToRemove != null)
     {
         bookInFile.Remove(bookToRemove);
     }
     else
     {
-        Console.WriteLine($"Book {input} hasn't found in your library");
+        throw new Exception($"Book '{input}' hasn't found in your library");
     }
 }
 
@@ -298,23 +349,60 @@ static string InputIsNullOrEmpty(string? input, string inf)
 {
     switch (inf)
     {
-        case "Informacja obowiązkowa; wypełnij pole":
+        case "Informacja obowiązkowa; dane muszą być wprowadzone":
             while (string.IsNullOrEmpty(input))
             {
+                Console.ForegroundColor = ConsoleColor.DarkRed;
                 Console.WriteLine(inf);
+                Console.ResetColor();
                 input = Console.ReadLine();
             }
             break;
-        case "jeśli nie chcesz podać danych nie wpisuj nic":
+        case "Podana wartość jest null / informacja opcjonalana":
             if (string.IsNullOrEmpty(input))
             {
                 input = null;
-                Console.WriteLine("Podana wartość jest null");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(inf);
+                Console.ResetColor();
             }
             break;
     }
 
     return input;
+}
+
+static void WriteAuditInfoToFileAndConsole(object? sender, Book e, string auditFileName, string auditInfo)
+{
+    using (var streamWriter = new StreamWriter(auditFileName, true))
+    {
+        streamWriter.Write($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[{auditInfo}]-['{e.Title}' (Id: {e.Id}) from {sender?.GetType().Name}]" + Environment.NewLine);
+    }
+    Console.ForegroundColor = ConsoleColor.Magenta;
+    Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[{auditInfo}]-['{e.Title}' (Id: {e.Id}) from {sender?.GetType().Name}]");
+    Console.ResetColor();
+}
+
+static void BoolValidation(out string? input, out bool _isProperty, string property)
+{
+    Console.ForegroundColor = ConsoleColor.Blue;
+    Console.WriteLine($"\nWpisz '+', jeśli {property}, '-' jeśli nie jest, albo zostaw pole puste");
+    Console.ResetColor();
+    input = Console.ReadLine();
+    if (input == "+")
+    {
+        input = "true";
+    }
+    else if (input == "-" || string.IsNullOrEmpty(input))
+    {
+        input = "false";
+    }
+    else
+    {
+        throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość;" +
+            "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+    }
+    _isProperty = bool.Parse(input);
 }
 
 

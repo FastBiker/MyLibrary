@@ -11,7 +11,7 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
     private readonly Action<T>? _itemAddedCallback;
     private readonly Action<T>? _itemRemovedCallback;
     private static int lastId = 0;
-    protected List<T> _items = new(); 
+    protected List<T> _items = new();
 
     public BookInFile(Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
     {
@@ -26,21 +26,22 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
     {
         if (File.Exists(fileName))
         {
-            var json = File.ReadAllText(fileName);
-            if (string.IsNullOrWhiteSpace(json))
+            using (var streamReader = new StreamReader(fileName))
             {
-                Console.WriteLine("You haven't got any books in your library");
-                return Enumerable.Empty<T>();
-            }
-            else
-            {
-                return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+                var json = streamReader.ReadToEnd();
+                if (string.IsNullOrWhiteSpace(json))
+                {
+                    throw new Exception("You haven't got any books in your library");
+                }
+                else
+                {
+                    return JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+                }
             }
         }
         else
         {
-            new Exception("File doesn't exist");
-            return new List<T>();
+            throw new Exception("File doesn't exist");
         }
     }
 
@@ -53,10 +54,13 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
     {
         if (File.Exists(fileName))
         {
-            var json = File.ReadAllText(fileName);
-            _items = string.IsNullOrWhiteSpace(json)
-                ? new List<T>()
-                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();           
+            using (var reader = new StreamReader(fileName))
+            {
+                var json = reader.ReadToEnd();
+                _items = string.IsNullOrWhiteSpace(json)
+                    ? new List<T>()
+                    : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+            }
         }
         else
         {
@@ -70,8 +74,12 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
         item.Id = ++lastId;
 
         _items.Add(item);
-        var newJson = JsonSerializer.Serialize(_items);
-        File.WriteAllText(fileName, newJson);
+
+        using (var writer = new StreamWriter(fileName))
+        {
+            var newJson = JsonSerializer.Serialize(_items);
+            writer.Write(newJson);
+        }
         _itemAddedCallback?.Invoke(item);
         ItemAdded?.Invoke(this, item);
     }
@@ -80,69 +88,36 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
     {
         if (File.Exists(fileName))
         {
-            var json = File.ReadAllText(fileName);
-            _items = string.IsNullOrWhiteSpace(json)
-                ? new List<T>()
-                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+            using (var streamReader = new StreamReader(fileName))
+            {
+                var json = streamReader.ReadToEnd();
+                _items = string.IsNullOrWhiteSpace(json)
+                    ? new List<T>()
+                    : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+            }
         }
         else
         {
-            new Exception("File doesn't exist");
-            _items = new List<T>();
-        }
-        foreach(var _item in _items)
-        {
-            if(_item.Id == item.Id)
-            {
-                _items.Remove(_item);
-                _itemRemovedCallback?.Invoke(item);
-                ItemRemoved?.Invoke(this, item);
-                break;
-            }
-            
+            throw new Exception("File doesn't exist");
         }
 
-        var newJson = JsonSerializer.Serialize(_items);
-        File.WriteAllText(fileName, newJson);
+        var _itemToRemove = _items.FirstOrDefault(x => x.Id == item.Id);
+        _items.Remove(_itemToRemove);
+        _itemRemovedCallback?.Invoke(item);
+        ItemRemoved?.Invoke(this, item);
+
+        using (var streamWriter = new StreamWriter(fileName))
+        {
+            var newJson = JsonSerializer.Serialize(_items);
+            streamWriter.Write(newJson);
+        }
     }
 
     public void Save()
     {
-        Console.WriteLine("Książka została zapisana w pliku 'mylirary.json'");
+        Console.ForegroundColor = ConsoleColor.DarkGreen;
+        Console.WriteLine("The book was saved in the 'mylibrary.json' file" + Environment.NewLine);
+        Console.ResetColor();
         // Save is not required with List
     }
 }
-
-//Oto zmodyfikowana wersja metody `Add` i przykładowa implementacja:
-
-//```csharp
-//private static int lastId = 0; // Do przechowywania ostatniego Id
-
-//public void Add(Book item)
-//{
-//    List<Book> items;
-//    if (File.Exists(fileName))
-//    {
-//        var json = File.ReadAllText(fileName);
-//        items = string.IsNullOrWhiteSpace(json)
-//            ? new List<Book>()
-//            : JsonSerializer.Deserialize<List<Book>>(json) ?? new List<Book>();
-//    }
-//    else
-//    {
-//        items = new List<Book>();
-//    }
-
-//    // Ustaw nowe Id
-//    lastId = items.Count > 0 ? items.Max(b => b.Id) : 0;
-//    item.Id = ++lastId; // Zwiększ Id i przypisz do item
-
-//    items.Add(item);
-//    var newJson = JsonSerializer.Serialize(items);
-//    File.WriteAllText(fileName, newJson);
-//    _itemAddedCallback?.Invoke(item);
-//    ItemAdded?.Invoke(this, item);
-//}
-
-
-//Environment.NewLine
