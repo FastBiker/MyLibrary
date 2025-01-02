@@ -48,6 +48,6 @@ public class Book : EntityBase
         $"\n \tIsLent: {IsLent}, " +
         $"\n \tIsBorrowed: {IsBorrowed}, " +
         $"\n \tDateOfBorrowed: {DateOfBorrowed} " +
-        $"\n===============================================" 
+        $"\n==============================================="
         + Environment.NewLine;
 }

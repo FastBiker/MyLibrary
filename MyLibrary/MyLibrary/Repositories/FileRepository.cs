@@ -1,11 +1,10 @@
 ﻿using MyLibrary.Entities;
-using MyLibrary.Repositories;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.Json;
 
-namespace MyLibrary.Components;
+namespace MyLibrary.Repositories;
 
-public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
+public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
     private const string fileName = "mylibrary.json";
     private readonly Action<T>? _itemAddedCallback;
@@ -13,7 +12,7 @@ public class BookInFile<T> : IRepository<T> where T : class, IEntity, new()
     private static int lastId = 0;
     protected List<T> _items = new();
 
-    public BookInFile(Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
+    public FileRepository(Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
     {
         _itemAddedCallback = itemAddedCallback;
         _itemRemovedCallback = itemRemovedCallback;
