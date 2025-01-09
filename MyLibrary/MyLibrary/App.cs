@@ -1,4 +1,5 @@
 ﻿using MyLibrary.Data;
+using MyLibrary.DataProviders;
 using MyLibrary.Entities;
 using MyLibrary.Entities.Extensions;
 using MyLibrary.Repositories;
@@ -8,15 +9,16 @@ namespace MyLibrary;
 
 public class App : IApp
 {
-    private readonly IRepository<Book> _bookRepository;
-    public App(IRepository<Book> bookRepository)
+    private readonly IRepository<Book> _fileRepository;
+    private readonly IBooksProvider _booksProvider;
+
+    public App(IRepository<Book> fileRepository, IBooksProvider booksProvider)
     {
-        _bookRepository = bookRepository;
+        _fileRepository = fileRepository;
+        _booksProvider = booksProvider;
     }
     public void Run()
     {
-        Console.WriteLine("I'm here in 'Run()' method");
-
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine("Witamy w aplikacji 'MyLibrary', która pomoże Ci uporządkować Twój domowy zbiór książek");
         Console.WriteLine("======================================================================================");
@@ -182,24 +184,6 @@ public class App : IApp
                     default:
                         throw new Exception("Wrong input value");
                 }
-                //Console.WriteLine(_authorName);
-                //Console.ForegroundColor = ConsoleColor.Blue;
-                //Console.WriteLine("\nWpisz imię/imiona autora(*)");
-                //Console.ResetColor();
-                //input = Console.ReadLine();
-                //var _authorName = InputIsNullOrEmpty(input, inf1);
-
-                //Console.ForegroundColor = ConsoleColor.Blue;
-                //Console.WriteLine("\nWpisz nazwisko autora(*)");
-                //Console.ResetColor();
-                //input = Console.ReadLine();
-                //var _authorSurname = InputIsNullOrEmpty(input, inf1);
-
-                //Console.ForegroundColor = ConsoleColor.Blue;
-                //Console.WriteLine("\nWpisz autora zbiorowego(*)");
-                //Console.ResetColor();
-                //input = Console.ReadLine();
-                //var _collectiveAuthor = InputIsNullOrEmpty(input, inf1);
 
                 Console.ForegroundColor = ConsoleColor.Blue;
                 Console.WriteLine("\nWpisz tytuł książki(*)");
@@ -241,14 +225,14 @@ public class App : IApp
                 Console.WriteLine("\nWpisz liczbę stron");
                 Console.ResetColor();
                 input = Console.ReadLine();
-                int? _pageNumber;
+                int? _pagesNumber;
                 if (int.TryParse(input, out int result2) && result2 > 0)
                 {
-                    _pageNumber = result2;
+                    _pagesNumber = result2;
                 }
                 else if (InputIsNullOrEmpty(input, inf2) == null)
                 {
-                    _pageNumber = null;
+                    _pagesNumber = null;
                 }
                 else
                 {
@@ -353,7 +337,7 @@ public class App : IApp
                         PublishingHouse = _publishingHouse,
                         PlaceOfPublication = _placeOfPublication,
                         YearOfPublication = _yearOfPublication,
-                        PageNumber = _pageNumber,
+                        PageNumber = _pagesNumber,
                         ISBN = _iSBN,
                         PlaceInLibrary = _placeInLibrary,
                         Owner = _owner,
@@ -459,6 +443,23 @@ public class App : IApp
                     "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
             }
             _isProperty = bool.Parse(input);
+        }
+
+        Console.WriteLine("Książki mające więcej niż 300 stron:");
+        Console.WriteLine("=====================================");
+        foreach (var book in _booksProvider.FilterBooks(300))
+        {
+            Console.WriteLine(book);
+        }
+
+        var minPrice = _booksProvider.GetMinimumPriceOffAllBooks();
+        Console.WriteLine($"Najtańsza książka w twojej bibliotece kosztuje {minPrice:c}");
+
+        Console.WriteLine($"\nWłaściciele książek z twojej biblioteki:");
+        Console.WriteLine("===========================================");
+        foreach (var book in _booksProvider.GetUniqueBookOwners())
+        {
+            Console.WriteLine(book);
         }
     }
 }

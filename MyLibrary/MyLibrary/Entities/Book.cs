@@ -67,7 +67,7 @@ public class Book : EntityBase
         }
         if (PageNumber.HasValue)
         {
-            sb.AppendLine($"\tPageNumber: {PageNumber}");
+            sb.AppendLine($"\tNumberOfPages: {PageNumber}");
         }
         if (ISBN != null)
         {
