@@ -13,4 +13,6 @@ public interface IBooksProvider
     List<Book> GetSpecificColumns();
 
     string AnonimousClass();
+
+    List<Book> GetBorrowedBooks();
 }

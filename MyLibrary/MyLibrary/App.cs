@@ -445,12 +445,12 @@ public class App : IApp
             _isProperty = bool.Parse(input);
         }
 
-        Console.WriteLine("Książki mające więcej niż 300 stron:");
-        Console.WriteLine("=====================================");
-        foreach (var book in _booksProvider.FilterBooks(300))
-        {
-            Console.WriteLine(book);
-        }
+        //Console.WriteLine("Książki mające więcej niż 300 stron:");
+        //Console.WriteLine("=====================================");
+        //foreach (var book in _booksProvider.FilterBooks(300))
+        //{
+        //    Console.WriteLine(book);
+        //}
 
         var minPrice = _booksProvider.GetMinimumPriceOffAllBooks();
         Console.WriteLine($"Najtańsza książka w twojej bibliotece kosztuje {minPrice:c}");
@@ -461,5 +461,15 @@ public class App : IApp
         {
             Console.WriteLine(book);
         }
+
+        Console.WriteLine("\nNiektóre dane z książek:");
+        Console.WriteLine("========================");
+        foreach (var book in _booksProvider.GetSpecificColumns())
+        {
+            Console.WriteLine(book);
+        }
+
+        var newBook = _booksProvider.AnonimousClass();
+        Console.WriteLine($"\nWybrane dane książek:" + Environment.NewLine + $"--------------------- {newBook}");
     }
 }
