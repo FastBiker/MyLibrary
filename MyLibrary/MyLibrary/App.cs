@@ -452,6 +452,7 @@ public class App : IApp
         //    Console.WriteLine(book);
         //}
 
+        //select
         var minPrice = _booksProvider.GetMinimumPriceOffAllBooks();
         Console.WriteLine($"Najtańsza książka w twojej bibliotece kosztuje {minPrice:c}");
 
@@ -471,5 +472,34 @@ public class App : IApp
 
         var newBook = _booksProvider.AnonimousClass();
         Console.WriteLine($"\nWybrane dane książek:" + Environment.NewLine + $"--------------------- {newBook}");
+
+        //order by
+        Console.WriteLine("\nKsiążki wg tytułów:");
+        Console.WriteLine("=====================");
+        foreach (var book in _booksProvider.OrderByTitle())
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki wg tytułów od 'z':");
+        Console.WriteLine("=====================");
+        foreach (var book in _booksProvider.OrderByTitleDescending())
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów:");
+        Console.WriteLine("==========================================");
+        foreach (var book in _booksProvider.OrderByAuthorSurnameAndTitle())
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów od'z':");
+        Console.WriteLine("================================================");
+        foreach (var book in _booksProvider.OrderByAuthorSurnameAndTitleDesc())
+        {
+            Console.WriteLine(book);
+        }
     }
 }

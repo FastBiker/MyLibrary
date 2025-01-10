@@ -4,8 +4,12 @@ namespace MyLibrary.DataProviders;
 
 public interface IBooksProvider
 {
+    //inne
     List<Book> FilterBooks(int minPagesNumber);
 
+    List<Book> GetBorrowedBooks();
+
+    //select
     List<string> GetUniqueBookOwners();
 
     decimal GetMinimumPriceOffAllBooks();
@@ -14,5 +18,13 @@ public interface IBooksProvider
 
     string AnonimousClass();
 
-    List<Book> GetBorrowedBooks();
+    // order by
+    List<Book> OrderByTitle();
+
+    List<Book> OrderByTitleDescending();
+
+    List<Book> OrderByAuthorSurnameAndTitle();
+
+    List<Book> OrderByAuthorSurnameAndTitleDesc();
+
 }
