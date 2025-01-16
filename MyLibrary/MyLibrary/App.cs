@@ -539,5 +539,26 @@ public class App : IApp
         Console.WriteLine("===================");
         var book2 = _booksProvider.SingleOrDefaultById(61);
         Console.WriteLine(book2);
+
+        Console.WriteLine("\nPokaż pierwsze 4 książki w kolejności alfabetycznej:");
+        Console.WriteLine("======================================================");
+        foreach (var book in _booksProvider.TakeBooks(4))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nPokaż książki od 10 do 14 w kolejności alfabetycznej:");
+        Console.WriteLine("=======================================================");
+        foreach (var book in _booksProvider.TakeBooks(10..14))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nPokaż książki zaczynające się na A:");
+        Console.WriteLine("=====================================");
+        foreach (var book in _booksProvider.TakeBooksWhileTitleStartsWith("1"))
+        {
+            Console.WriteLine(book);
+        }
     }
 }

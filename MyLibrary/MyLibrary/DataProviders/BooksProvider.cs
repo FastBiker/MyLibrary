@@ -170,4 +170,32 @@ public class BooksProvider : IBooksProvider
         var books = _bookRepository.GetAll();
         return books.SingleOrDefault(x => x.Id == id, new Book { Id = -1, Title = "NOT FOUND"});
     }
+
+    // take
+    public List<Book> TakeBooks(int howMany)
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .OrderBy(x => x.Title)
+            .Take(howMany)
+            .ToList();
+    }
+
+    public List<Book> TakeBooks(Range range)
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .OrderBy(x => x.Title)
+            .Take(range)
+            .ToList();
+    }
+
+    public List<Book> TakeBooksWhileTitleStartsWith(string prefix)
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .OrderBy(x => x.Id)
+            .TakeWhile(x => x.Id < 30)
+            .ToList();
+    }
 }

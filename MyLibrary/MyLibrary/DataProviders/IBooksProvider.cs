@@ -49,4 +49,12 @@ public interface IBooksProvider
     Book SingleById(int id);
 
     Book? SingleOrDefaultById(int id);
+
+    // take
+
+    List<Book> TakeBooks(int howMany);
+
+    List<Book> TakeBooks(Range range);
+
+    List<Book> TakeBooksWhileTitleStartsWith(string prefix);
 }
