@@ -153,10 +153,10 @@ public class BooksProvider : IBooksProvider
         return books.FirstOrDefault(x => x.Owner == owner, new Book { Id = -1, Title = "NOT FOUND"});
     }
 
-    public Book LastByOwner(string owner)
+    public Book? LastByOwner(string owner)
     {
         var books = _bookRepository.GetAll();
-        return books.First(x => x.Owner == owner);
+        return books.LastOrDefault(x => x.Owner == owner, new Book { Id = -1, Owner = "NOT FOUND"});
     }
 
     public Book SingleById(int id)
@@ -171,7 +171,7 @@ public class BooksProvider : IBooksProvider
         return books.SingleOrDefault(x => x.Id == id, new Book { Id = -1, Title = "NOT FOUND"});
     }
 
-    // take
+    // Take, TakeWhile
     public List<Book> TakeBooks(int howMany)
     {
         var books = _bookRepository.GetAll();
@@ -190,12 +190,52 @@ public class BooksProvider : IBooksProvider
             .ToList();
     }
 
-    public List<Book> TakeBooksWhileTitleStartsWith(string prefix)
+    public List<Book> TakeBooksWhileIdIs()
     {
         var books = _bookRepository.GetAll();
         return books
             .OrderBy(x => x.Id)
             .TakeWhile(x => x.Id < 30)
+            .ToList();
+    }
+
+    // Skip, SkipWhile
+    public List<Book> SkipBooks(int howMany)
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .OrderBy(x => x.Title)
+            .Skip(howMany)
+            .ToList();
+    }
+
+    public List<Book> SkipBooksWhileTitleStartsWith(int howMany, string prefix)
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .OrderBy(x => x.Title)
+            .Skip(howMany)
+            .SkipWhile(x => x.Title.StartsWith(prefix))
+            .ToList();
+    }
+
+    // Distinct, DistinctBy
+    public List<string> DistinctAllOwners()
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .Select(x => x.Owner)
+            .Distinct()
+            .OrderBy(c => c)
+            .ToList();
+    }
+
+    public List<Book> DistinctByOwners()
+    {
+        var books = _bookRepository.GetAll();
+        return books
+            .DistinctBy(x => x.Owner)
+            .OrderBy(x => x.Owner)
             .ToList();
     }
 }

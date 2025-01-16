@@ -44,7 +44,7 @@ public interface IBooksProvider
 
     Book FirstOrDefaultByOwnerWithDefault(string owner);
 
-    Book LastByOwner(string owner);
+    Book? LastByOwner(string owner);
 
     Book SingleById(int id);
 
@@ -56,5 +56,17 @@ public interface IBooksProvider
 
     List<Book> TakeBooks(Range range);
 
-    List<Book> TakeBooksWhileTitleStartsWith(string prefix);
+    List<Book> TakeBooksWhileIdIs();
+
+    // Skip
+
+    List<Book> SkipBooks(int howMany);
+
+    List<Book> SkipBooksWhileTitleStartsWith(int howMany, string prefix);
+
+    // Distinct, DistinctBy
+
+    List<string> DistinctAllOwners();
+
+    List<Book> DistinctByOwners();
 }

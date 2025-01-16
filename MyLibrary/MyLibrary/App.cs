@@ -535,6 +535,13 @@ public class App : IApp
         var book1 = _booksProvider.FirstByOwner("Piotr");
         Console.WriteLine(book1);
 
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine("\nOstatnia książka na liście książka należąca do Baraka Obamy:");
+        Console.WriteLine("==============================================================");
+        var book3 = _booksProvider.LastByOwner("Barak Obama");
+        Console.WriteLine(book3);
+        Console.ResetColor();
+
         Console.WriteLine("\nKsiążka o Id = 61:");
         Console.WriteLine("===================");
         var book2 = _booksProvider.SingleOrDefaultById(61);
@@ -554,9 +561,37 @@ public class App : IApp
             Console.WriteLine(book);
         }
 
-        Console.WriteLine("\nPokaż książki zaczynające się na A:");
+        Console.WriteLine("\nPokaż książki o Id mniejszym od 30:");
         Console.WriteLine("=====================================");
-        foreach (var book in _booksProvider.TakeBooksWhileTitleStartsWith("1"))
+        foreach (var book in _booksProvider.TakeBooksWhileIdIs())
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nPokaż książki pomijając pierwszych 35 w kolejności alfabetycznej:");
+        Console.WriteLine("===================================================================");
+        foreach (var book in _booksProvider.SkipBooks(35))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nPomiń pierwszą ksiązkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na A:");
+        Console.WriteLine("=============================================================================================");
+        foreach (var book in _booksProvider.SkipBooksWhileTitleStartsWith(1, "A"))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nAlfabetyczna lista wszystkich włścicieli książek z mojej biblioteki:");
+        Console.WriteLine("=========================================================");
+        foreach (var book in _booksProvider.DistinctAllOwners())
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nLista pierwszych książek wszystkich właścicieli książek z mojej biblioteki, alfabetycznie wg właścicieli:");
+        Console.WriteLine("===========================================================================================================");
+        foreach (var book in _booksProvider.DistinctByOwners())
         {
             Console.WriteLine(book);
         }
