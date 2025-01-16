@@ -1,4 +1,5 @@
-﻿using MyLibrary.Entities;
+﻿using MyLibrary.DataProviders.Extensions;
+using MyLibrary.Entities;
 using MyLibrary.Repositories;
 using System.Text;
 
@@ -10,17 +11,6 @@ public class BooksProvider : IBooksProvider
     public BooksProvider(IRepository<Book> bookRepository)
     {
         _bookRepository = bookRepository;
-    }
-
-    //inne
-    public List<Book> FilterBooks(int minPage)
-    {
-        throw new NotImplementedException();
-    }
-    
-    public List<Book> GetBorrowedBooks()
-    {
-        throw new NotImplementedException();
     }
 
     //select
@@ -105,5 +95,79 @@ public class BooksProvider : IBooksProvider
             .OrderByDescending(x => x.AuthorSurname)
             .ThenByDescending(x => x.Title)
             .ToList();
+    }
+
+    //where
+    public List<Book> WhereStartsWith(string prefix)
+    {
+        var books = _bookRepository.GetAll();
+        return books.Where(x => x.Title.StartsWith(prefix)).ToList();
+    }
+
+    public List<Book> WhereStartsWithAndCostIsGreaterThan(string prefix, decimal cost)
+    {
+        var books = _bookRepository.GetAll();
+        return books.Where(x => x.Title.StartsWith(prefix) && x.Price > cost).ToList();
+    }
+
+    public List<Book> WhereOwnerIs(string owner)
+    {
+        var books = _bookRepository.GetAll();
+        return books.ByOwner(owner).ToList();
+    }
+
+    public List<Book> WhereVolumeIsGreaterThan(int minPagesNumber)
+    {
+        var books = _bookRepository.GetAll();
+        return books.Where(x => x.PageNumber > minPagesNumber).ToList();
+    }
+
+    public List<Book> WhereIsBorrowed()
+    {
+        var books = _bookRepository.GetAll();
+        return books.Where(x => x.IsBorrowed).ToList();
+    }
+
+    public List<string> WhereTitleOfBooksWhoOwnerIs(string owner)
+    {
+        throw new NotImplementedException();
+    }
+
+
+    //first, last, single
+    public Book FirstByOwner(string owner)
+    {
+        var books = _bookRepository.GetAll();
+        return books.First(x => x.Owner == owner);
+    }
+
+    public Book? FirstOrDefaultByOwner(string owner)
+    {
+        var books = _bookRepository.GetAll();
+        return books.FirstOrDefault(x => x.Owner == owner);
+    }
+
+    public Book FirstOrDefaultByOwnerWithDefault(string owner)
+    {
+        var books = _bookRepository.GetAll();
+        return books.FirstOrDefault(x => x.Owner == owner, new Book { Id = -1, Title = "NOT FOUND"});
+    }
+
+    public Book LastByOwner(string owner)
+    {
+        var books = _bookRepository.GetAll();
+        return books.First(x => x.Owner == owner);
+    }
+
+    public Book SingleById(int id)
+    {
+        var books = _bookRepository.GetAll();
+        return books.Single(x => x.Id == id);
+    }
+
+    public Book? SingleOrDefaultById(int id)
+    {
+        var books = _bookRepository.GetAll();
+        return books.SingleOrDefault(x => x.Id == id, new Book { Id = -1, Title = "NOT FOUND"});
     }
 }

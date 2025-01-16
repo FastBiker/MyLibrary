@@ -445,13 +445,6 @@ public class App : IApp
             _isProperty = bool.Parse(input);
         }
 
-        //Console.WriteLine("Książki mające więcej niż 300 stron:");
-        //Console.WriteLine("=====================================");
-        //foreach (var book in _booksProvider.FilterBooks(300))
-        //{
-        //    Console.WriteLine(book);
-        //}
-
         //select
         var minPrice = _booksProvider.GetMinimumPriceOffAllBooks();
         Console.WriteLine($"Najtańsza książka w twojej bibliotece kosztuje {minPrice:c}");
@@ -501,5 +494,50 @@ public class App : IApp
         {
             Console.WriteLine(book);
         }
+
+        Console.WriteLine("\nKsiążki, które zaczynają się na konkretną literę 'G':");
+        Console.WriteLine("=======================================================");
+        foreach (var book in _booksProvider.WhereStartsWith("G"))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki, które zaczynają się na konkretną literę 'P' i kosztują więcej niż 20 zł:");
+        Console.WriteLine("===================================================================================");
+        foreach (var book in _booksProvider.WhereStartsWithAndCostIsGreaterThan("P", 20))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki, których właścicielem jest Joe Biden:");
+        Console.WriteLine("================================================");
+        foreach (var book in _booksProvider.WhereOwnerIs("Joe Biden"))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki, których objętość jest większa niż 200 stron:");
+        Console.WriteLine("=======================================================");
+        foreach (var book in _booksProvider.WhereVolumeIsGreaterThan(200))
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nKsiążki wypożyczone:");
+        Console.WriteLine("======================");
+        foreach (var book in _booksProvider.WhereIsBorrowed())
+        {
+            Console.WriteLine(book);
+        }
+
+        Console.WriteLine("\nPietrwsza książka należąca do Piotra:");
+        Console.WriteLine("=======================================");
+        var book1 = _booksProvider.FirstByOwner("Piotr");
+        Console.WriteLine(book1);
+
+        Console.WriteLine("\nKsiążka o Id = 61:");
+        Console.WriteLine("===================");
+        var book2 = _booksProvider.SingleOrDefaultById(61);
+        Console.WriteLine(book2);
     }
 }
