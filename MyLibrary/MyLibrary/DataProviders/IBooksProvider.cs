@@ -69,4 +69,7 @@ public interface IBooksProvider
     List<string> DistinctAllOwners();
 
     List<Book> DistinctByOwners();
+
+    // Chunk
+    List<Book[]> ChunkBooks(int size);
 }

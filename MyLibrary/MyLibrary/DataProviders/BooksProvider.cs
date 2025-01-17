@@ -238,4 +238,14 @@ public class BooksProvider : IBooksProvider
             .OrderBy(x => x.Owner)
             .ToList();
     }
+
+    public List<Book[]> ChunkBooks(int size)
+    {;
+        var books = _bookRepository.GetAll();
+        var chunkBooks = books.Chunk(size).ToList();
+
+        return chunkBooks;
+
+
+    }
 }

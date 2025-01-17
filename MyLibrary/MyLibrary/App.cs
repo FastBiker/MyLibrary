@@ -451,16 +451,16 @@ public class App : IApp
 
         Console.WriteLine($"\nWłaściciele książek z twojej biblioteki:");
         Console.WriteLine("===========================================");
-        foreach (var book in _booksProvider.GetUniqueBookOwners())
+        foreach (var item in _booksProvider.GetUniqueBookOwners())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nNiektóre dane z książek:");
         Console.WriteLine("========================");
-        foreach (var book in _booksProvider.GetSpecificColumns())
+        foreach (var item in _booksProvider.GetSpecificColumns())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         var newBook = _booksProvider.AnonimousClass();
@@ -469,65 +469,65 @@ public class App : IApp
         //order by
         Console.WriteLine("\nKsiążki wg tytułów:");
         Console.WriteLine("=====================");
-        foreach (var book in _booksProvider.OrderByTitle())
+        foreach (var item in _booksProvider.OrderByTitle())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki wg tytułów od 'z':");
         Console.WriteLine("=====================");
-        foreach (var book in _booksProvider.OrderByTitleDescending())
+        foreach (var item in _booksProvider.OrderByTitleDescending())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów:");
         Console.WriteLine("==========================================");
-        foreach (var book in _booksProvider.OrderByAuthorSurnameAndTitle())
+        foreach (var item in _booksProvider.OrderByAuthorSurnameAndTitle())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów od'z':");
         Console.WriteLine("================================================");
-        foreach (var book in _booksProvider.OrderByAuthorSurnameAndTitleDesc())
+        foreach (var item in _booksProvider.OrderByAuthorSurnameAndTitleDesc())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki, które zaczynają się na konkretną literę 'G':");
         Console.WriteLine("=======================================================");
-        foreach (var book in _booksProvider.WhereStartsWith("G"))
+        foreach (var item in _booksProvider.WhereStartsWith("G"))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki, które zaczynają się na konkretną literę 'P' i kosztują więcej niż 20 zł:");
         Console.WriteLine("===================================================================================");
-        foreach (var book in _booksProvider.WhereStartsWithAndCostIsGreaterThan("P", 20))
+        foreach (var item in _booksProvider.WhereStartsWithAndCostIsGreaterThan("P", 20))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki, których właścicielem jest Joe Biden:");
         Console.WriteLine("================================================");
-        foreach (var book in _booksProvider.WhereOwnerIs("Joe Biden"))
+        foreach (var item in _booksProvider.WhereOwnerIs("Joe Biden"))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki, których objętość jest większa niż 200 stron:");
         Console.WriteLine("=======================================================");
-        foreach (var book in _booksProvider.WhereVolumeIsGreaterThan(200))
+        foreach (var item in _booksProvider.WhereVolumeIsGreaterThan(200))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nKsiążki wypożyczone:");
         Console.WriteLine("======================");
-        foreach (var book in _booksProvider.WhereIsBorrowed())
+        foreach (var item in _booksProvider.WhereIsBorrowed())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nPietrwsza książka należąca do Piotra:");
@@ -556,44 +556,56 @@ public class App : IApp
 
         Console.WriteLine("\nPokaż książki od 10 do 14 w kolejności alfabetycznej:");
         Console.WriteLine("=======================================================");
-        foreach (var book in _booksProvider.TakeBooks(10..14))
+        foreach (var item in _booksProvider.TakeBooks(10..14))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nPokaż książki o Id mniejszym od 30:");
         Console.WriteLine("=====================================");
-        foreach (var book in _booksProvider.TakeBooksWhileIdIs())
+        foreach (var item in _booksProvider.TakeBooksWhileIdIs())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nPokaż książki pomijając pierwszych 35 w kolejności alfabetycznej:");
         Console.WriteLine("===================================================================");
-        foreach (var book in _booksProvider.SkipBooks(35))
+        foreach (var item in _booksProvider.SkipBooks(35))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nPomiń pierwszą ksiązkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na A:");
         Console.WriteLine("=============================================================================================");
-        foreach (var book in _booksProvider.SkipBooksWhileTitleStartsWith(1, "A"))
+        foreach (var item in _booksProvider.SkipBooksWhileTitleStartsWith(1, "A"))
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nAlfabetyczna lista wszystkich włścicieli książek z mojej biblioteki:");
-        Console.WriteLine("=========================================================");
-        foreach (var book in _booksProvider.DistinctAllOwners())
+        Console.WriteLine("======================================================================");
+        foreach (var item in _booksProvider.DistinctAllOwners())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
         }
 
         Console.WriteLine("\nLista pierwszych książek wszystkich właścicieli książek z mojej biblioteki, alfabetycznie wg właścicieli:");
         Console.WriteLine("===========================================================================================================");
-        foreach (var book in _booksProvider.DistinctByOwners())
+        foreach (var item in _booksProvider.DistinctByOwners())
         {
-            Console.WriteLine(book);
+            Console.WriteLine(item);
+        }
+
+        Console.WriteLine("\nPodział książek na paczki 5-elementowe:");
+        Console.WriteLine("=========================================");
+        foreach (var chunkBooks in _booksProvider.ChunkBooks(5))
+        {
+            Console.WriteLine($"\nCHUNK {chunkBooks}");
+            foreach (var item in chunkBooks)
+            {
+                Console.WriteLine(item);
+            }
+            Console.WriteLine("############################################");
         }
     }
 }
