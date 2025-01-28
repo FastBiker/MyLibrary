@@ -3,13 +3,15 @@ using MyLibrary;
 using MyLibrary.DataProviders;
 using MyLibrary.Entities;
 using MyLibrary.Repositories;
+using MyLibrary.UserCommunication;
 
 var services = new ServiceCollection();
 services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Book>, ListRepository<Book>>();
 services.AddSingleton<IRepository<Book>, SqlRepository<Book>>();
 services.AddSingleton<IRepository<Book>, FileRepository<Book>>();
-services.AddSingleton<IBooksProvider, BooksProvider>();
+services.AddSingleton<IBooksDataProvider, BooksDataProvider>();
+services.AddSingleton<IUserCommunication, UserCommunication>();
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;

@@ -34,7 +34,7 @@ public class Book : EntityBase
 
     public bool IsBorrowed { get; set; }
 
-    public DateTime? DateOfBorrowed { get; set; }
+    public DateTime? DateOfBorrowedOrLent { get; set; }
 
     #region ToString Override
     public override string ToString()
@@ -94,9 +94,9 @@ public class Book : EntityBase
         {
             sb.AppendLine($"\tIsBorrowed: {IsBorrowed}");
         }
-        if (DateOfBorrowed.HasValue)
+        if (DateOfBorrowedOrLent.HasValue)
         {
-            sb.AppendLine($"\tDateOfBorrowed: {DateOfBorrowed}");
+            sb.AppendLine($"\tDateOfBorrowed: {DateOfBorrowedOrLent}");
         }
         sb.AppendLine($"===============================================");
 

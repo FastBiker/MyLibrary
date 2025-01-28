@@ -1,14 +1,16 @@
 ﻿using MyLibrary.DataProviders.Extensions;
 using MyLibrary.Entities;
 using MyLibrary.Repositories;
+using System.Collections.Generic;
 using System.Text;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace MyLibrary.DataProviders;
 
-public class BooksProvider : IBooksProvider
+public class BooksDataProvider : IBooksDataProvider
 {
     private readonly IRepository<Book> _bookRepository;
-    public BooksProvider(IRepository<Book> bookRepository)
+    public BooksDataProvider(IRepository<Book> bookRepository)
     {
         _bookRepository = bookRepository;
     }
@@ -20,7 +22,7 @@ public class BooksProvider : IBooksProvider
         return (decimal)books.Select(x => x.Price).Min();
     }
 
-    public List<Book> GetSpecificColumns()
+    public List<Book> GetOnlyAuthorAndTitle()
     {
         var books = _bookRepository.GetAll();
         var list = books.Select(book => new Book
@@ -28,8 +30,8 @@ public class BooksProvider : IBooksProvider
             Id = book.Id,
             AuthorName = book.AuthorName,
             AuthorSurname = book.AuthorSurname,
+            CollectiveAuthor = book.CollectiveAuthor,
             Title = book.Title,
-            IsBorrowed = book.IsBorrowed,
 
         }).ToList();
 
@@ -101,36 +103,104 @@ public class BooksProvider : IBooksProvider
     public List<Book> WhereStartsWith(string prefix)
     {
         var books = _bookRepository.GetAll();
-        return books.Where(x => x.Title.StartsWith(prefix)).ToList();
+        var list = books.Where(x => x.Title.StartsWith(prefix)).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"Brak książek, które zaczynają się od '{prefix}'");
+        }
+        return list;
     }
 
     public List<Book> WhereStartsWithAndCostIsGreaterThan(string prefix, decimal cost)
     {
         var books = _bookRepository.GetAll();
-        return books.Where(x => x.Title.StartsWith(prefix) && x.Price > cost).ToList();
+        var list = books.Where(x => x.Title.StartsWith(prefix) && x.Price > cost).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"Brak książek, które zaczynają się od '{prefix}' i kosztują więcej niż {cost:c}");
+        }
+        return list;
     }
 
     public List<Book> WhereOwnerIs(string owner)
     {
         var books = _bookRepository.GetAll();
-        return books.ByOwner(owner).ToList();
+        var list = books.ByOwner(owner).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"NOT FOUND");
+        }
+        return list;
     }
 
     public List<Book> WhereVolumeIsGreaterThan(int minPagesNumber)
     {
         var books = _bookRepository.GetAll();
-        return books.Where(x => x.PageNumber > minPagesNumber).ToList();
+        var list = books.Where(x => x.PageNumber > minPagesNumber).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"NOT FOUND");
+        }
+        return list;
     }
 
     public List<Book> WhereIsBorrowed()
     {
         var books = _bookRepository.GetAll();
-        return books.Where(x => x.IsBorrowed).ToList();
+        var list = books.Where(x => x.IsBorrowed).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"NOT FOUND");
+        }
+        return list;
     }
 
-    public List<string> WhereTitleOfBooksWhoOwnerIs(string owner)
+    public List<Book> WhereIsLent()
     {
-        throw new NotImplementedException();
+        var books = _bookRepository.GetAll();
+        var list = books.Where(x => x.IsLent).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"NOT FOUND");
+        }
+        return list;
+    }
+
+    public List<Book> WhereIsForSale()
+    {
+        var books = _bookRepository.GetAll();
+        var list = books.Where(x => x.IsForSale.HasValue && x.IsForSale.Value).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"NOT FOUND");
+        }
+        return list;
+    }
+
+    public List<Book> GetOnlyTitleAndPlaceInLibrary()
+    {
+        var books = _bookRepository.GetAll();
+        var list = books.Select(book => new Book
+        {
+            Id = book.Id,
+            Title = book.Title,
+            PlaceInLibrary = book.PlaceInLibrary,
+        })
+            .OrderBy(x => x.Title)
+            .ToList();
+        return list;
+    }
+
+    public List<string> WhereTitlesOfBooksWhoOwnerIs(string owner)
+    {
+        var books = _bookRepository.GetAll();
+        var list = books.ByOwner(owner).ToList();
+        if (list.Count == 0)
+        {
+            throw new Exception($"NOT FOUND");
+        }
+        var titlesOfOwner = list.Select(x => x.Title).ToList();
+        return titlesOfOwner;
     }
 
 
@@ -147,13 +217,13 @@ public class BooksProvider : IBooksProvider
         return books.FirstOrDefault(x => x.Owner == owner);
     }
 
-    public Book FirstOrDefaultByOwnerWithDefault(string owner)
+    public Book? FirstOrDefaultByOwnerWithDefault(string owner)
     {
         var books = _bookRepository.GetAll();
         return books.FirstOrDefault(x => x.Owner == owner, new Book { Id = -1, Title = "NOT FOUND"});
     }
 
-    public Book? LastByOwner(string owner)
+    public Book? LastOrDefaultByOwnerWithDefault(string owner)
     {
         var books = _bookRepository.GetAll();
         return books.LastOrDefault(x => x.Owner == owner, new Book { Id = -1, Owner = "NOT FOUND"});
@@ -190,12 +260,12 @@ public class BooksProvider : IBooksProvider
             .ToList();
     }
 
-    public List<Book> TakeBooksWhileIdIs()
+    public List<Book> TakeBooksWhileIdIs(int id)
     {
         var books = _bookRepository.GetAll();
         return books
             .OrderBy(x => x.Id)
-            .TakeWhile(x => x.Id < 30)
+            .TakeWhile(x => x.Id < id)
             .ToList();
     }
 

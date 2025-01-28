@@ -117,6 +117,6 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
         Console.ForegroundColor = ConsoleColor.DarkGreen;
         Console.WriteLine("The book was saved in the 'mylibrary.json' file" + Environment.NewLine);
         Console.ResetColor();
-        // Save is not required with List
+        // Save is not required with file
     }
 }
