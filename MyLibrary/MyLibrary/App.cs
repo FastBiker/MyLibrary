@@ -132,6 +132,7 @@ public class App : IApp
                 case "4":
                     Console.ForegroundColor = ConsoleColor.Green;
                     Console.WriteLine("Filtry:");
+                    Console.WriteLine("-------");
                     Console.ResetColor();
                     try
                     {
@@ -472,7 +473,7 @@ public class App : IApp
             while(true)
             {
                 Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine("\n(q) wróć do menu; \n(a) najtańsza książka; \n(b) włąściciele książek alfabetycznie; \n(c) tylko autorzy i tytuły; " +
+                Console.WriteLine("(q) wróć do menu; \n(a) najtańsza książka; \n(b) włąściciele książek alfabetycznie; \n(c) tylko autorzy i tytuły; " +
                     "\n(d) książki wg tytułów alfabetycznie; \n(e) książki wg tytułów od 'z'; \n(f) książki wg nazwisk autorów i wg tytułów; " +
                     "\n(g) książki wg nazwisk autorów i wg tytułów od'z'; \n(h) książki, które zaczynają się na wybraną literę; " +
                     "\n(i) książki, które zaczynają się na wybraną literę i kosztują więcej niż wybrana kwota; " +
@@ -508,61 +509,81 @@ public class App : IApp
                         foreach (var item in _booksDataProvider.DistinctAllOwners())
                         {
                             Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine(item);
+                            Console.WriteLine($"\n{item}");
                             Console.ResetColor();
                         }
                         break;
                     case "c":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nTylko autorzy i tytuły:");
                         Console.WriteLine("=========================");
                         foreach (var item in _booksDataProvider.GetOnlyAuthorAndTitle())
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "d":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki wg tytułów:");
                         Console.WriteLine("=====================");
                         foreach (var item in _booksDataProvider.OrderByTitle())
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "e":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki wg tytułów od 'z':");
                         Console.WriteLine("============================");
                         foreach (var item in _booksDataProvider.OrderByTitleDescending())
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "f":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów:");
                         Console.WriteLine("==========================================");
                         foreach (var item in _booksDataProvider.OrderByAuthorSurnameAndTitle())
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "g":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów od'z':");
                         Console.WriteLine("================================================");
                         foreach (var item in _booksDataProvider.OrderByAuthorSurnameAndTitleDesc())
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "h":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj znak/znaki rozpoczynające tytuł:");
                         input = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nKsiążki, których tytuły zaczynają się na '{input}':");
-                        Console.WriteLine("===================================================");
+                        Console.WriteLine("===============================================");
                         foreach (var item in _booksDataProvider.WhereStartsWith(input))
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "i":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj znak/znaki rozpoczynające tytuł:");
                         var input1 = Console.ReadLine();
                         Console.WriteLine("\nPodaj liczbę większą od '0'");
@@ -575,34 +596,46 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'minimalny koszt książki' mają niewłaściwą wartość; wpisz liczbę większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nKsiążki, które zaczynają się na literę '{input1}' i kosztują więcej niż {cost:c}:");
                         Console.WriteLine("===================================================================================");
                         foreach (var item in _booksDataProvider.WhereStartsWithAndCostIsGreaterThan(input1, cost))
                         {
-                            Console.WriteLine(item);
+                            Console.ForegroundColor = ConsoleColor.Blue;
+                            Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "j":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj nazwę włąściciela:");
                         input = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nKsiążki, których właścicielem jest {input}:");
                         Console.WriteLine("================================================");
                         foreach (var item in _booksDataProvider.WhereOwnerIs(input))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "k":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj nazwę włąściciela:");
                         input = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nTytuły Książek, których właścicielem jest {input}:");
                         Console.WriteLine("=====================================================");
                         foreach (var item in _booksDataProvider.WhereTitlesOfBooksWhoOwnerIs(input))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "l":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj liczbę większą od '0'");
                         input = Console.ReadLine();
                         int minPagesNumber;
@@ -614,65 +647,86 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'objętość książki' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nKsiążki, których objętość jest większa niż {minPagesNumber} stron(y):");
                         Console.WriteLine("=======================================================");
                         foreach (var item in _booksDataProvider.WhereVolumeIsGreaterThan(minPagesNumber))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "m":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki wypożyczone:");
                         Console.WriteLine("====================");
                         foreach (var item in _booksDataProvider.WhereIsBorrowed())
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "n":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki pożyczone:");
                         Console.WriteLine("==================");
                         foreach (var item in _booksDataProvider.WhereIsLent())
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "o":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nKsiążki na sprzedaż:");
                         Console.WriteLine("====================");
                         foreach (var item in _booksDataProvider.WhereIsForSale())
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "p":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nTylko tytuł i miejsce w bibliotece:");
                         Console.WriteLine("===================================");
                         foreach (var item in _booksDataProvider.GetOnlyTitleAndPlaceInLibrary())
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
-                        break;
                     case "r":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj nazwę włąściciela");
                         input = Console.ReadLine();
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nPierwsza książka należąca do {input}:");
                         Console.WriteLine("======================================");
                         var book1 = _booksDataProvider.FirstOrDefaultByOwnerWithDefault(input);
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(book1);
+                        Console.ResetColor();
                         break;
                     case "s":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj nazwę włąściciela");
                         input = Console.ReadLine();
-                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nOstatnia książka na liście książka należąca do {input}:");
                         Console.WriteLine("==============================================================");
                         var book2 = _booksDataProvider.LastOrDefaultByOwnerWithDefault(input);
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(book2);
                         Console.ResetColor();
                         break;
                     case "t":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj ID:");
                         input = Console.ReadLine();
                         int id;
@@ -684,12 +738,16 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ID' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nKsiążka o ID: {id}:");
                         Console.WriteLine("=====================");
                         var book3 = _booksDataProvider.SingleOrDefaultById(id);
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine(book3);
+                        Console.ResetColor();
                         break;
                     case "u":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nIle pierwszych książek chcesz wyświetlić?");
                         input = Console.ReadLine();
                         int howMany;
@@ -701,14 +759,18 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nPierwsze {howMany} książki(książek) z listy w kolejności alfabetycznej:");
                         Console.WriteLine("==============================================================");
                         foreach (var item in _booksDataProvider.TakeBooks(howMany))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "v":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj zakres, w któym chcesz wyświetlić książki wg wzoru 'x..y':");
                         input1 = Console.ReadLine();Console.WriteLine("..");input2 = Console.ReadLine();
                         int x;
@@ -723,14 +785,18 @@ public class App : IApp
                             throw new Exception("\nPodane dane w 'podaj zakres' mają niewłaściwą wartość; " +
                                 "wpisz liczby całkowite większą od '0' wg wzoru (x..y)");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nPokaż książki od {x} do {y} z listy w kolejności alfabetycznej:");
-                        Console.WriteLine("=======================================================");
+                        Console.WriteLine("================================================================");
                         foreach (var item in _booksDataProvider.TakeBooks(x..y))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "w":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nPodaj Id:");
                         input = Console.ReadLine();
                         if (int.TryParse(input, out int result6) && result6 > 0)
@@ -741,14 +807,18 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'Id' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nPokaż książki o Id mniejszym od {id}:");
                         Console.WriteLine("=====================================");
                         foreach (var item in _booksDataProvider.TakeBooksWhileIdIs(id))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "x":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nIle pierwszych książek chcesz pominąć?");
                         input = Console.ReadLine();
                         if (int.TryParse(input, out int result7) && result7 > 0)
@@ -759,30 +829,40 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nPokaż książki pomijając pierwszych {howMany} w kolejności alfabetycznej:");
                         Console.WriteLine("=======================================================================");
                         foreach (var item in _booksDataProvider.SkipBooks(howMany))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "y":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nPomiń pierwszą książkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na A:");
                         Console.WriteLine("=============================================================================================");
                         foreach (var item in _booksDataProvider.SkipBooksWhileTitleStartsWith(1, "A"))
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "z":
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("\nLista pierwszych książek wszystkich właścicieli książek z mojej biblioteki, alfabetycznie wg właścicieli:");
                         Console.WriteLine("=========================================================================================================");
                         foreach (var item in _booksDataProvider.DistinctByOwners())
                         {
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine($"\n{item}");
+                            Console.ResetColor();
                         }
                         break;
                     case "ax":
+                        Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("\nNa ilu elementowe grupy/paczki chcesz podzielić wszystkie książki?");
                         input = Console.ReadLine();
                         if (int.TryParse(input, out int result8) && result8 > 0)
@@ -793,14 +873,18 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek w paczce/grupie' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine($"\nPodział książek na paczki {howMany}-elementowe:");
                         Console.WriteLine("=========================================");
                         foreach (var chunkBooks in _booksDataProvider.ChunkBooks(howMany))
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkGreen;
                             Console.WriteLine($"\nCHUNK {chunkBooks}");
                             foreach (var item in chunkBooks)
                             {
-                                Console.WriteLine($"\n{item}");
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                Console.WriteLine(item);
+                                Console.ResetColor();
                             }
                             Console.WriteLine("############################################");
                         }
