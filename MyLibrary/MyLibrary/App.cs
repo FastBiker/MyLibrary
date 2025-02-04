@@ -23,11 +23,6 @@ public class App : IApp
     public void Run()
     {
         _userCommunication.Welcome();
-        //Console.ForegroundColor = ConsoleColor.Red;
-        //Console.WriteLine("Witamy w aplikacji 'MyLibrary', która pomoże Ci uporządkować Twój domowy zbiór książek");
-        //Console.WriteLine("======================================================================================");
-        //Console.ResetColor();
-        //Console.WriteLine();
 
         string auditFileName = "audit_library.txt";
 
@@ -38,18 +33,14 @@ public class App : IApp
         bookInFile.ItemAdded += BookOnItemAdded;
         bookInFile.ItemRemoved += BookOnItemRemoved;
 
-        static void BookRemoved(Book item)
+        void BookRemoved(Book item)
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[BookDeleted]-[{item.Title} (Id: {item.Id})]");
-            Console.ResetColor();
+            _userCommunication.WriteAuditInfoToConsoleUsingCallback(item, "BookDeleted");
         }
 
-        static void BookAdded(Book item)
+        void BookAdded(Book item)
         {
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[BookAdded]-[{item.Title} (Id: {item.Id})]");
-            Console.ResetColor();
+            _userCommunication.WriteAuditInfoToConsoleUsingCallback(item, "BookAdded");
         }
 
         void BookOnItemAdded(object? sender, Book e)
@@ -65,11 +56,7 @@ public class App : IApp
 
         while (true)
         {
-            //_userCommunication.Menu();
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("(1) wyświetl wszystkie książki; (2) dodaj nową książkę; (3) usuń książkę; (4) filtry; (q) opuść aplikację");
-            Console.ResetColor();
-            var input = Console.ReadLine();
+            string? input = _userCommunication.MainMenu();
             if (input == "q")
             {
                 break;
@@ -77,11 +64,8 @@ public class App : IApp
             switch (input)
             {
                 case "1":
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Lista książek z Twojej biblioteki domowej:");
-                    Console.WriteLine("==========================================");
-                    Console.ResetColor();
-                    Console.WriteLine();
+                    _userCommunication.MainMethodsHeaders("Lista książek z Twojej biblioteki domowej:"
+                        + Environment.NewLine + "==========================================");
                     try
                     {
                         WriteAllToConsole(bookRepository);
@@ -89,146 +73,101 @@ public class App : IApp
                     }
                     catch (Exception e)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Exception catched: {e.Message}");
-                        Console.ResetColor();
+                        _userCommunication.ExceptionCatchedMainMethods(e);
                     }
                     break;
 
                 case "2":
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Dodaj nową książkę, podając kolejno informacje o niej; '*' oznacza konieczność wpisania danych; " +
+                    _userCommunication.MainMethodsHeaders("Dodaj nową książkę, podając kolejno informacje o niej; " +
+                        "'*' oznacza konieczność wpisania danych; " +
                         "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
-                    Console.ResetColor();
                     try
                     {
                         AddBooks(bookRepository, bookInFile);
                     }
                     catch (Exception e)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Exception catched: {e.Message}");
-                        Console.ResetColor();
+                        _userCommunication.ExceptionCatchedMainMethods(e);
                     }
                     break;
 
                 case "3":
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Usuń książkę, wpisując jej tytuł:");
-                    Console.ResetColor();
+                    _userCommunication.MainMethodsHeaders("Usuń książkę, wpisując jej tytuł:");
                     try
                     {
                         RemoveBook(bookInFile);
                     }
                     catch (Exception e)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Exception catched: {e.Message}");
-                        Console.ResetColor();
+                        _userCommunication.ExceptionCatchedMainMethods(e);
                     }
 
                     break;
 
                 case "4":
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Filtry:");
-                    Console.WriteLine("-------");
-                    Console.ResetColor();
+                    _userCommunication.MainMethodsHeaders("Filtry:" + Environment.NewLine + "-------");
                     try
                     {
                         FilterBooks(_booksDataProvider);
                     }
                     catch (Exception e)
                     {
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Exception catched: {e.Message}");
-                        Console.ResetColor();
+                        _userCommunication.ExceptionCatchedMainMethods(e);
                     }
-                    break; 
+                    break;
                 default:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Wrong input value");
-                    Console.ResetColor();
+                    _userCommunication.ExceptionWrongMenuInput();
                     break;
             }
 
         }
-
-        static void WriteAllToConsole(IReadRepository<IEntity> repository)
+        void WriteAllToConsole(IReadRepository<IEntity> repository)
         {
             var items = repository.GetAll();
-            foreach (var item in items)
-            {
-                Console.WriteLine(item);
-            }
+            _userCommunication.WriteItemToConsole(items);
         }
 
         void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
         {
             while (true)
             {
-                var inf1 = "Informacja obowiązkowa; dane muszą być wprowadzone";
-                var inf2 = "Podana wartość jest null / informacja opcjonalana";
-
-                Console.WriteLine("\nWybierz: '1' - jeden autor albo '2' - autor zbiorowy");
-                var input = Console.ReadLine();
+                _userCommunication.SelectAuthor(out string inf1, out string inf2, out string? input);
                 string _authorSurname;
                 string _collectiveAuthor;
                 string _authorName;
                 switch (input)
                 {
                     case "1":
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("\nWpisz imię/imiona autora(*)");
-                        Console.ResetColor();
-                        input = Console.ReadLine();
+                        input = _userCommunication.WriteBookProperties("imię autora(*)");
                         _authorName = InputIsNullOrEmpty(input, inf1);
 
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("\nWpisz nazwisko autora(*)");
-                        Console.ResetColor();
-                        input = Console.ReadLine();
+                        input = _userCommunication.WriteBookProperties("nazwisko autora(*)");
                         _authorSurname = InputIsNullOrEmpty(input, inf1);
 
                         _collectiveAuthor = null;
                         break;
 
                     case "2":
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("\nWpisz autora zbiorowego(*)");
-                        Console.ResetColor();
-                        input = Console.ReadLine();
+                        input = _userCommunication.WriteBookProperties("autora zbiorowego(*)");
                         _collectiveAuthor = InputIsNullOrEmpty(input, inf1);
 
-                        _authorName = null; 
+                        _authorName = null;
                         _authorSurname = null;
-                        break ;
+                        break;
                     default:
                         throw new Exception("Wrong input value");
                 }
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nWpisz tytuł książki(*)");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("tytuł książki(*)");
                 var _title = InputIsNullOrEmpty(input, inf1);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nWpisz nazwę wydawnictwa");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("nazwę wydawnictwa");
                 var _publishingHouse = InputIsNullOrEmpty(input, inf2);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nWpisz miejsce wydania");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("miejsce wydania");
                 var _placeOfPublication = InputIsNullOrEmpty(input, inf2);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nWpisz rok wydania (rrrr)");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("rok wydania (rrrr)");
                 int? _yearOfPublication;
                 if (int.TryParse(input, out int result) && result > 999 && result < 10000)
                 {
@@ -243,10 +182,7 @@ public class App : IApp
                     throw new Exception("\nPodane dane w 'rok wydania' mają niewłaściwą wartość; wpisz liczbę czterocyfrową dodatnią (rrrr)");
                 }
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nWpisz liczbę stron");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("liczbę stron");
                 int? _pagesNumber;
                 if (int.TryParse(input, out int result2) && result2 > 0)
                 {
@@ -261,22 +197,13 @@ public class App : IApp
                     throw new Exception("\nPodane dane w 'liczba stron' mają niewłaściwą wartość; wpisz liczbę całkowitą dodatnią");
                 }
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nWpisz ISBN");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("ISBN");
                 var _iSBN = InputIsNullOrEmpty(input, inf2);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nPodaj lokalizację książki w twojwj bibliotece");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("lokalizację książki w twojwj bibliotece");
                 var _placeInLibrary = InputIsNullOrEmpty(input, inf2);
 
-                Console.ForegroundColor = ConsoleColor.Blue;
-                Console.WriteLine("\nPodaj właściciela książki");
-                Console.ResetColor();
-                input = Console.ReadLine();
+                input = _userCommunication.WriteBookProperties("właściciela książki");
                 var _owner = InputIsNullOrEmpty(input, inf2);
 
                 bool _isForSale;
@@ -286,10 +213,7 @@ public class App : IApp
                 decimal? _price;
                 if (_isForSale == true)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("\nWpisz cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
-                    Console.ResetColor();
-                    input = Console.ReadLine();
+                    input = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
                     if (decimal.TryParse(input, out decimal result3) && result3 > 0)
                     {
                         _price = result3;
@@ -320,10 +244,7 @@ public class App : IApp
                 DateTime? _dateOfBorrowedOrLent;
                 if (_isBorrowed == true || _isLent == true)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("\nPodaj datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
-                    Console.ResetColor();
-                    input = Console.ReadLine();
+                    input = _userCommunication.WriteBookProperties("datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
                     if (DateTime.TryParse(input, out DateTime result4))
                     {
                         _dateOfBorrowedOrLent = result4;
@@ -343,10 +264,7 @@ public class App : IApp
                     _dateOfBorrowedOrLent = null;
                 }
 
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine("\nWpisz 'q', żeby zapisać książkę i powrócić do menu albo wciśnij Enter, aby zapisać książkę i dodać kolejną");
-                Console.ResetColor();
-                var inputBreak = Console.ReadLine();
+                var inputBreak = _userCommunication.SaveBook();
 
                 var books = new[]
                 {
@@ -380,16 +298,14 @@ public class App : IApp
                 }
                 else
                 {
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("\nDodaj nową książkę:" + Environment.NewLine + "==================");
-                    Console.ResetColor();
+                    _userCommunication.MainMethodsHeaders("\nDodaj nową książkę:" + Environment.NewLine + "==================");
                 }
             }
         }
 
-        static void RemoveBook(IRepository<Book> bookInFile)
+        void RemoveBook(IRepository<Book> bookInFile)
         {
-            var input = Console.ReadLine();
+            string? input = _userCommunication.WriteRemovedBookTitle();
             var books = bookInFile.GetAll();
             var bookToRemove = books.FirstOrDefault(x => x.Title == input);
 
@@ -405,28 +321,23 @@ public class App : IApp
 
         var originalBook = new Book { Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
         var copyBook = originalBook.Copy();
-        Console.WriteLine(copyBook);
+        _userCommunication.WriteCopyBookToConsole(copyBook);
 
-        static string InputIsNullOrEmpty(string? input, string inf)
+        string InputIsNullOrEmpty(string? input, string inf)
         {
             switch (inf)
             {
                 case "Informacja obowiązkowa; dane muszą być wprowadzone":
                     while (string.IsNullOrEmpty(input))
                     {
-                        Console.ForegroundColor = ConsoleColor.DarkRed;
-                        Console.WriteLine(inf);
-                        Console.ResetColor();
-                        input = Console.ReadLine();
+                        input = _userCommunication.EnteringMandatoryData(inf);
                     }
                     break;
                 case "Podana wartość jest null / informacja opcjonalana":
                     if (string.IsNullOrEmpty(input))
                     {
                         input = null;
-                        Console.ForegroundColor = ConsoleColor.Cyan;
-                        Console.WriteLine(inf);
-                        Console.ResetColor();
+                        _userCommunication.MessageOptionalData(inf);
                     }
                     break;
             }
@@ -434,23 +345,18 @@ public class App : IApp
             return input;
         }
 
-        static void WriteAuditInfoToFileAndConsole(object? sender, Book e, string auditFileName, string auditInfo)
+        void WriteAuditInfoToFileAndConsole(object? sender, Book e, string auditFileName, string auditInfo)
         {
             using (var streamWriter = new StreamWriter(auditFileName, true))
             {
                 streamWriter.Write($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[{auditInfo}]-['{e.Title}' (Id: {e.Id}) from {sender?.GetType().Name}]" + Environment.NewLine);
             }
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine($"[{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}]-[{auditInfo}]-['{e.Title}' (Id: {e.Id}) from {sender?.GetType().Name}]");
-            Console.ResetColor();
+            _userCommunication.WriteAuditInfoToConsoleUsingEventHandler(sender, e, auditInfo);
         }
 
-        static void BoolValidation(out string? input, out bool _isProperty, string property)
+        void BoolValidation(out string? input, out bool _isProperty, string property)
         {
-            Console.ForegroundColor = ConsoleColor.Blue;
-            Console.WriteLine($"\nWpisz '+', jeśli {property}, '-' jeśli nie jest, albo zostaw pole puste");
-            Console.ResetColor();
-            input = Console.ReadLine();
+            input = _userCommunication.WriteBoolPropertyValue(property);
             if (input == "+")
             {
                 input = "true";
@@ -467,29 +373,11 @@ public class App : IApp
             _isProperty = bool.Parse(input);
         }
 
-        //###########################################################################################################
-        static void FilterBooks(IBooksDataProvider _booksDataProvider)
+        void FilterBooks(IBooksDataProvider _booksDataProvider)
         {
-            while(true)
+            while (true)
             {
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine("(q) wróć do menu; \n(a) najtańsza książka; \n(b) włąściciele książek alfabetycznie; \n(c) tylko autorzy i tytuły; " +
-                    "\n(d) książki wg tytułów alfabetycznie; \n(e) książki wg tytułów od 'z'; \n(f) książki wg nazwisk autorów i wg tytułów; " +
-                    "\n(g) książki wg nazwisk autorów i wg tytułów od'z'; \n(h) książki, które zaczynają się na wybraną literę; " +
-                    "\n(i) książki, które zaczynają się na wybraną literę i kosztują więcej niż wybrana kwota; " +
-                    "\n(j) książki, których właścicielem jest wybrana osoba; \n(k) tytuły książek danego właściciela " +
-                    "\n(l) książki, których objętość jest większa niż wybrana liczba stron; " +
-                    "\n(m) książki wypożyczone od kogoś; \n(n) książki pożyczone komuś; \n(o) książki na sprzedaż; " +
-                    "\n(p) tylko tytuł i lokalizacja w bibliotece??; \n(r) pierwsza książka w bibliotece należąca do danego włąśiciela; " +
-                    "\n(s) ostatnia książka na liście, należąca do danego właściciela; \n(t) książka o daym Id; " +
-                    "\n(u) pierwsze 'x' książek z listy w kolejności alfabetycznej; " +
-                    "\n(v) książki w zakresie (x..y) z listy w kolejności alfabetycznej; \n(w) książki o Id mniejszym od 'x'; " +
-                    "\n(x) książki pomijając pierwszych 'x' w kolejności alfabetycznej; " +
-                    "\n(y) pomiń pierwszą ksiązkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na 'A';" +
-                    "\n(z) lista pierwszych książek wszystkich właścicieli, alfabetycznie wg właścicieli;" +
-                    "\n(ax) podział książek na paczki x-elementowe");
-                Console.ResetColor();
-                var input = Console.ReadLine();
+                string? input = _userCommunication.BooksFilterMenu();
                 if (input == "q")
                 {
                     break;
@@ -498,96 +386,65 @@ public class App : IApp
                 {
                     case "a":
                         var cost = _booksDataProvider.GetMinimumPriceOffAllBooks();
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine($"Najtańsza książka w twojej bibliotece kosztuje {cost:c}");
-                        Console.ResetColor();
+                        _userCommunication.WriteMinimumPriceOffAllBooksToConsole(cost);
                         break;
                     case "b":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nAlfabetyczna lista wszystkich włścicieli książek z mojej biblioteki:");
-                        Console.WriteLine("=====================================================================");
+                        _userCommunication.FilterHeader("Alfabetyczna lista wszystkich włścicieli książek z mojej biblioteki:" + Environment.NewLine 
+                            + "=====================================================================");
                         foreach (var item in _booksDataProvider.DistinctAllOwners())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterPropertyToConsole(item);
                         }
                         break;
                     case "c":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nTylko autorzy i tytuły:");
-                        Console.WriteLine("=========================");
+                        _userCommunication.FilterHeader("Tylko autorzy i tytuły:" + Environment.NewLine + "=========================");
                         foreach (var item in _booksDataProvider.GetOnlyAuthorAndTitle())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "d":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki wg tytułów:");
-                        Console.WriteLine("=====================");
+                        _userCommunication.FilterHeader("Książki wg tytułów:" + Environment.NewLine + "=====================");
                         foreach (var item in _booksDataProvider.OrderByTitle())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "e":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki wg tytułów od 'z':");
-                        Console.WriteLine("============================");
+                        _userCommunication.FilterHeader("Książki wg tytułów od 'z':" + Environment.NewLine + "============================");
                         foreach (var item in _booksDataProvider.OrderByTitleDescending())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "f":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów:");
-                        Console.WriteLine("==========================================");
+                        _userCommunication.FilterHeader("Książki wg nazwisk autorów i wg tytułów:" + Environment.NewLine 
+                            + "==========================================");
                         foreach (var item in _booksDataProvider.OrderByAuthorSurnameAndTitle())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "g":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki wg nazwisk autorów i wg tytułów od'z':");
-                        Console.WriteLine("================================================");
+                        _userCommunication.FilterHeader("Książki wg nazwisk autorów i wg tytułów od'z':" + Environment.NewLine 
+                            + "================================================");
                         foreach (var item in _booksDataProvider.OrderByAuthorSurnameAndTitleDesc())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "h":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj znak/znaki rozpoczynające tytuł:");
-                        input = Console.ReadLine();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nKsiążki, których tytuły zaczynają się na '{input}':");
-                        Console.WriteLine("===============================================");
+                        input = _userCommunication.InputFilterData("Podaj znak / znaki rozpoczynające tytuł:");
+                        _userCommunication.FilterHeader("Książki, których tytuły zaczynają się na '{input}':" + Environment.NewLine
+                            + "===============================================");
                         foreach (var item in _booksDataProvider.WhereStartsWith(input))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "i":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj znak/znaki rozpoczynające tytuł:");
-                        var input1 = Console.ReadLine();
-                        Console.WriteLine("\nPodaj liczbę większą od '0'");
-                        var input2 = Console.ReadLine();
+                        var input1 = _userCommunication.InputFilterData("\nPodaj znak/znaki rozpoczynające tytuł:");
+                        var input2 = _userCommunication.InputFilterData("\nPodaj liczbę większą od '0'");
                         if (decimal.TryParse(input2, out decimal result) && result > 0)
                         {
                             cost = result;
@@ -596,48 +453,33 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'minimalny koszt książki' mają niewłaściwą wartość; wpisz liczbę większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nKsiążki, które zaczynają się na literę '{input1}' i kosztują więcej niż {cost:c}:");
-                        Console.WriteLine("===================================================================================");
+                        _userCommunication.FilterHeader("Książki, które zaczynają się na literę '{input1}' i kosztują więcej niż {cost:c}:" 
+                            + Environment.NewLine + "===================================================================================");
                         foreach (var item in _booksDataProvider.WhereStartsWithAndCostIsGreaterThan(input1, cost))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "j":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj nazwę włąściciela:");
-                        input = Console.ReadLine();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nKsiążki, których właścicielem jest {input}:");
-                        Console.WriteLine("================================================");
+                        input = _userCommunication.InputFilterData("\nPodaj nazwę włąściciela:");
+                        _userCommunication.FilterHeader("Książki, których właścicielem jest {input}:" + Environment.NewLine
+                            + "================================================");
                         foreach (var item in _booksDataProvider.WhereOwnerIs(input))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "k":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj nazwę włąściciela:");
-                        input = Console.ReadLine();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nTytuły Książek, których właścicielem jest {input}:");
-                        Console.WriteLine("=====================================================");
+                        input = _userCommunication.InputFilterData("\nPodaj nazwę włąściciela:");
+                        _userCommunication.FilterHeader("Tytuły Książek, których właścicielem jest {input}:" + Environment.NewLine
+                            + "=====================================================");
                         foreach (var item in _booksDataProvider.WhereTitlesOfBooksWhoOwnerIs(input))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterPropertyToConsole(item);
                         }
                         break;
                     case "l":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj liczbę większą od '0'");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("\nPodaj liczbę większą od '0'");
                         int minPagesNumber;
                         if (int.TryParse(input, out int result1) && result1 > 0)
                         {
@@ -647,88 +489,58 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'objętość książki' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nKsiążki, których objętość jest większa niż {minPagesNumber} stron(y):");
-                        Console.WriteLine("=======================================================");
+                        _userCommunication.FilterHeader("Książki, których objętość jest większa niż {minPagesNumber} stron(y):" + Environment.NewLine
+                            + "=======================================================");
                         foreach (var item in _booksDataProvider.WhereVolumeIsGreaterThan(minPagesNumber))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "m":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki wypożyczone:");
-                        Console.WriteLine("====================");
+                        _userCommunication.FilterHeader("Książki wypożyczone:" + Environment.NewLine + "====================");
                         foreach (var item in _booksDataProvider.WhereIsBorrowed())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "n":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki pożyczone:");
-                        Console.WriteLine("==================");
+                        _userCommunication.FilterHeader("Książki pożyczone:" + Environment.NewLine + "==================");
                         foreach (var item in _booksDataProvider.WhereIsLent())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "o":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nKsiążki na sprzedaż:");
-                        Console.WriteLine("====================");
+                        _userCommunication.FilterHeader("Książki na sprzedaż:" + Environment.NewLine + "====================");
                         foreach (var item in _booksDataProvider.WhereIsForSale())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "p":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nTylko tytuł i miejsce w bibliotece:");
-                        Console.WriteLine("===================================");
+                        _userCommunication.FilterHeader("Tylko tytuł i miejsce w bibliotece:" + Environment.NewLine + "===================================");
                         foreach (var item in _booksDataProvider.GetOnlyTitleAndPlaceInLibrary())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "r":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj nazwę włąściciela");
-                        input = Console.ReadLine();
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nPierwsza książka należąca do {input}:");
-                        Console.WriteLine("======================================");
+                        input = _userCommunication.InputFilterData("Podaj nazwę włąściciela");
+                        _userCommunication.FilterHeader($"Pierwsza książka należąca do {input}:" + Environment.NewLine 
+                            + "======================================");
                         var book1 = _booksDataProvider.FirstOrDefaultByOwnerWithDefault(input);
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine(book1);
-                        Console.ResetColor();
+                        _userCommunication.WriteFilterBooksToConsole(book1);
                         break;
                     case "s":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj nazwę włąściciela");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("Podaj nazwę włąściciela");
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nOstatnia książka na liście książka należąca do {input}:");
-                        Console.WriteLine("==============================================================");
+                        _userCommunication.FilterHeader($"Ostatnia książka należąca do {input}:" + Environment.NewLine
+                            + "======================================");
                         var book2 = _booksDataProvider.LastOrDefaultByOwnerWithDefault(input);
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine(book2);
-                        Console.ResetColor();
+                        _userCommunication.WriteFilterBooksToConsole(book2);
                         break;
                     case "t":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj ID:");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("Podaj ID:");
                         int id;
                         if (int.TryParse(input, out int result2) && result2 > 0)
                         {
@@ -738,18 +550,12 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ID' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nKsiążka o ID: {id}:");
-                        Console.WriteLine("=====================");
+                        _userCommunication.FilterHeader($"Książka o ID: {id}:" + Environment.NewLine + "=================");
                         var book3 = _booksDataProvider.SingleOrDefaultById(id);
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine(book3);
-                        Console.ResetColor();
+                        _userCommunication.WriteFilterBooksToConsole(book3);
                         break;
                     case "u":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nIle pierwszych książek chcesz wyświetlić?");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("Ile pierwszych książek chcesz wyświetlić?");
                         int howMany;
                         if (int.TryParse(input, out int result3) && result3 > 0)
                         {
@@ -759,20 +565,15 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nPierwsze {howMany} książki(książek) z listy w kolejności alfabetycznej:");
-                        Console.WriteLine("==============================================================");
+                        _userCommunication.FilterHeader($"Pierwsze {howMany} książki(książek) z listy w kolejności alfabetycznej:" 
+                            + Environment.NewLine + "==============================================================");
                         foreach (var item in _booksDataProvider.TakeBooks(howMany))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "v":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj zakres, w któym chcesz wyświetlić książki wg wzoru 'x..y':");
-                        input1 = Console.ReadLine();Console.WriteLine("..");input2 = Console.ReadLine();
+                        _userCommunication.InputRange(out input1, out input2);
                         int x;
                         int y;
                         if (int.TryParse(input1, out int result4) && int.TryParse(input2, out int result5) && result4 > 0 && result5 > 0)
@@ -785,20 +586,15 @@ public class App : IApp
                             throw new Exception("\nPodane dane w 'podaj zakres' mają niewłaściwą wartość; " +
                                 "wpisz liczby całkowite większą od '0' wg wzoru (x..y)");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nPokaż książki od {x} do {y} z listy w kolejności alfabetycznej:");
-                        Console.WriteLine("================================================================");
+                        _userCommunication.FilterHeader($"Książki od {x} do {y} z listy w kolejności alfabetycznej:"
+                            + Environment.NewLine + "=====================================================");
                         foreach (var item in _booksDataProvider.TakeBooks(x..y))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "w":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nPodaj Id:");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("Podaj Id:");
                         if (int.TryParse(input, out int result6) && result6 > 0)
                         {
                             id = result6;
@@ -807,20 +603,14 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'Id' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nPokaż książki o Id mniejszym od {id}:");
-                        Console.WriteLine("=====================================");
+                        _userCommunication.FilterHeader($"Książki o Id mniejszym od {id}:" + Environment.NewLine + "=============================");
                         foreach (var item in _booksDataProvider.TakeBooksWhileIdIs(id))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "x":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nIle pierwszych książek chcesz pominąć?");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("Ile pierwszych książek chcesz pominąć?");
                         if (int.TryParse(input, out int result7) && result7 > 0)
                         {
                             howMany = result7;
@@ -829,42 +619,31 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nPokaż książki pomijając pierwszych {howMany} w kolejności alfabetycznej:");
-                        Console.WriteLine("=======================================================================");
+                        _userCommunication.FilterHeader($"Pokaż książki pomijając pierwszych {howMany} w kolejności alfabetycznej:" 
+                            + Environment.NewLine + "=================================================================");
                         foreach (var item in _booksDataProvider.SkipBooks(howMany))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "y":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nPomiń pierwszą książkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na A:");
-                        Console.WriteLine("=============================================================================================");
+                        _userCommunication.FilterHeader("Pomiń pierwszą książkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na A:"
+                            + Environment.NewLine + "==========================================================================================");
                         foreach (var item in _booksDataProvider.SkipBooksWhileTitleStartsWith(1, "A"))
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "z":
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nLista pierwszych książek wszystkich właścicieli książek z mojej biblioteki, alfabetycznie wg właścicieli:");
-                        Console.WriteLine("=========================================================================================================");
+                        _userCommunication.FilterHeader("Lista pierwszych książek wszystkich właścicieli z mojej biblioteki, alfabetycznie wg właścicieli:"
+                            + Environment.NewLine + "==========================================================================================");
                         foreach (var item in _booksDataProvider.DistinctByOwners())
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine($"\n{item}");
-                            Console.ResetColor();
+                            _userCommunication.WriteFilterBooksToConsole(item);
                         }
                         break;
                     case "ax":
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nNa ilu elementowe grupy/paczki chcesz podzielić wszystkie książki?");
-                        input = Console.ReadLine();
+                        input = _userCommunication.InputFilterData("Na ilu elementowe grupy / paczki chcesz podzielić wszystkie książki?");
                         if (int.TryParse(input, out int result8) && result8 > 0)
                         {
                             howMany = result8;
@@ -873,32 +652,18 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek w paczce/grupie' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"\nPodział książek na paczki {howMany}-elementowe:");
-                        Console.WriteLine("=========================================");
+                        _userCommunication.FilterHeader("Podział książek na paczki {howMany}-elementowe:"
+                            + Environment.NewLine + "=========================================");
                         foreach (var chunkBooks in _booksDataProvider.ChunkBooks(howMany))
                         {
-                            Console.ForegroundColor = ConsoleColor.DarkGreen;
-                            Console.WriteLine($"\nCHUNK {chunkBooks}");
-                            foreach (var item in chunkBooks)
-                            {
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.WriteLine(item);
-                                Console.ResetColor();
-                            }
-                            Console.WriteLine("############################################");
+                            _userCommunication.WriteChunkToConsole(chunkBooks);
                         }
                         break;
                     default:
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Wrong input value");
-                        Console.ResetColor();
+                        _userCommunication.ExceptionWrongMenuInput();
                         break;
                 }
             }
-            
-
-
         }
     }
 }
