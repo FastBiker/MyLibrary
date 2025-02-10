@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyLibrary.Entities;
+using MyLibrary.Data.Entities;
 
 namespace MyLibrary.Data;
 

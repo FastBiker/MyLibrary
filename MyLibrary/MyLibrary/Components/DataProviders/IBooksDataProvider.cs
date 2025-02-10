@@ -1,7 +1,6 @@
-﻿using MyLibrary.Entities;
-using System.ComponentModel.DataAnnotations;
+﻿using MyLibrary.Data.Entities;
 
-namespace MyLibrary.DataProviders;
+namespace MyLibrary.Components.DataProviders;
 
 public interface IBooksDataProvider
 {
@@ -11,8 +10,6 @@ public interface IBooksDataProvider
     decimal GetMinimumPriceOffAllBooks();
 
     List<Book> GetOnlyAuthorAndTitle();
-
-    //string AnonimousClass();
 
     // order by
     List<Book> OrderByTitle();

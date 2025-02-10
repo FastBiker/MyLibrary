@@ -1,4 +1,4 @@
-﻿namespace MyLibrary.Entities;
+﻿namespace MyLibrary.Data.Entities;
 
 public abstract class EntityBase : IEntity
 {

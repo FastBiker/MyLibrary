@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MyLibrary.Entities;
+using MyLibrary.Data.Entities;
 
-namespace MyLibrary.Repositories;
+namespace MyLibrary.Data.Repositories;
 
 public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
@@ -9,7 +9,7 @@ public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
     private readonly DbContext _dbContext;
     private readonly Action<T>? _itemAddedCallback;
 
-    public SqlRepository(DbContext dbContext, Action<T>? itemAddedCallback = null) 
+    public SqlRepository(DbContext dbContext, Action<T>? itemAddedCallback = null)
     {
         _dbContext = dbContext;
         _dbSet = _dbContext.Set<T>();
@@ -18,28 +18,28 @@ public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
 
     public event EventHandler<T> ItemAdded;
 
-    public IEnumerable<T> GetAll() 
+    public IEnumerable<T> GetAll()
     {
         return _dbSet.OrderBy(x => x.Id).ToList();
     }
-    public T? GetById(int id) 
+    public T? GetById(int id)
     {
         return _dbSet.Find(id);
     }
 
-    public void Add(T item) 
+    public void Add(T item)
     {
         _dbSet.Add(item);
         _itemAddedCallback?.Invoke(item);
         ItemAdded?.Invoke(this, item);
     }
 
-    public void Remove(T item) 
+    public void Remove(T item)
     {
         _dbSet.Remove(item);
     }
 
-    public void Save() 
+    public void Save()
     {
         _dbContext.SaveChanges();
     }

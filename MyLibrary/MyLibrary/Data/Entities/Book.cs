@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace MyLibrary.Entities;
+namespace MyLibrary.Data.Entities;
 
 public class Book : EntityBase
 {
@@ -42,7 +42,7 @@ public class Book : EntityBase
         StringBuilder sb = new(1024);
 
         sb.AppendLine($"Id: {Id}");
-        if ( AuthorName != null && AuthorSurname != null)
+        if (AuthorName != null && AuthorSurname != null)
         {
             sb.AppendLine($"Author: {AuthorName} {AuthorSurname}");
         }
@@ -103,24 +103,24 @@ public class Book : EntityBase
         return sb.ToString();
     }
 
-        
-        
-        //$"Id: {Id}," +
-        //$"\n Author: {AuthorName} {AuthorSurname}, " +
-        //$"\n Title: {Title}," +
-        //$"\n \tPublishingHouse: {PublishingHouse}," +
-        //$"\n \tPlaceOfPublication: {PlaceOfPublication}," +
-        //$"\n \tYearOfPublication: {YearOfPublication}, " +
-        //$"\n \tPageNumber: {PageNumber}," +
-        //$"\n \tISBN: {ISBN}," +
-        //$"\n \tPlaceInLibrary: {PlaceInLibrary}," +
-        //$"\n \tOwner: {Owner}, " +
-        //$"\n \tIsForSale: {IsForSale}" +
-        //$"\n \tPrice: {Price}," +
-        //$"\n \tIsLent: {IsLent}, " +
-        //$"\n \tIsBorrowed: {IsBorrowed}, " +
-        //$"\n \tDateOfBorrowed: {DateOfBorrowed} " +
-        //$"\n==============================================="
-        //+ Environment.NewLine;
+
+
+    //$"Id: {Id}," +
+    //$"\n Author: {AuthorName} {AuthorSurname}, " +
+    //$"\n Title: {Title}," +
+    //$"\n \tPublishingHouse: {PublishingHouse}," +
+    //$"\n \tPlaceOfPublication: {PlaceOfPublication}," +
+    //$"\n \tYearOfPublication: {YearOfPublication}, " +
+    //$"\n \tPageNumber: {PageNumber}," +
+    //$"\n \tISBN: {ISBN}," +
+    //$"\n \tPlaceInLibrary: {PlaceInLibrary}," +
+    //$"\n \tOwner: {Owner}, " +
+    //$"\n \tIsForSale: {IsForSale}" +
+    //$"\n \tPrice: {Price}," +
+    //$"\n \tIsLent: {IsLent}, " +
+    //$"\n \tIsBorrowed: {IsBorrowed}, " +
+    //$"\n \tDateOfBorrowed: {DateOfBorrowed} " +
+    //$"\n==============================================="
+    //+ Environment.NewLine;
     #endregion
 }

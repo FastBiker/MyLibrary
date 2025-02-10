@@ -1,10 +1,10 @@
-﻿using MyLibrary.Entities;
+﻿using MyLibrary.Data.Entities;
 
-namespace MyLibrary.Repositories.Extensions;
+namespace MyLibrary.Data.Repositories.Extensions;
 
 public static class RepositoryExtensions
 {
-    public static void AddBatch<T>(this IRepository<T> repository, T[] items) 
+    public static void AddBatch<T>(this IRepository<T> repository, T[] items)
         where T : class, IEntity
     {
         foreach (var item in items)

@@ -1,6 +1,4 @@
-﻿using MyLibrary.DataProviders;
-using MyLibrary.Entities;
-using MyLibrary.Repositories;
+﻿using MyLibrary.Data.Entities;
 
 namespace MyLibrary.UserCommunication;
 

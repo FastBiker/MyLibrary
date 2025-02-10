@@ -1,6 +1,6 @@
-﻿using MyLibrary.Entities;
+﻿using MyLibrary.Data.Entities;
 
-namespace MyLibrary.Repositories;
+namespace MyLibrary.Data.Repositories;
 
 public interface IWriteRepository<in T> where T : class, IEntity
 {

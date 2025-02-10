@@ -1,8 +1,7 @@
-﻿using MyLibrary.Entities;
-using System.Security.Cryptography.X509Certificates;
+﻿using MyLibrary.Data.Entities;
 using System.Text.Json;
 
-namespace MyLibrary.Repositories;
+namespace MyLibrary.Data.Repositories;
 
 public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
 {

@@ -12,4 +12,16 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Resources\Files\książkiTop100.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Files\książkiTopCd.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resources\Files\My_Home_Library.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

@@ -1,11 +1,9 @@
-﻿using MyLibrary.DataProviders.Extensions;
-using MyLibrary.Entities;
-using MyLibrary.Repositories;
-using System.Collections.Generic;
+﻿using MyLibrary.Components.DataProviders.Extensions;
+using MyLibrary.Data.Entities;
+using MyLibrary.Data.Repositories;
 using System.Text;
-using static System.Reflection.Metadata.BlobBuilder;
 
-namespace MyLibrary.DataProviders;
+namespace MyLibrary.Components.DataProviders;
 
 public class BooksDataProvider : IBooksDataProvider
 {
@@ -220,13 +218,13 @@ public class BooksDataProvider : IBooksDataProvider
     public Book? FirstOrDefaultByOwnerWithDefault(string owner)
     {
         var books = _bookRepository.GetAll();
-        return books.FirstOrDefault(x => x.Owner == owner, new Book { Id = -1, Title = "NOT FOUND"});
+        return books.FirstOrDefault(x => x.Owner == owner, new Book { Id = -1, Title = "NOT FOUND" });
     }
 
     public Book? LastOrDefaultByOwnerWithDefault(string owner)
     {
         var books = _bookRepository.GetAll();
-        return books.LastOrDefault(x => x.Owner == owner, new Book { Id = -1, Owner = "NOT FOUND"});
+        return books.LastOrDefault(x => x.Owner == owner, new Book { Id = -1, Owner = "NOT FOUND" });
     }
 
     public Book SingleById(int id)
@@ -238,7 +236,7 @@ public class BooksDataProvider : IBooksDataProvider
     public Book? SingleOrDefaultById(int id)
     {
         var books = _bookRepository.GetAll();
-        return books.SingleOrDefault(x => x.Id == id, new Book { Id = -1, Title = "NOT FOUND"});
+        return books.SingleOrDefault(x => x.Id == id, new Book { Id = -1, Title = "NOT FOUND" });
     }
 
     // Take, TakeWhile
@@ -310,7 +308,8 @@ public class BooksDataProvider : IBooksDataProvider
     }
 
     public List<Book[]> ChunkBooks(int size)
-    {;
+    {
+        ;
         var books = _bookRepository.GetAll();
         var chunkBooks = books.Chunk(size).ToList();
 

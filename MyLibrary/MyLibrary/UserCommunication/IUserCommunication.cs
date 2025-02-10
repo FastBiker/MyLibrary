@@ -1,4 +1,4 @@
-﻿using MyLibrary.Entities;
+﻿using MyLibrary.Data.Entities;
 
 namespace MyLibrary.UserCommunication;
 

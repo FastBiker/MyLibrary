@@ -1,9 +1,9 @@
-﻿using MyLibrary.Data;
-using MyLibrary.DataProviders;
-using MyLibrary.Entities;
-using MyLibrary.Entities.Extensions;
-using MyLibrary.Repositories;
-using MyLibrary.Repositories.Extensions;
+﻿using MyLibrary.Components.DataProviders;
+using MyLibrary.Data;
+using MyLibrary.Data.Entities;
+using MyLibrary.Data.Entities.Extensions;
+using MyLibrary.Data.Repositories;
+using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
 
 namespace MyLibrary;
