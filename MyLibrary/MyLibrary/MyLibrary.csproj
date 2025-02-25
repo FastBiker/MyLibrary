@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\Files\książkiTop100.csv">
+    <None Update="Resources\Files\BooksTop100.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Resources\Files\książkiTopCd.csv">
+    <None Update="Resources\Files\BooksTop259.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Resources\Files\My_Home_Library.csv">

@@ -48,12 +48,12 @@
 49;Zły;Leopold;Tyrmand
 50;Przeminęło z wiatrem;Margaret;Mitchell
 51;Opowiadania;Ernest;Hemingway
-52;„Lot nad kukułczym gniazdem;Ken;Kesey
+52;Lot nad kukułczym gniazdem;Ken;Kesey
 53;Kompleks Portnoya;Philip;Roth
 54;Kod Leonarda Da Vinci;Dan;Brown
 55;Na wschód od Edenu;John;Steinbeck
 56;Dziennik Anny Frank;Anne;Frank
-57;Mężczyźni;którzy nienawidzą kobiet;Stieg;Larsson
+57;Mężczyźni, którzy nienawidzą kobiet;Stieg;Larsson
 58;Złodziejka książek;Markus;Zusak
 59;Chłopiec z latawcem;Khaled;Hosseini
 60;Cień Wiatru;Carlos Ruiz;Zafon
@@ -66,7 +66,7 @@
 67;Szklany klosz;Sylvia;Plath
 68;Dziennik Bridget Jones;Helen;Fieldieng
 69;Opowieść o dwóch miastach;Charles;Dickens
-70;Biblia;autor zbiorowy
+70;Biblia;autor;zbiorowy
 71;Dawca;Lois;Lowry
 72;O czym szumią wierzby;Kenneth;Grahamme
 73;Gwiazd naszych wina;John;Green
@@ -86,21 +86,21 @@
 87;Germinal;Emil;Zola
 88;Wodnikowe Wzgórze;Richard;Adams
 89;Droga;Cormac;McCarthy
-90;Rzeczy;które nieśli;Tim O'Brien
+90;Rzeczy, które nieśli;Tim; O'Brien
 91;Nędznicy;Victor;Hugo
 92;Trzej muszkieterowie;Alexander;Dumas
 93;Kolej żelazna;Aharon;Appelfeld
 94;No właśnie co. Dramaty i proza w przekładzie Antoniego Libery;Samuel;Beckett
 95;Kulturowe sprzeczności kapitalizmu;Daniel;Bell
 96;Zaburzenie;Thomas;Bernhard
-97;Szumy;zlepy;ciągi;Miron;Białoszewski
+97;Szumy, zlepy, ciągi;Miron;Białoszewski
 98;Uwiedzeni;Anna;Bolecka
 99;Utracona cześć Katarzyny Blum;Heinrich;Böll
 100;Fikcje;J.L.;Borges
 101;Pod osłoną nieba;Paul;Bowles
 102;Krótka historia prawie wszystkiego;Bill;Bryson
 103;Śniadanie u Tiffany’ego;Truman;Capote
-104;Żegnaj;laleczko;Raymond;Chandler
+104;Żegnaj, laleczko;Raymond;Chandler
 105;Hańba;J.M.;Coetzee
 106;Odlot malowanego ptaka;Henryk;Dasko
 107;Noce i dnie;Maria;Dąbrowska
@@ -109,7 +109,7 @@
 110;Idiota;Fiodor;Dostojewski
 111;Pożegnania;Stanisław;Dygat
 112;Wiersze;T.S.;Eliot
-113;Encheiridion;Epiktet
+113;Encheiridion;Epiktet;
 114;Historia szaleństwa w dobie klasycyzmu;Michel;Foucault
 115;Mag;John;Fowles
 116;Życie przed sobą;Romain;Gary
@@ -120,7 +120,7 @@
 121;Wierność w stereo;Nick;Hornby
 122;Świat według Garpa;John;Irving
 123;Sława i chwała;Jarosław;Iwaszkiewicz
-124;Cholonek;czyli dobry pan Bóg z gliny;Janosh
+124;Cholonek, czyli dobry pan Bóg z gliny;Janosh;
 125;Mój diabeł stróż;Anita Halina;Janowska
 126;Kometa nad Doliną Muminków;Tove;Jansson
 127;Na marmurowych skałach;Ernst;Junger
@@ -154,9 +154,9 @@
 155;Pogoda dla bogaczy;Irwin;Shaw
 156;Białe zęby;Zadie;Smith
 157;Wybór Zofii;William;Styron
-158;Wiersze wybrane;Wisława ;Szymborska
+158;Wiersze wybrane;Wisława;Szymborska
 159;Zimne kraje;Marcin;Świetlicki
-160;Dom dzienny;dom nocny;Olga;Tokarczuk
+160;Dom dzienny, dom nocny;Olga;Tokarczuk
 161;Oni;Teresa;Torańska
 162;Rodzinna historia lęku;Agata;Tuszyńska
 163;Groch z kapustą;Julian;Tuwim
@@ -170,9 +170,9 @@
 171;Wstrząsające dzieło kulejącego geniusza;Dave;Eggers
 172;Było minęło: wspomnienia dziecka-żołnierza;Ishmael;Beah
 173;Przedwiośnie;Stefan;Żeromski
-174;Wszyscy ludzie prezydenta;;Bob Woodward / Carl Bernstein
+174;Wszyscy ludzie prezydenta;Bob Woodward;Carl Bernstein
 175;Mroczne Materie;Philip;Pullman
-176;Teresa D'Uberville;Thomas ;Hardy
+176;Teresa D'Uberville;Thomas;Hardy
 177;Birdsong;Sebastian;Faulks
 178;Przygody Hucka Finna;Mark;Twain
 179;Służące;Kathryn;Stockett
@@ -180,7 +180,7 @@
 181;Proces;Franz;Kafka
 182;Miasteczko Middlemarch;George;Eliot
 183;Zaginiona dziewczyna;Gillian;Flynn
-184;Strzelby;zarazki;maszyny: losy ludzkich społeczeństw;Jared;Diamond
+184;Strzelby, zarazki, maszyny: losy ludzkich społeczeństw;Jared;Diamond
 185;Samotnia;Charles;Dickens
 186;Wojna i Pokój;Lew;Tołstoj
 187;Noc;Elie;Wiesel
@@ -213,7 +213,7 @@
 214;Kupa kultury. Przewodnik inteligenta;Leszek;Bugajski
 215;Gra Endera;Orson Scott;Card
 216;Dziwny przypadek psa nocną porą;Mark;Haddon
-217;Mężczyzna;który pomylił swoją żonę z kapeluszem;Oliver;Sacks
+217;Mężczyzna, który pomylił swoją żonę z kapeluszem;Oliver;Sacks
 218;W obronie jedzenia. Manifest wszystkożerców;Michael;Pollan
 219;Ptasiek;William;Wharton
 220;Gra o tron;George R.R.;Martin
@@ -222,13 +222,13 @@
 223;Stary człowiek i morze;Ernest;Hemingway
 224;Moby Dick;Herman;Melville
 225;Juda nieznany;Thomas;Hardy
-226;Lord Jim;Josep;h Conrad
+226;Lord Jim;Joseph;Conrad
 227;Bardzo głodna gąsienica;Eric;Carle
 228;Dżuma;Albert;Camus
 229;Szkarłatna litera;Nathaniel;Hawthorne
 230;Oliver Twist;Charles;Dickens
 231;Filary Ziemi;Ken;Follett
-232;Pięć osób;które spotykamy w niebie;Mitch;Albom
+232;Pięć osób, które spotykamy w niebie;Mitch;Albom
 233;Łuk Triumfalny;Erich Maria;Remarque
 234;Zapiski z małej wyspy;Bryson;Bill
 235;Kronika ptaka nakręcacza;Haruki;Murakami
@@ -243,7 +243,7 @@
 244;Opętanie;A.S.;Byatt
 245;Zaklęci w czasie;Audrey;Niffenegger
 246;Gdy była porządną dziewczyną;Philip;Roth
-247;Odyseja;Homer
+247;Odyseja;Homer;
 248;Łaskawa ziemia;Pearl S.;Buck
 249;I nie było już nikogo;Agatha;Christie
 250;Chłopi;Władysław;Reymont
@@ -256,4 +256,4 @@
 257;Miasteczko jak Alece Springs;Nevil;Shute
 258;Niezwykła rogatka;Norton;Juster
 259;Bracia Karamazow;Fiodor;Dostojewski
-260;Historia mego życia";Helen;Keller
+260;Historia mego życia;Helen;Keller

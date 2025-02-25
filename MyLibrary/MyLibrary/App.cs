@@ -1,10 +1,12 @@
-﻿using MyLibrary.Components.DataProviders;
+﻿using MyLibrary.Components.CsvReader;
+using MyLibrary.Components.DataProviders;
 using MyLibrary.Data;
 using MyLibrary.Data.Entities;
 using MyLibrary.Data.Entities.Extensions;
 using MyLibrary.Data.Repositories;
 using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
+using System.Text;
 
 namespace MyLibrary;
 
@@ -13,15 +15,25 @@ public class App : IApp
     private readonly IRepository<Book> _fileRepository;
     private readonly IBooksDataProvider _booksDataProvider;
     private readonly IUserCommunication _userCommunication;
+    private readonly ICsvReader _csvReader;
 
-    public App(IRepository<Book> fileRepository, IBooksDataProvider booksDataProvider, IUserCommunication userCommunication)
+    public App(IRepository<Book> fileRepository, IBooksDataProvider booksDataProvider, IUserCommunication userCommunication, ICsvReader csvReader)
     {
         _fileRepository = fileRepository;
         _booksDataProvider = booksDataProvider;
         _userCommunication = userCommunication;
+        _csvReader = csvReader;
     }
     public void Run()
     {
+        var realBooks = _csvReader.ProcessRealBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
+        var top259Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop259.csv");
+        var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
+        foreach (var item in realBooks)
+        {
+            Console.WriteLine(item);
+        }
+
         _userCommunication.Welcome();
 
         string auditFileName = "audit_library.txt";

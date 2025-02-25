@@ -1,5 +1,5 @@
 ﻿using MyLibrary.Components.CsvReader.VariousBooksCollections;
-using System.Data.Common;
+using System.Globalization;
 
 namespace MyLibrary.Components.CsvReader.Extensions;
 
@@ -7,34 +7,68 @@ public static class BooksExtensions
 {
     public static IEnumerable<RealBook> ToBook(this IEnumerable<string> source)
     {
-        var books = new List<RealBook>();
-
         foreach (var line in source)
         {
-            var columns = line.Split(';');
+            var columns = line.Split(';',StringSplitOptions.None);
 
-            var book = new RealBook
+            for (int i = 0; i < 9; i++)
             {
-                Lp = int.Parse(columns[0]),
+                if (string.IsNullOrEmpty(columns[i]))
+                {
+                    columns[i] = null;
+                }
+            }
+
+            bool _isForSale;
+            if (columns[6] == "tak")
+            {
+                _isForSale = true;
+            }
+            else
+            {
+                _isForSale = false;
+            }
+
+            decimal? _price;
+            if (_isForSale == true)
+            {
+                if (decimal.TryParse(columns[7], out decimal result3) && result3 > 0)
+                {
+                    _price = result3;
+                }
+                else 
+                {
+                    _price = null;
+                }
+            }
+            else
+            {
+                _price = null;
+            }
+
+            yield return new RealBook
+            {
+                Lp = columns[0],
                 AuthorName = columns[1],
                 AuthorSurname = columns[2],
                 CollectiveAuthor = columns[3],
                 Title = columns[4],
                 PlaceInLibrary = columns[5],
-                IsForSale = bool.Parse(columns[6]),
-                Price = decimal.Parse(columns[7]),
+                IsForSale = _isForSale,
+                Price = _price, 
                 Comments = columns[8]
             };
-            books.Add(new RealBook());
         }
 
-        return books;
+        //Bez użycia "yield":
+        //===================
+        //var books = new List<RealBook>();
 
         //foreach (var line in source)
         //{
         //    var columns = line.Split(';');
 
-        //    yield return new RealBook
+        //    var book = new RealBook
         //    {
         //        Lp = int.Parse(columns[0]),
         //        AuthorName = columns[1],
@@ -46,6 +80,9 @@ public static class BooksExtensions
         //        Price = decimal.Parse(columns[7]),
         //        Comments = columns[8]
         //    };
+        //    books.Add(new RealBook());
         //}
+
+        //return books;
     }
 }

@@ -3,7 +3,7 @@
 3;Jane Eyre;Charlotte;Bronte
 4;Seria o Harrym Potterze;JK;Rowling
 5;Zabić drozda;Harper;Lee
-6;Biblia
+6;Biblia;;
 7;Wichrowe Wzgórza;Emily;Bronte
 8;Rok 1984;George;Orwell
 9;Mroczne materie;Philip;Pullman
@@ -19,17 +19,17 @@
 19;Żona podróżnika w czasie;Audrey;Niffenegger
 20;Miasteczko Middlemarch;George;Eliot
 21;Przeminęło z wiatrem;Margaret;Mitchell
-22;Wielki Gatsby;F Scott Fitzgerald
+22;Wielki Gatsby;F Scott;Fitzgerald
 23;Samotnia;Charles;Dickens
-24;Wojna i pokój;Lew;Tolstoy
+24;Wojna i pokój;Lew;Tołstoj
 25;Autostopem przez Galaktykę;Douglas;Adams
 26;Znowu w Brideshead;Evelyn;Waugh
-27;Zbrodnia i kara;Fyodor;Dostoyevsky
+27;Zbrodnia i kara;Fyodor;Dostojewski
 28;Grona gniewu;John;Steinbeck
 29;Alicja w Krainie Czarów;Lewis;Carroll
 30;O czym szumią wierzby;Kenneth;Grahame
-31;Anna Karenina;Lew;Tolstoy
-32;David Copperfield;Charles Dickens
+31;Anna Karenina;Lew;Tołstoj
+32;David Copperfield;Charles;Dickens
 33;Opowieści z Narnii;CS;Lewis
 34;Emma;Jane;Austen
 35;Perswazje;Jane;Austen
@@ -89,7 +89,7 @@
 89;Przygody Scherlocka Holmesa;Sir Arthur Conan;Doyle
 90;The Faraway Tree Collection;Enid;Blyton
 91;Jądro ciemności;Joseph;Conrad
-92;Mały Książę;Antoine De Saint-Exupery
+92;Mały Książę;Antoine;De Saint-Exupery
 93;Fabryka os;Iain;Banks
 94;Wodnikowe Wzgórze;Richard;Adams
 95;Sprzysiężenie głupców;John Kennedy;Toole
