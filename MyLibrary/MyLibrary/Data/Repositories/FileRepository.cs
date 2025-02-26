@@ -9,7 +9,7 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
     private readonly Action<T>? _itemAddedCallback;
     private readonly Action<T>? _itemRemovedCallback;
     private static int lastId = 0;
-    protected List<T> _items = new();
+    protected List<T> _items = [];
 
     public FileRepository(Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
     {

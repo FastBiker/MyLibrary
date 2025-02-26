@@ -15,11 +15,11 @@ services.AddSingleton<IRepository<Book>, FileRepository<Book>>();
 services.AddSingleton<IBooksDataProvider, BooksDataProvider>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
 services.AddSingleton<ICsvReader, CsvReader>();
-//services.AddSingleton<IConvertFileTxtToCsv, ConvertFileTxtToCsv>();
+services.AddSingleton<IConvertFileToCsv, ConvertFileToCsv>();
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;
 app.Run();
 
-//var convert = serviceProvider.GetService<IConvertFileTxtToCsv>()!;
-//convert.ReplaceString();
+var convert = serviceProvider.GetService<IConvertFileToCsv>()!;
+convert.Convert();

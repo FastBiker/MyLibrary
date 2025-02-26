@@ -6,7 +6,6 @@ using MyLibrary.Data.Entities.Extensions;
 using MyLibrary.Data.Repositories;
 using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
-using System.Text;
 
 namespace MyLibrary;
 
@@ -26,6 +25,7 @@ public class App : IApp
     }
     public void Run()
     {
+        //pliki zewnętrzne CSV z książkami
         var realBooks = _csvReader.ProcessRealBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
         var top259Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
@@ -34,6 +34,7 @@ public class App : IApp
             Console.WriteLine(item);
         }
 
+        //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
 
         string auditFileName = "audit_library.txt";
@@ -41,9 +42,9 @@ public class App : IApp
         var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), BookAdded);
         bookRepository.ItemAdded += BookOnItemAdded;
 
-        var bookInFile = new FileRepository<Book>(BookAdded, BookRemoved);
-        bookInFile.ItemAdded += BookOnItemAdded;
-        bookInFile.ItemRemoved += BookOnItemRemoved;
+        var fileRepository = new FileRepository<Book>(BookAdded, BookRemoved);
+        fileRepository.ItemAdded += BookOnItemAdded;
+        fileRepository.ItemRemoved += BookOnItemRemoved;
 
         void BookRemoved(Book item)
         {
@@ -81,7 +82,7 @@ public class App : IApp
                     try
                     {
                         WriteAllToConsole(bookRepository);
-                        WriteAllToConsole(bookInFile);
+                        WriteAllToConsole(fileRepository);
                     }
                     catch (Exception e)
                     {
@@ -95,7 +96,7 @@ public class App : IApp
                         "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
                     try
                     {
-                        AddBooks(bookRepository, bookInFile);
+                        AddBooks(bookRepository, fileRepository);
                     }
                     catch (Exception e)
                     {
@@ -107,7 +108,7 @@ public class App : IApp
                     _userCommunication.MainMethodsHeaders("Usuń książkę, wpisując jej tytuł:");
                     try
                     {
-                        RemoveBook(bookInFile);
+                        RemoveBook(fileRepository);
                     }
                     catch (Exception e)
                     {
@@ -139,7 +140,7 @@ public class App : IApp
             _userCommunication.WriteItemToConsole(items);
         }
 
-        void AddBooks(IRepository<Book> bookRepository, IRepository<Book> bookInFile)
+        void AddBooks(IRepository<Book> bookRepository, IRepository<Book> fileRepository)
         {
             while (true)
             {
@@ -302,7 +303,7 @@ public class App : IApp
                 };
 
                 //bookRepository.AddBatch(books);
-                bookInFile.AddBatch(books);
+                fileRepository.AddBatch(books);
 
                 if (inputBreak == "q")
                 {
@@ -315,15 +316,15 @@ public class App : IApp
             }
         }
 
-        void RemoveBook(IRepository<Book> bookInFile)
+        void RemoveBook(IRepository<Book> fileRepository)
         {
             string? input = _userCommunication.WriteRemovedBookTitle();
-            var books = bookInFile.GetAll();
+            var books = fileRepository.GetAll();
             var bookToRemove = books.FirstOrDefault(x => x.Title == input);
 
             if (bookToRemove != null)
             {
-                bookInFile.Remove(bookToRemove);
+                fileRepository.Remove(bookToRemove);
             }
             else
             {

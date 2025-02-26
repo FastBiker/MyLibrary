@@ -36,72 +36,75 @@ public class Book : EntityBase
 
     public DateTime? DateOfBorrowedOrLent { get; set; }
 
-    #region ToString Override
-    public override string ToString()
-    {
-        StringBuilder sb = new(1024);
+    public override string ToString() => $"{Id};{AuthorName};{AuthorSurname};{CollectiveAuthor};{Title};{PublishingHouse};{PlaceOfPublication};" +
+        $"{YearOfPublication};{PageNumber};{ISBN};{PlaceInLibrary};{Owner};{IsForSale};{Price};{IsLent};{IsBorrowed};{DateOfBorrowedOrLent}";
 
-        sb.AppendLine($"Id: {Id}");
-        if (AuthorName != null && AuthorSurname != null)
-        {
-            sb.AppendLine($"Author: {AuthorName} {AuthorSurname}");
-        }
-        if (CollectiveAuthor != null)
-        {
-            sb.AppendLine($"CollectiveAuthor: {CollectiveAuthor}");
-        }
+    //#region ToString Override
+    //public override string ToString()
+    //{
+    //    StringBuilder sb = new(1024);
 
-        sb.AppendLine($"\tTitle: {Title}");
+    //    sb.AppendLine($"Id: {Id}");
+    //    if (AuthorName != null && AuthorSurname != null)
+    //    {
+    //        sb.AppendLine($"Author: {AuthorName} {AuthorSurname}");
+    //    }
+    //    if (CollectiveAuthor != null)
+    //    {
+    //        sb.AppendLine($"CollectiveAuthor: {CollectiveAuthor}");
+    //    }
 
-        if (PublishingHouse != null)
-        {
-            sb.AppendLine($"\tPublishingHouse: {PublishingHouse}");
-        }
-        if (PlaceOfPublication != null)
-        {
-            sb.AppendLine($"\tPlaceOfPublication: {PlaceOfPublication}");
-        }
-        if (YearOfPublication.HasValue)
-        {
-            sb.AppendLine($"\tYearOfPublication: {YearOfPublication}");
-        }
-        if (PageNumber.HasValue)
-        {
-            sb.AppendLine($"\tNumberOfPages: {PageNumber}");
-        }
-        if (ISBN != null)
-        {
-            sb.AppendLine($"\tISBN: {ISBN}");
-        }
-        if (PlaceInLibrary != null)
-        {
-            sb.AppendLine($"\tPlaceInLibrary: {PlaceInLibrary}");
-        }
-        if (Owner != null)
-        {
-            sb.AppendLine($"\tOwner: {Owner}");
-        }
-        if (IsForSale == true)
-        {
-            sb.AppendLine($"\tIsForSale: {IsForSale}");
-            sb.AppendLine($"\tPrice: {Price:c}");
-        }
-        if (IsLent == true)
-        {
-            sb.AppendLine($"\tIsLent: {IsLent}");
-        }
-        if (IsBorrowed == true)
-        {
-            sb.AppendLine($"\tIsBorrowed: {IsBorrowed}");
-        }
-        if (DateOfBorrowedOrLent.HasValue)
-        {
-            sb.AppendLine($"\tDateOfBorrowed: {DateOfBorrowedOrLent}");
-        }
-        sb.AppendLine($"===============================================");
+    //    sb.AppendLine($"\tTitle: {Title}");
 
-        return sb.ToString();
-    }
+    //    if (PublishingHouse != null)
+    //    {
+    //        sb.AppendLine($"\tPublishingHouse: {PublishingHouse}");
+    //    }
+    //    if (PlaceOfPublication != null)
+    //    {
+    //        sb.AppendLine($"\tPlaceOfPublication: {PlaceOfPublication}");
+    //    }
+    //    if (YearOfPublication.HasValue)
+    //    {
+    //        sb.AppendLine($"\tYearOfPublication: {YearOfPublication}");
+    //    }
+    //    if (PageNumber.HasValue)
+    //    {
+    //        sb.AppendLine($"\tNumberOfPages: {PageNumber}");
+    //    }
+    //    if (ISBN != null)
+    //    {
+    //        sb.AppendLine($"\tISBN: {ISBN}");
+    //    }
+    //    if (PlaceInLibrary != null)
+    //    {
+    //        sb.AppendLine($"\tPlaceInLibrary: {PlaceInLibrary}");
+    //    }
+    //    if (Owner != null)
+    //    {
+    //        sb.AppendLine($"\tOwner: {Owner}");
+    //    }
+    //    if (IsForSale == true)
+    //    {
+    //        sb.AppendLine($"\tIsForSale: {IsForSale}");
+    //        sb.AppendLine($"\tPrice: {Price:c}");
+    //    }
+    //    if (IsLent == true)
+    //    {
+    //        sb.AppendLine($"\tIsLent: {IsLent}");
+    //    }
+    //    if (IsBorrowed == true)
+    //    {
+    //        sb.AppendLine($"\tIsBorrowed: {IsBorrowed}");
+    //    }
+    //    if (DateOfBorrowedOrLent.HasValue)
+    //    {
+    //        sb.AppendLine($"\tDateOfBorrowed: {DateOfBorrowedOrLent}");
+    //    }
+    //    sb.AppendLine($"===============================================");
+
+    //    return sb.ToString();
+    //}
 
 
 
@@ -122,5 +125,5 @@ public class Book : EntityBase
     //$"\n \tDateOfBorrowed: {DateOfBorrowed} " +
     //$"\n==============================================="
     //+ Environment.NewLine;
-    #endregion
+    //#endregion
 }

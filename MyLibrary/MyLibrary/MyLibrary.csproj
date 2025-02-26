@@ -19,6 +19,9 @@
     <None Update="Resources\Files\BooksTop259.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Resources\Files\mylibrary.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Resources\Files\My_Home_Library.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
