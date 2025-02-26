@@ -29,7 +29,8 @@ public class App : IApp
         var realBooks = _csvReader.ProcessRealBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
         var top259Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
-        foreach (var item in realBooks)
+        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\mylibrary.csv");
+        foreach (var item in myLibraryBooks)
         {
             Console.WriteLine(item);
         }
