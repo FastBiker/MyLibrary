@@ -6,6 +6,7 @@ using MyLibrary.Data.Entities.Extensions;
 using MyLibrary.Data.Repositories;
 using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
+using System.ComponentModel.DataAnnotations;
 
 namespace MyLibrary;
 
@@ -30,10 +31,24 @@ public class App : IApp
         var top259Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
         var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\mylibrary.csv");
-        foreach (var item in myLibraryBooks)
+
+        var groups = myLibraryBooks
+            .GroupBy(x => x.Owner)
+            .Select(g => new
+            {
+                Owner = g.Key,
+                Max = g.Max(p => p.PageNumber),
+                Averrage = g.Average(p => p.PageNumber)
+            })
+            .OrderBy(x => x.Averrage);
+
+        foreach (var group in groups)
         {
-            Console.WriteLine(item);
+            Console.WriteLine($"{group.Owner}");
+            Console.WriteLine($"\t{group.Max}");
+            Console.WriteLine($"\t{group.Averrage}");
         }
+
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
