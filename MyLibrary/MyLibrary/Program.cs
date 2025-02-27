@@ -21,5 +21,5 @@ var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;
 app.Run();
 
-var convert = serviceProvider.GetService<IConvertFileToCsv>()!;
-convert.Convert();
+//var convert = serviceProvider.GetService<IConvertFileToCsv>()!;
+//convert.Convert();

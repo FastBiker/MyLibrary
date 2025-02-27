@@ -26,27 +26,53 @@ public class App : IApp
     }
     public void Run()
     {
-        //pliki zewnętrzne CSV z książkami
+        //pliki zewnętrzne CSV z książkami i operacje na nich
         var realBooks = _csvReader.ProcessRealBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
         var top259Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
         var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\mylibrary.csv");
 
-        var groups = myLibraryBooks
-            .GroupBy(x => x.Owner)
-            .Select(g => new
-            {
-                Owner = g.Key,
-                Max = g.Max(p => p.PageNumber),
-                Averrage = g.Average(p => p.PageNumber)
-            })
-            .OrderBy(x => x.Averrage);
+        //var groups = myLibraryBooks
+        //    .GroupBy(x => x.Owner)
+        //    .Select(g => new
+        //    {
+        //        Owner = g.Key,
+        //        Max = g.Max(p => p.PageNumber),
+        //        Averrage = g.Average(p => p.PageNumber)
+        //    })
+        //    .OrderBy(x => x.Averrage);
 
-        foreach (var group in groups)
+        //foreach (var group in groups)
+        //{
+        //    Console.WriteLine($"{group.Owner}");
+        //    Console.WriteLine($"\t{group.Max}");
+        //    Console.WriteLine($"\t{group.Averrage}");
+        //}
+
+        var booksInLibrary = myLibraryBooks
+            .Join(top259Books,
+            x => x.Title,
+            x => x.Title,
+            (myLibraryBooks, top259Books) => 
+                new 
+                {
+                    top259Books.Lp,
+                    top259Books.AuthorName,
+                    top259Books.AuthorSurname,
+                    myLibraryBooks.Title,
+                    myLibraryBooks.Owner,
+                    myLibraryBooks.PageNumber
+                })
+            .OrderByDescending(x => x.PageNumber)
+            .ThenBy(x => x.Owner);
+
+        foreach (var book in booksInLibrary) 
         {
-            Console.WriteLine($"{group.Owner}");
-            Console.WriteLine($"\t{group.Max}");
-            Console.WriteLine($"\t{group.Averrage}");
+            Console.WriteLine($"Lp. {book.Lp}");
+            Console.WriteLine($"Owner: {book.Owner}");
+            Console.WriteLine($"\tAuthor: {book.AuthorName} {book.AuthorSurname}");
+            Console.WriteLine($"\tTitle: {book.Title}");
+            Console.WriteLine($"\tPageNumber: {book.PageNumber}");
         }
 
 
