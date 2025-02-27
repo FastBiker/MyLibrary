@@ -1,4 +1,5 @@
 ﻿using MyLibrary.Components.CsvReader;
+using MyLibrary.Components.CsvReader.VariousBooksCollections;
 using MyLibrary.Components.DataProviders;
 using MyLibrary.Data;
 using MyLibrary.Data.Entities;
@@ -7,6 +8,7 @@ using MyLibrary.Data.Repositories;
 using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
 using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 
 namespace MyLibrary;
 
@@ -49,20 +51,20 @@ public class App : IApp
         //    Console.WriteLine($"\t{group.Averrage}");
         //}
 
-        var booksInLibrary = myLibraryBooks
-            .Join(top259Books,
-            x => x.Title,
-            x => x.Title,
-            (myLibraryBooks, top259Books) => 
+        var booksInLibrary = myLibraryBooks.Join(
+            top259Books,
+            m => new { m.Title, m.AuthorSurname },
+            t => new { t.Title, t.AuthorSurname},
+            (myLibraryBook, top259Book) => 
                 new 
                 {
-                    top259Books.Lp,
-                    top259Books.AuthorName,
-                    top259Books.AuthorSurname,
-                    myLibraryBooks.Title,
-                    myLibraryBooks.Owner,
-                    myLibraryBooks.PageNumber
-                })
+                    top259Book.Lp,
+                    top259Book.AuthorName,
+                    top259Book.AuthorSurname,
+                    myLibraryBook.Title,
+                    myLibraryBook.Owner,
+                    myLibraryBook.PageNumber
+                })   
             .OrderByDescending(x => x.PageNumber)
             .ThenBy(x => x.Owner);
 
