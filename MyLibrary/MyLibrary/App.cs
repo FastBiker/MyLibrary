@@ -29,10 +29,10 @@ public class App : IApp
     public void Run()
     {
         //pliki zewnętrzne CSV z książkami i operacje na nich
-        var realBooks = _csvReader.ProcessRealBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
-        var top259Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop259.csv");
-        var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
-        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\mylibrary.csv");
+        var realBooks = _csvReader.ProcessRealBooks("Resources\\Files\\My_Home_Library.csv");
+        var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
+        var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
+        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
 
         var grups = top259Books.GroupJoin(
             myLibraryBooks,
