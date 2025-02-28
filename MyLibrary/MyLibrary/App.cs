@@ -34,6 +34,26 @@ public class App : IApp
         var top100Books = _csvReader.ProcessTopBooks("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\BooksTop100.csv");
         var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\mylibrary.csv");
 
+        var grups = top259Books.GroupJoin(
+            myLibraryBooks,
+            top259Book => top259Book.AuthorSurname,
+            myLibraryBook => myLibraryBook.AuthorSurname,
+            (t, g) => new
+            {
+                Author = t,
+                Books = g
+            })
+            .OrderBy(x => x.Author.AuthorSurname);
+
+        foreach (var grup in  grups)
+        {
+            Console.WriteLine($"Author: {grup.Author.AuthorSurname} {grup.Author.AuthorName}");
+            Console.WriteLine($"Books: {grup.Books.Count()}");
+            Console.WriteLine($"Max: {grup.Books.Max(x => x.PageNumber)}");
+            Console.WriteLine($"Min: {grup.Books.Min(x => x.PageNumber)}");
+            Console.WriteLine($"Averrage: {grup.Books.Average(x => x.PageNumber)}");
+            Console.WriteLine();
+        }
         //var groups = myLibraryBooks
         //    .GroupBy(x => x.Owner)
         //    .Select(g => new
@@ -51,31 +71,31 @@ public class App : IApp
         //    Console.WriteLine($"\t{group.Averrage}");
         //}
 
-        var booksInLibrary = myLibraryBooks.Join(
-            top259Books,
-            m => new { m.Title, m.AuthorSurname },
-            t => new { t.Title, t.AuthorSurname},
-            (myLibraryBook, top259Book) => 
-                new 
-                {
-                    top259Book.Lp,
-                    top259Book.AuthorName,
-                    top259Book.AuthorSurname,
-                    myLibraryBook.Title,
-                    myLibraryBook.Owner,
-                    myLibraryBook.PageNumber
-                })   
-            .OrderByDescending(x => x.PageNumber)
-            .ThenBy(x => x.Owner);
+        //var booksInLibrary = myLibraryBooks.Join(
+        //    top259Books,
+        //    m => new { m.Title, m.AuthorSurname },
+        //    t => new { t.Title, t.AuthorSurname},
+        //    (myLibraryBook, top259Book) => 
+        //        new 
+        //        {
+        //            top259Book.Lp,
+        //            top259Book.AuthorName,
+        //            top259Book.AuthorSurname,
+        //            myLibraryBook.Title,
+        //            myLibraryBook.Owner,
+        //            myLibraryBook.PageNumber
+        //        })   
+        //    .OrderByDescending(x => x.PageNumber)
+        //    .ThenBy(x => x.Owner);
 
-        foreach (var book in booksInLibrary) 
-        {
-            Console.WriteLine($"Lp. {book.Lp}");
-            Console.WriteLine($"Owner: {book.Owner}");
-            Console.WriteLine($"\tAuthor: {book.AuthorName} {book.AuthorSurname}");
-            Console.WriteLine($"\tTitle: {book.Title}");
-            Console.WriteLine($"\tPageNumber: {book.PageNumber}");
-        }
+        //foreach (var book in booksInLibrary) 
+        //{
+        //    Console.WriteLine($"Lp. {book.Lp}");
+        //    Console.WriteLine($"Owner: {book.Owner}");
+        //    Console.WriteLine($"\tAuthor: {book.AuthorName} {book.AuthorSurname}");
+        //    Console.WriteLine($"\tTitle: {book.Title}");
+        //    Console.WriteLine($"\tPageNumber: {book.PageNumber}");
+        //}
 
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
