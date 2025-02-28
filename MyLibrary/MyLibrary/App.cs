@@ -9,6 +9,7 @@ using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Xml.Linq;
 
 namespace MyLibrary;
 
@@ -34,68 +35,24 @@ public class App : IApp
         var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
         var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
 
-        var grups = top259Books.GroupJoin(
-            myLibraryBooks,
-            top259Book => top259Book.AuthorSurname,
-            myLibraryBook => myLibraryBook.AuthorSurname,
-            (t, g) => new
-            {
-                Author = t,
-                Books = g
-            })
-            .OrderBy(x => x.Author.AuthorSurname);
+        var document = new XDocument();
 
-        foreach (var grup in  grups)
-        {
-            Console.WriteLine($"Author: {grup.Author.AuthorSurname} {grup.Author.AuthorName}");
-            Console.WriteLine($"Books: {grup.Books.Count()}");
-            Console.WriteLine($"Max: {grup.Books.Max(x => x.PageNumber)}");
-            Console.WriteLine($"Min: {grup.Books.Min(x => x.PageNumber)}");
-            Console.WriteLine($"Averrage: {grup.Books.Average(x => x.PageNumber)}");
-            Console.WriteLine();
-        }
-        //var groups = myLibraryBooks
-        //    .GroupBy(x => x.Owner)
-        //    .Select(g => new
-        //    {
-        //        Owner = g.Key,
-        //        Max = g.Max(p => p.PageNumber),
-        //        Averrage = g.Average(p => p.PageNumber)
-        //    })
-        //    .OrderBy(x => x.Averrage);
+        var books = new XElement("Books", myLibraryBooks
+            .Select(x =>
+            new XElement("Book",
+                new XAttribute("Id", x.Id),
+                new XAttribute("AuthorName", x.AuthorName ?? ""),
+                new XAttribute("AuthorSurname", x.AuthorSurname ?? ""),
+                new XAttribute("CollectiveAuthor", x.CollectiveAuthor ?? ""),
+                new XAttribute("Title", x.Title),
+                new XAttribute("PlaceInLibrary", x.PlaceInLibrary ?? ""),
+                new XAttribute("PagesNumber", x.PageNumber ?? 0))));
 
-        //foreach (var group in groups)
-        //{
-        //    Console.WriteLine($"{group.Owner}");
-        //    Console.WriteLine($"\t{group.Max}");
-        //    Console.WriteLine($"\t{group.Averrage}");
-        //}
+        document.Add(books);
+        document.Save("mylibrary.xml");
+        Console.WriteLine("Plik XML zapisany!");
 
-        //var booksInLibrary = myLibraryBooks.Join(
-        //    top259Books,
-        //    m => new { m.Title, m.AuthorSurname },
-        //    t => new { t.Title, t.AuthorSurname},
-        //    (myLibraryBook, top259Book) => 
-        //        new 
-        //        {
-        //            top259Book.Lp,
-        //            top259Book.AuthorName,
-        //            top259Book.AuthorSurname,
-        //            myLibraryBook.Title,
-        //            myLibraryBook.Owner,
-        //            myLibraryBook.PageNumber
-        //        })   
-        //    .OrderByDescending(x => x.PageNumber)
-        //    .ThenBy(x => x.Owner);
 
-        //foreach (var book in booksInLibrary) 
-        //{
-        //    Console.WriteLine($"Lp. {book.Lp}");
-        //    Console.WriteLine($"Owner: {book.Owner}");
-        //    Console.WriteLine($"\tAuthor: {book.AuthorName} {book.AuthorSurname}");
-        //    Console.WriteLine($"\tTitle: {book.Title}");
-        //    Console.WriteLine($"\tPageNumber: {book.PageNumber}");
-        //}
 
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
