@@ -1,4 +1,5 @@
-﻿using MyLibrary.Components.CsvReader;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
+using MyLibrary.Components.CsvReader;
 using MyLibrary.Components.CsvReader.VariousBooksCollections;
 using MyLibrary.Components.DataProviders;
 using MyLibrary.Data;
@@ -33,24 +34,9 @@ public class App : IApp
         var realBooks = _csvReader.ProcessRealBooks("Resources\\Files\\My_Home_Library.csv");
         var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
-        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
 
-        var document = new XDocument();
-
-        var books = new XElement("Books", myLibraryBooks
-            .Select(x =>
-            new XElement("Book",
-                new XAttribute("Id", x.Id),
-                new XAttribute("AuthorName", x.AuthorName ?? ""),
-                new XAttribute("AuthorSurname", x.AuthorSurname ?? ""),
-                new XAttribute("CollectiveAuthor", x.CollectiveAuthor ?? ""),
-                new XAttribute("Title", x.Title),
-                new XAttribute("PlaceInLibrary", x.PlaceInLibrary ?? ""),
-                new XAttribute("PagesNumber", x.PageNumber ?? 0))));
-
-        document.Add(books);
-        document.Save("mylibrary.xml");
-        Console.WriteLine("Plik XML zapisany!");
+        CreateXml();
+        QueryXml();
 
 
 
@@ -423,7 +409,7 @@ public class App : IApp
                         _userCommunication.WriteMinimumPriceOffAllBooksToConsole(cost);
                         break;
                     case "b":
-                        _userCommunication.FilterHeader("Alfabetyczna lista wszystkich włścicieli książek z mojej biblioteki:" + Environment.NewLine 
+                        _userCommunication.FilterHeader("Alfabetyczna lista wszystkich włścicieli książek z mojej biblioteki:" + Environment.NewLine
                             + "=====================================================================");
                         foreach (var item in _booksDataProvider.DistinctAllOwners())
                         {
@@ -452,7 +438,7 @@ public class App : IApp
                         }
                         break;
                     case "f":
-                        _userCommunication.FilterHeader("Książki wg nazwisk autorów i wg tytułów:" + Environment.NewLine 
+                        _userCommunication.FilterHeader("Książki wg nazwisk autorów i wg tytułów:" + Environment.NewLine
                             + "==========================================");
                         foreach (var item in _booksDataProvider.OrderByAuthorSurnameAndTitle())
                         {
@@ -460,7 +446,7 @@ public class App : IApp
                         }
                         break;
                     case "g":
-                        _userCommunication.FilterHeader("Książki wg nazwisk autorów i wg tytułów od'z':" + Environment.NewLine 
+                        _userCommunication.FilterHeader("Książki wg nazwisk autorów i wg tytułów od'z':" + Environment.NewLine
                             + "================================================");
                         foreach (var item in _booksDataProvider.OrderByAuthorSurnameAndTitleDesc())
                         {
@@ -487,7 +473,7 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'minimalny koszt książki' mają niewłaściwą wartość; wpisz liczbę większą od '0'");
                         }
-                        _userCommunication.FilterHeader("Książki, które zaczynają się na literę '{input1}' i kosztują więcej niż {cost:c}:" 
+                        _userCommunication.FilterHeader("Książki, które zaczynają się na literę '{input1}' i kosztują więcej niż {cost:c}:"
                             + Environment.NewLine + "===================================================================================");
                         foreach (var item in _booksDataProvider.WhereStartsWithAndCostIsGreaterThan(input1, cost))
                         {
@@ -560,7 +546,7 @@ public class App : IApp
                         break;
                     case "r":
                         input = _userCommunication.InputFilterData("Podaj nazwę włąściciela");
-                        _userCommunication.FilterHeader($"Pierwsza książka należąca do {input}:" + Environment.NewLine 
+                        _userCommunication.FilterHeader($"Pierwsza książka należąca do {input}:" + Environment.NewLine
                             + "======================================");
                         var book1 = _booksDataProvider.FirstOrDefaultByOwnerWithDefault(input);
                         _userCommunication.WriteFilterBooksToConsole(book1);
@@ -599,7 +585,7 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        _userCommunication.FilterHeader($"Pierwsze {howMany} książki(książek) z listy w kolejności alfabetycznej:" 
+                        _userCommunication.FilterHeader($"Pierwsze {howMany} książki(książek) z listy w kolejności alfabetycznej:"
                             + Environment.NewLine + "==============================================================");
                         foreach (var item in _booksDataProvider.TakeBooks(howMany))
                         {
@@ -653,7 +639,7 @@ public class App : IApp
                         {
                             throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
                         }
-                        _userCommunication.FilterHeader($"Pokaż książki pomijając pierwszych {howMany} w kolejności alfabetycznej:" 
+                        _userCommunication.FilterHeader($"Pokaż książki pomijając pierwszych {howMany} w kolejności alfabetycznej:"
                             + Environment.NewLine + "=================================================================");
                         foreach (var item in _booksDataProvider.SkipBooks(howMany))
                         {
@@ -698,6 +684,45 @@ public class App : IApp
                         break;
                 }
             }
+        }
+    }
+
+    private void CreateXml()
+    {
+        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
+
+        var document = new XDocument();
+
+        var books = new XElement("Books", myLibraryBooks
+            .Select(x =>
+            new XElement("Book",
+                new XAttribute("Id", x.Id),
+                new XAttribute("AuthorName", x.AuthorName ?? ""),
+                new XAttribute("AuthorSurname", x.AuthorSurname ?? ""),
+                new XAttribute("CollectiveAuthor", x.CollectiveAuthor ?? ""),
+                new XAttribute("Title", x.Title),
+                new XAttribute("PlaceInLibrary", x.PlaceInLibrary ?? ""),
+                new XAttribute("PagesNumber", x.PageNumber ?? 0),
+                new XAttribute("Owner", x.Owner ?? ""))));
+
+        document.Add(books);
+        document.Save("mylibrary.xml");
+        Console.WriteLine("Plik XML zapisany!");
+    }
+
+    private static void QueryXml()
+    {
+        var document = XDocument.Load("mylibrary.xml");
+
+        var titles = document
+            .Element("Books")?
+            .Elements("Book")
+            .Where(x => x.Attribute("Owner")?.Value == "Donald Trump")
+            .Select(x => x.Attribute("Title")?.Value);
+
+        foreach (var title in titles)
+        {
+            Console.WriteLine(title);
         }
     }
 }
