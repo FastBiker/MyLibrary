@@ -35,39 +35,15 @@ public class App : IApp
         var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
         var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
-        var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
-
-        var grups = dataCleanBook
-            .GroupBy(x => x.Publisher)
-            .Select(g => new
-            {
-                Publisher = g.Key,
-                Count = g.Count(),
-                Max = g.Max(r => r.PublisherRevenue),
-                Min = g.Min(r => r.PublisherRevenue),
-                Average = g.Average(r => r.PublisherRevenue),
-                Sum = g.Sum(r => r.PublisherRevenue),
-            })
-            .OrderBy(x => x.Average);
-
-        foreach (var grup in grups) 
-        {
-            Console.WriteLine($"{grup.Publisher}");
-            Console.WriteLine($"Count: {grup.Count}");
-            Console.WriteLine($"Max: {grup.Max}");
-            Console.WriteLine($"Min: {grup.Min}");
-            Console.WriteLine($"Average: {grup.Average}");
-            Console.WriteLine($"Sum: {grup.Sum}");
-            Console.WriteLine();
-        }
+        //var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
 
         //foreach (var book in dataCleanBook)
         //{
         //    Console.WriteLine(book);
         //}
 
-        //CreateXml();
-        //QueryXml();
+        CreateXml();
+        QueryXml();
 
 
 
