@@ -1,4 +1,4 @@
-﻿namespace MyLibrary.Components.CsvReader.VariousBooksCollections;
+﻿namespace MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
 
 public class TopBook
 {

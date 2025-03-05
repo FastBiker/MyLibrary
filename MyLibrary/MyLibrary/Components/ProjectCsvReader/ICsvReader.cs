@@ -1,7 +1,7 @@
-﻿using MyLibrary.Components.CsvReader.VariousBooksCollections;
+﻿using MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
 using MyLibrary.Data.Entities;
 
-namespace MyLibrary.Components.CsvReader;
+namespace MyLibrary.Components.ProjectCsvReader;
 
 public interface ICsvReader
 {
@@ -10,4 +10,6 @@ public interface ICsvReader
     List<TopBook> ProcessTopBooks(string filePath);
 
     List<Book> ProcessMyLibraryBook(string filePath);
+
+    List<DataCleanBook> ProcessDataCleanBook(string filePath);
 }

@@ -1,12 +1,59 @@
-﻿using MyLibrary.Components.CsvReader.Extensions;
-using MyLibrary.Components.CsvReader.VariousBooksCollections;
+﻿using MyLibrary.Components.ProjectCsvReader.Extensions;
+using MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
 using MyLibrary.Data.Entities;
 using System.Globalization;
+using CsvHelper;
 
-namespace MyLibrary.Components.CsvReader;
 
-public class CsvReader : ICsvReader
+namespace MyLibrary.Components.ProjectCsvReader;
+
+public class ProjectCsvReader : ICsvReader
 {
+    public List<DataCleanBook> ProcessDataCleanBook(string filePath)
+    {
+        if (!File.Exists(filePath))
+        {
+            Console.WriteLine("Nie znaleziono pliku 'Books_Data_Clean.csv'!");
+            return new List<DataCleanBook>();
+        }
+
+        using (var reader = new StreamReader(filePath))
+        using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+        {
+            return csv.GetRecords<DataCleanBook>().ToList();
+        }
+
+        //return records;
+
+        //var books = File.ReadAllLines(filePath)
+        //.Skip(1)
+        //.Where(x => x.Length > 1)
+        //.Select(x =>
+        //{
+        //    var columns = x.Split(',');
+
+        //    return new DataCleanBook()
+        //    {
+        //        Index = uint.Parse(columns[0]),
+        //        PublishingYear = float.Parse(columns[1], CultureInfo.InvariantCulture),
+        //        BookName = columns[2],
+        //        Author = columns[3],
+        //        LanguageCode = columns[4],
+        //        AuthorRating = columns[5],
+        //        BookAverageRating = float.Parse(columns[6]),
+        //        BookRatingsCount = float.Parse(columns[7]),
+        //        Genre = columns[8],
+        //        GrossSales = decimal.Parse(columns[9]),
+        //        PublisherRevenuel = decimal.Parse(columns[10]),
+        //        SalePrice = decimal.Parse(columns[11]),
+        //        SalesRank = uint.Parse(columns[12]),
+        //        Publisher = columns[13],
+        //        UnitsSold = uint.Parse(columns[14]),
+        //    };
+        }
+
+    //return books.ToList();
+
     public List<Book> ProcessMyLibraryBook(string filePath)
     {
         if (!File.Exists(filePath))
@@ -14,28 +61,25 @@ public class CsvReader : ICsvReader
             Console.WriteLine("Nie znaleziono pliku MyHome!");
             return new List<Book>();
         }
-
         var books =
-           File.ReadAllLines(filePath)
-           .Where(x => x.Length > 1)
-           .Select(x =>
-           {
-               var columns = x.Split(';', StringSplitOptions.None);
-
-               for (int i = 0; i < 16; i++)
-               {
-                   if (string.IsNullOrEmpty(columns[i]))
-                   {
-                       columns[i] = null;
-                   }
-               }
-
-               int? _yearOfPublication;
-               if (int.TryParse(columns[7], out int result1) && result1 > 999 && result1 < 10000)
-               {
-                   _yearOfPublication = result1;
-               }
-               else
+        File.ReadAllLines(filePath)
+        .Where(x => x.Length > 1)
+        .Select(x =>
+        {
+            var columns = x.Split(';', StringSplitOptions.None);
+            for (int i = 0; i < 16; i++)
+            {
+                if (string.IsNullOrEmpty(columns[i]))
+                {
+                    columns[i] = null;
+                }
+            }
+            int? _yearOfPublication;
+            if (int.TryParse(columns[7], out int result1) && result1 > 999 && result1 < 10000)
+            {
+                _yearOfPublication = result1;
+            }
+            else
                {
                    _yearOfPublication = null;
                }

@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using MyLibrary;
-using MyLibrary.Components.CsvReader;
+using MyLibrary.Components.ProjectCsvReader;
 using MyLibrary.Components.DataProviders;
 using MyLibrary.Components.TxtToCsvConverter;
 using MyLibrary.Data.Entities;
@@ -14,7 +14,7 @@ services.AddSingleton<IRepository<Book>, SqlRepository<Book>>();
 services.AddSingleton<IRepository<Book>, FileRepository<Book>>();
 services.AddSingleton<IBooksDataProvider, BooksDataProvider>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
-services.AddSingleton<ICsvReader, CsvReader>();
+services.AddSingleton<ICsvReader, ProjectCsvReader>();
 services.AddSingleton<IConvertFileToCsv, ConvertFileToCsv>();
 
 var serviceProvider = services.BuildServiceProvider();

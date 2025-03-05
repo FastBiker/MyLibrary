@@ -1,6 +1,6 @@
-﻿using MyLibrary.Components.CsvReader.VariousBooksCollections;
+﻿using MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
 
-namespace MyLibrary.Components.CsvReader.Extensions;
+namespace MyLibrary.Components.ProjectCsvReader.Extensions;
 
 public static class BooksExtensions
 {

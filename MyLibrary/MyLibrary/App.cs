@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using MyLibrary.Components.CsvReader;
-using MyLibrary.Components.CsvReader.VariousBooksCollections;
+using MyLibrary.Components.ProjectCsvReader;
+using MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
 using MyLibrary.Components.DataProviders;
 using MyLibrary.Data;
 using MyLibrary.Data.Entities;
@@ -34,9 +34,15 @@ public class App : IApp
         var realBooks = _csvReader.ProcessRealBooks("Resources\\Files\\My_Home_Library.csv");
         var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
+        var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
 
-        CreateXml();
-        QueryXml();
+        foreach (var book in dataCleanBook) 
+        {
+            Console.WriteLine(book);
+        }
+
+        //CreateXml();
+        //QueryXml();
 
 
 
