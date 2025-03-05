@@ -34,12 +34,37 @@ public class App : IApp
         var realBooks = _csvReader.ProcessRealBooks("Resources\\Files\\My_Home_Library.csv");
         var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
+        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
         var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
 
-        foreach (var book in dataCleanBook) 
+        var grups = dataCleanBook
+            .GroupBy(x => x.Publisher)
+            .Select(g => new
+            {
+                Publisher = g.Key,
+                Count = g.Count(),
+                Max = g.Max(r => r.PublisherRevenue),
+                Min = g.Min(r => r.PublisherRevenue),
+                Average = g.Average(r => r.PublisherRevenue),
+                Sum = g.Sum(r => r.PublisherRevenue),
+            })
+            .OrderBy(x => x.Average);
+
+        foreach (var grup in grups) 
         {
-            Console.WriteLine(book);
+            Console.WriteLine($"{grup.Publisher}");
+            Console.WriteLine($"Count: {grup.Count}");
+            Console.WriteLine($"Max: {grup.Max}");
+            Console.WriteLine($"Min: {grup.Min}");
+            Console.WriteLine($"Average: {grup.Average}");
+            Console.WriteLine($"Sum: {grup.Sum}");
+            Console.WriteLine();
         }
+
+        //foreach (var book in dataCleanBook)
+        //{
+        //    Console.WriteLine(book);
+        //}
 
         //CreateXml();
         //QueryXml();
@@ -695,35 +720,33 @@ public class App : IApp
 
     private void CreateXml()
     {
-        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
+        var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
 
         var document = new XDocument();
 
-        var books = new XElement("Books", myLibraryBooks
+        var books = new XElement("Books", dataCleanBook
             .Select(x =>
             new XElement("Book",
-                new XAttribute("Id", x.Id),
-                new XAttribute("AuthorName", x.AuthorName ?? ""),
-                new XAttribute("AuthorSurname", x.AuthorSurname ?? ""),
-                new XAttribute("CollectiveAuthor", x.CollectiveAuthor ?? ""),
-                new XAttribute("Title", x.Title),
-                new XAttribute("PlaceInLibrary", x.PlaceInLibrary ?? ""),
-                new XAttribute("PagesNumber", x.PageNumber ?? 0),
-                new XAttribute("Owner", x.Owner ?? ""))));
+                new XAttribute("Index", x.Index),
+                new XAttribute("Author", x.Author ?? ""),
+                new XAttribute("Title", x.BookName ?? ""),
+                new XAttribute("Publisher", x.Publisher ?? ""),
+                new XAttribute("PublishingYear", x.PublishingYear ?? 0),
+                new XAttribute("Genre", x.Genre ?? ""))));
 
         document.Add(books);
-        document.Save("mylibrary.xml");
+        document.Save("Books_Data_Clean.xml");
         Console.WriteLine("Plik XML zapisany!");
     }
 
     private static void QueryXml()
     {
-        var document = XDocument.Load("mylibrary.xml");
+        var document = XDocument.Load("Books_Data_Clean.xml");
 
         var titles = document
             .Element("Books")?
             .Elements("Book")
-            .Where(x => x.Attribute("Owner")?.Value == "Donald Trump")
+            .Where(x => x.Attribute("Genre")?.Value == "fiction")
             .Select(x => x.Attribute("Title")?.Value);
 
         foreach (var title in titles)

@@ -12,40 +12,40 @@ public class DataCleanBook
     public string? BookName { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("Author")]
-    public string Author { get; set; }
+    public string? Author { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("language_code")]
     public string? LanguageCode { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("Author_Rating")]
-    public string AuthorRating { get; set; }
+    public string? AuthorRating { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("Book_average_rating")]
-    public float BookAverageRating { get; set; }
+    public float? BookAverageRating { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("Book_ratings_count")]
-    public float BookRatingsCount { get; set; }
+    public float? BookRatingsCount { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("genre")]
-    public string Genre { get; set; }
+    public string? Genre { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("gross sales")]
-    public decimal GrossSales { get; set; }
+    public decimal? GrossSales { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("publisher revenue")]
-    public decimal PublisherRevenue { get; set; }
+    public decimal? PublisherRevenue { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("sale price")]
-    public decimal SalePrice { get; set; }
+    public decimal? SalePrice { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("sales rank")]
-    public uint SalesRank { get; set; }
+    public uint? SalesRank { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("Publisher ")]
-    public string Publisher { get; set; }
+    public string? Publisher { get; set; }
 
     [CsvHelper.Configuration.Attributes.Name("units sold")]
-    public uint UnitsSold { get; set; }
+    public uint? UnitsSold { get; set; }
 
     public override string ToString() =>
         $"Index: {Index}" +
