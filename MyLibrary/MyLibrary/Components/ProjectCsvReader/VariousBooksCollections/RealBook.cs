@@ -4,7 +4,7 @@ namespace MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
 
 public class RealBook
 {
-    public string? Lp { get; set; }
+    public string? Index { get; set; }
 
     public string? AuthorName { get; set; }
 
@@ -27,7 +27,7 @@ public class RealBook
     {
         StringBuilder sb = new(1024);
 
-        sb.AppendLine($"Lp. {Lp}");
+        sb.AppendLine($"Lp. {Index}");
         if (AuthorName != null && AuthorSurname != null)
         {
             sb.AppendLine($"Author: {AuthorName} {AuthorSurname}");

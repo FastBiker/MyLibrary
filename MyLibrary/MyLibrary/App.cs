@@ -35,13 +35,16 @@ public class App : IApp
         var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
         var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
         var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
-        //var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
+        var dataCleanBooks = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
 
         //foreach (var book in dataCleanBook)
         //{
         //    Console.WriteLine(book);
         //}
 
+
+
+        //pliki XML zapis i odczyt
         CreateXml();
         QueryXml();
 

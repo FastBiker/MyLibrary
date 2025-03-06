@@ -47,7 +47,7 @@ public static class BooksExtensions
 
             yield return new RealBook
             {
-                Lp = columns[0],
+                Index = columns[0],
                 AuthorName = columns[1],
                 AuthorSurname = columns[2],
                 CollectiveAuthor = columns[3],

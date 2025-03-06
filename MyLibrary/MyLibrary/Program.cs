@@ -23,3 +23,5 @@ app.Run();
 
 //var convert = serviceProvider.GetService<IConvertFileToCsv>()!;
 //convert.Convert();
+
+//Data Source=LAPTOP-R6OVM9N5\SQLEXPRESS;Initial Catalog=MyLibraryStorage;Integrated Security=True;Trust Server Certificate=True

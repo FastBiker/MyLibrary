@@ -27,17 +27,18 @@ public class ProjectCsvReader : ICsvReader
         }
     }
 
-        //odczyt pliku CSV przy pomocy LINQ
+    //odczyt pliku CSV przy pomocy LINQ
 
     //    var books = File.ReadAllLines(filePath)
     //    .Skip(1)
     //    .Where(x => x.Length > 1)
     //    .Select(x =>
     //    {
-    //        var columns = x.Split(',', StringSplitOptions.None);
+    //        var columns = x.Split('"', StringSplitOptions.None);
 
     //        for (int i = 0; i < 14; i++)
     //        {
+    //            columns[i] = columns[i].Trim('"');
     //            if (string.IsNullOrEmpty(columns[i]))
     //            {
     //                columns[i] = null;
@@ -114,6 +115,7 @@ public class ProjectCsvReader : ICsvReader
     //}
 
     //jak za pomocą LINQ odczytać plik CSV, w którym niektóre właściwości mają następujący format np. Author = "Kami Garcia, Margaret Stohl"
+    //jak poprawnie odczytać plik CSV, w którym Cudzysłów (`" "`) jest używany do oznaczania tekstu, który może zawierać przecinki
 
     public List<Book> ProcessMyLibraryBook(string filePath)
     {
@@ -279,7 +281,7 @@ public class ProjectCsvReader : ICsvReader
 
                 return new TopBook()
                 {
-                    Lp = int.Parse(columns[0], CultureInfo.InvariantCulture),
+                    Index = int.Parse(columns[0], CultureInfo.InvariantCulture),
                     Title = columns[1],
                     AuthorName = columns[2],
                     AuthorSurname = columns[3]

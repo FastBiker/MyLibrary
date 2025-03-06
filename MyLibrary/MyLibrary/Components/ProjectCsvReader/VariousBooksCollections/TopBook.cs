@@ -2,7 +2,7 @@
 
 public class TopBook
 {
-    public int? Lp { get; set; }
+    public int? Index { get; set; }
 
     public string? Title { get; set; }
 
@@ -10,5 +10,5 @@ public class TopBook
 
     public string? AuthorSurname { get; set; }
 
-    public override string ToString() => $"Lp. {Lp} \nAuthor: {AuthorName} {AuthorSurname} \nTitle: {Title}";
+    public override string ToString() => $"Lp. {Index} \nAuthor: {AuthorName} {AuthorSurname} \nTitle: {Title}";
 }
