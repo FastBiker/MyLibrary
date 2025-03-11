@@ -11,6 +11,9 @@ using MyLibrary.UserCommunication;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Xml.Linq;
+using AutoMapper;
+using System.Threading.Tasks;
+using System;
 
 namespace MyLibrary;
 
@@ -20,44 +23,82 @@ public class App : IApp
     private readonly IBooksDataProvider _booksDataProvider;
     private readonly IUserCommunication _userCommunication;
     private readonly ICsvReader _csvReader;
+    private readonly MyLibraryDbContext _myLibraryDbContext;
 
-    public App(IRepository<Book> fileRepository, IBooksDataProvider booksDataProvider, IUserCommunication userCommunication, ICsvReader csvReader)
+    public App(IRepository<Book> fileRepository, IBooksDataProvider booksDataProvider, 
+        IUserCommunication userCommunication, ICsvReader csvReader, MyLibraryDbContext myLibraryDbContext)
     {
         _fileRepository = fileRepository;
         _booksDataProvider = booksDataProvider;
         _userCommunication = userCommunication;
         _csvReader = csvReader;
+        _myLibraryDbContext = myLibraryDbContext;
+        _myLibraryDbContext.Database.EnsureCreated();
     }
     public void Run()
     {
-        //pliki zewnętrzne CSV z książkami i operacje na nich
-        var realBooks = _csvReader.ProcessRealBooks("Resources\\Files\\My_Home_Library.csv");
-        var top259Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop259.csv");
-        var top100Books = _csvReader.ProcessTopBooks("Resources\\Files\\BooksTop100.csv");
-        var myLibraryBooks = _csvReader.ProcessMyLibraryBook("C:Resources\\Files\\mylibrary.csv");
-        var dataCleanBooks = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
+        var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
 
-        //foreach (var book in dataCleanBook)
+        foreach (var book in books)
+        {
+            _myLibraryDbContext.Books.Add(new Book
+            {
+                AuthorName = book.AuthorName,
+
+                AuthorSurname = book.AuthorSurname,
+
+                CollectiveAuthor = book.CollectiveAuthor,
+
+                Title = book.Title,
+
+                PublishingHouse = book.PublishingHouse,
+
+                PlaceOfPublication = book.PlaceOfPublication,
+
+                YearOfPublication = book.YearOfPublication,
+
+                PageNumber = book.PageNumber,
+
+                ISBN = book.ISBN,
+
+                PlaceInLibrary = book.PlaceInLibrary,
+
+                Owner = book.Owner,
+
+                IsForSale = book.IsForSale,
+
+                Price = book.Price,
+
+                IsLent = book.IsLent,
+
+                IsBorrowed = book.IsBorrowed,
+
+                DateOfBorrowedOrLent = book.DateOfBorrowedOrLent,
+            });
+        }
+
+        _myLibraryDbContext.SaveChanges();
+
+
+        //        2. * *Konfiguracja * *: Następnie utwórz mapowanie, mówiąc Automapperowi, jak przenosić dane. Możesz to zrobić w specjalnej klasie:
+        //   ```csharp
+        //var config = new MapperConfiguration(cfg =>
         //{
-        //    Console.WriteLine(book);
-        //}
+        //    cfg.CreateMap<Order, OrderDto>();Microsoft.EntityFrameworkCore.DbUpdateException: 'An error occurred while saving the entity changes. See the inner exception for details.'
 
+        //});
+        //var mapper = config.CreateMapper();
+        //   ```
 
-
-        //pliki XML zapis i odczyt
-        CreateXml();
-        QueryXml();
-
-
-
+        //3. * *Użycie * *: Kiedy potrzebujesz, wykonujesz mapowanie, tak jakbyś przełożył zawartość z jednej skrzynki do drugiej:
+        //   ```csharp
+        //   var orderDto = mapper.Map<OrderDto>(order);
+        //   ```
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
 
         string auditFileName = "audit_library.txt";
-
-        var bookRepository = new SqlRepository<Book>(new MyLibraryDbContext(), BookAdded);
-        bookRepository.ItemAdded += BookOnItemAdded;
 
         var fileRepository = new FileRepository<Book>(BookAdded, BookRemoved);
         fileRepository.ItemAdded += BookOnItemAdded;
@@ -98,7 +139,6 @@ public class App : IApp
                         + Environment.NewLine + "==========================================");
                     try
                     {
-                        WriteAllToConsole(bookRepository);
                         WriteAllToConsole(fileRepository);
                     }
                     catch (Exception e)
@@ -113,7 +153,7 @@ public class App : IApp
                         "w przypadku pozostałych danych, jeśli nie chcesz ich wprowadzać, przejdź dalej, wciskając 'Enter'");
                     try
                     {
-                        AddBooks(bookRepository, fileRepository);
+                        AddBooks(fileRepository);
                     }
                     catch (Exception e)
                     {
@@ -157,7 +197,7 @@ public class App : IApp
             _userCommunication.WriteItemToConsole(items);
         }
 
-        void AddBooks(IRepository<Book> bookRepository, IRepository<Book> fileRepository)
+        void AddBooks(IRepository<Book> fileRepository)
         {
             while (true)
             {
@@ -319,7 +359,6 @@ public class App : IApp
                     }
                 };
 
-                //bookRepository.AddBatch(books);
                 fileRepository.AddBatch(books);
 
                 if (inputBreak == "q")
@@ -694,43 +733,6 @@ public class App : IApp
                         break;
                 }
             }
-        }
-    }
-
-    private void CreateXml()
-    {
-        var dataCleanBook = _csvReader.ProcessDataCleanBook("Resources\\Files\\Books_Data_Clean.csv");
-
-        var document = new XDocument();
-
-        var books = new XElement("Books", dataCleanBook
-            .Select(x =>
-            new XElement("Book",
-                new XAttribute("Index", x.Index),
-                new XAttribute("Author", x.Author ?? ""),
-                new XAttribute("Title", x.BookName ?? ""),
-                new XAttribute("Publisher", x.Publisher ?? ""),
-                new XAttribute("PublishingYear", x.PublishingYear ?? 0),
-                new XAttribute("Genre", x.Genre ?? ""))));
-
-        document.Add(books);
-        document.Save("Books_Data_Clean.xml");
-        Console.WriteLine("Plik XML zapisany!");
-    }
-
-    private static void QueryXml()
-    {
-        var document = XDocument.Load("Books_Data_Clean.xml");
-
-        var titles = document
-            .Element("Books")?
-            .Elements("Book")
-            .Where(x => x.Attribute("Genre")?.Value == "fiction")
-            .Select(x => x.Attribute("Title")?.Value);
-
-        foreach (var title in titles)
-        {
-            Console.WriteLine(title);
         }
     }
 }

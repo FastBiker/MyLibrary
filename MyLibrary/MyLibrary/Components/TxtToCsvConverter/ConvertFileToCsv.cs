@@ -56,7 +56,7 @@ public class ConvertFileToCsv : IConvertFileToCsv
     void ConvertJsonToCsv(IRepository<Book> _fileRepository)
     {
         //string jsonFilePath = "mylibrary.json";
-        string csvFilePath = "C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\mylibrary.csv";
+        string csvFilePath = "C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\bin\\Debug\\net8.0\\Resources\\Files\\mylibrary.csv";
 
         var books = _fileRepository.GetAll();
         var list = books.Select(book => new Book

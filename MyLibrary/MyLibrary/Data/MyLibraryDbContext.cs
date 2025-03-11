@@ -5,11 +5,11 @@ namespace MyLibrary.Data;
 
 public class MyLibraryDbContext : DbContext
 {
-    //public DbSet<Book> Books => Set<Book>();
+    public MyLibraryDbContext(DbContextOptions<MyLibraryDbContext> options) 
+        : base(options)
+    {
 
-    //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //{
-    //    base.OnConfiguring(optionsBuilder);
-    //    optionsBuilder.UseInMemoryDatabase("StorageBookAppDb");
-    //}
+    }
+
+    public DbSet<Book> Books { get; set; }
 }

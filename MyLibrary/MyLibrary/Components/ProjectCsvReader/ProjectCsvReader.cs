@@ -26,97 +26,6 @@ public class ProjectCsvReader : ICsvReader
             return csv.GetRecords<DataCleanBook>().ToList();
         }
     }
-
-    //odczyt pliku CSV przy pomocy LINQ
-
-    //    var books = File.ReadAllLines(filePath)
-    //    .Skip(1)
-    //    .Where(x => x.Length > 1)
-    //    .Select(x =>
-    //    {
-    //        var columns = x.Split('"', StringSplitOptions.None);
-
-    //        for (int i = 0; i < 14; i++)
-    //        {
-    //            columns[i] = columns[i].Trim('"');
-    //            if (string.IsNullOrEmpty(columns[i]))
-    //            {
-    //                columns[i] = null;
-    //            }
-    //        }
-
-    //        var _publishingYear = ParseFloat(columns[1]);
-
-    //        var _bookAverageRating = ParseFloat(columns[6]);
-
-    //        var _bookRatingsCountg = ParseFloat(columns[7]);
-
-    //        var _grossSales = ParseDecimal(columns[9]);
-
-    //        var _publisherRevenue = ParseDecimal(columns[10]);
-
-    //        var _salePrice = ParseDecimal(columns[11]);
-
-    //        var _salesRank = ParseInt(columns[12]);
-
-    //        var _unitsSold = ParseInt(columns[14]);
-
-
-    //        return new DataCleanBook()
-    //        {
-    //            Index = uint.Parse(columns[0], CultureInfo.InvariantCulture),
-    //            PublishingYear = _publishingYear,
-    //            BookName = columns[2].Trim('"'),
-    //            Author = columns[3].Trim('"'),
-    //            LanguageCode = columns[4],
-    //            AuthorRating = columns[5],
-    //            BookAverageRating = _bookAverageRating,
-    //            BookRatingsCount = _bookRatingsCountg,
-    //            Genre = columns[8],
-    //            GrossSales = _grossSales,
-    //            PublisherRevenue = _publisherRevenue,
-    //            SalePrice = _salePrice,
-    //            SalesRank = _salesRank,
-    //            Publisher = columns[13].Trim('"'),
-    //            UnitsSold = _unitsSold,
-    //        };
-    //    });
-    //    return books.ToList();
-    //}
-
-    //private static float? ParseFloat(string columns)
-    //{
-    //    if (float.TryParse(columns, out float result))
-    //    {
-    //        return result;
-    //    }
-
-    //    return null;
-    //}
-
-    //private static decimal? ParseDecimal(string columns)
-    //{
-    //    if (decimal.TryParse(columns, out decimal result))
-    //    {
-    //        return result;
-    //    }
-
-    //    return null;
-    //}
-
-    //private static uint? ParseInt(string columns)
-    //{
-    //    if (uint.TryParse(columns, out uint result))
-    //    {
-    //        return result;
-    //    }
-
-    //    return null;
-    //}
-
-    //jak za pomocą LINQ odczytać plik CSV, w którym niektóre właściwości mają następujący format np. Author = "Kami Garcia, Margaret Stohl"
-    //jak poprawnie odczytać plik CSV, w którym Cudzysłów (`" "`) jest używany do oznaczania tekstu, który może zawierać przecinki
-
     public List<Book> ProcessMyLibraryBook(string filePath)
     {
         if (!File.Exists(filePath))
@@ -158,7 +67,7 @@ public class ProjectCsvReader : ICsvReader
             }
 
             bool _isForSale;
-            if (columns[12] == "true")
+            if (columns[12] == "True")
             {
                 _isForSale = true;
             }
@@ -170,7 +79,7 @@ public class ProjectCsvReader : ICsvReader
             decimal? _price;
             if (_isForSale == true)
             {
-                if (decimal.TryParse(columns[7], out decimal result3) && result3 > 0)
+                if (decimal.TryParse(columns[13], out decimal result3) && result3 > 0)
                 {
                     _price = result3;
                 }
@@ -185,7 +94,7 @@ public class ProjectCsvReader : ICsvReader
             }
 
             bool _isLent;
-            if (columns[14] == "true")
+            if (columns[14] == "True")
             {
                 _isLent = true;
             }
@@ -195,7 +104,7 @@ public class ProjectCsvReader : ICsvReader
             }
 
             bool _isBorrowed;
-            if (columns[15] == "true")
+            if (columns[15] == "True")
             {
                 _isBorrowed = true;
             }
