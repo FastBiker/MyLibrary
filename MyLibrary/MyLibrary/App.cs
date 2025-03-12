@@ -14,6 +14,9 @@ using System.Xml.Linq;
 using AutoMapper;
 using System.Threading.Tasks;
 using System;
+using static System.Reflection.Metadata.BlobBuilder;
+//using MyLibrary.Components.MappingProfile;
+using System.Diagnostics;
 
 namespace MyLibrary;
 
@@ -37,63 +40,15 @@ public class App : IApp
     }
     public void Run()
     {
-        var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
+        //InsertData();
 
-        foreach (var book in books)
+        var booksFromDb = _myLibraryDbContext.Books.ToList();
+
+        foreach (var bookFromDb in booksFromDb) 
         {
-            _myLibraryDbContext.Books.Add(new Book
-            {
-                AuthorName = book.AuthorName,
-
-                AuthorSurname = book.AuthorSurname,
-
-                CollectiveAuthor = book.CollectiveAuthor,
-
-                Title = book.Title,
-
-                PublishingHouse = book.PublishingHouse,
-
-                PlaceOfPublication = book.PlaceOfPublication,
-
-                YearOfPublication = book.YearOfPublication,
-
-                PageNumber = book.PageNumber,
-
-                ISBN = book.ISBN,
-
-                PlaceInLibrary = book.PlaceInLibrary,
-
-                Owner = book.Owner,
-
-                IsForSale = book.IsForSale,
-
-                Price = book.Price,
-
-                IsLent = book.IsLent,
-
-                IsBorrowed = book.IsBorrowed,
-
-                DateOfBorrowedOrLent = book.DateOfBorrowedOrLent,
-            });
+            Console.WriteLine($"{bookFromDb.AuthorName} {bookFromDb.AuthorSurname}{bookFromDb.CollectiveAuthor}," +
+                $"\n\t{bookFromDb.Title} \n\t{bookFromDb.PageNumber} \n\t{bookFromDb.Id}");
         }
-
-        _myLibraryDbContext.SaveChanges();
-
-
-        //        2. * *Konfiguracja * *: Następnie utwórz mapowanie, mówiąc Automapperowi, jak przenosić dane. Możesz to zrobić w specjalnej klasie:
-        //   ```csharp
-        //var config = new MapperConfiguration(cfg =>
-        //{
-        //    cfg.CreateMap<Order, OrderDto>();Microsoft.EntityFrameworkCore.DbUpdateException: 'An error occurred while saving the entity changes. See the inner exception for details.'
-
-        //});
-        //var mapper = config.CreateMapper();
-        //   ```
-
-        //3. * *Użycie * *: Kiedy potrzebujesz, wykonujesz mapowanie, tak jakbyś przełożył zawartość z jednej skrzynki do drugiej:
-        //   ```csharp
-        //   var orderDto = mapper.Map<OrderDto>(order);
-        //   ```
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
@@ -734,5 +689,58 @@ public class App : IApp
                 }
             }
         }
+    }
+
+    private void InsertData()
+    {
+        var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
+
+        //var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookEntity>());
+
+        //var mapper = config.CreateMapper();
+
+        //var bookEntities = mapper.Map<List<BookEntity>>(books);
+
+        //_myLibraryDbContext.AddRange(bookEntities);
+
+        foreach (var book in books)
+        {
+            _myLibraryDbContext.Books.Add(new Book
+            {
+                AuthorName = book.AuthorName,
+
+                AuthorSurname = book.AuthorSurname,
+
+                CollectiveAuthor = book.CollectiveAuthor,
+
+                Title = book.Title,
+
+                PublishingHouse = book.PublishingHouse,
+
+                PlaceOfPublication = book.PlaceOfPublication,
+
+                YearOfPublication = book.YearOfPublication,
+
+                PageNumber = book.PageNumber,
+
+                ISBN = book.ISBN,
+
+                PlaceInLibrary = book.PlaceInLibrary,
+
+                Owner = book.Owner,
+
+                IsForSale = book.IsForSale,
+
+                Price = book.Price,
+
+                IsLent = book.IsLent,
+
+                IsBorrowed = book.IsBorrowed,
+
+                DateOfBorrowedOrLent = book.DateOfBorrowedOrLent,
+            });
+        }
+
+        _myLibraryDbContext.SaveChanges();
     }
 }
