@@ -15,8 +15,9 @@ using AutoMapper;
 using System.Threading.Tasks;
 using System;
 using static System.Reflection.Metadata.BlobBuilder;
-//using MyLibrary.Components.MappingProfile;
+using MyLibrary.Components.MappingProfile;
 using System.Diagnostics;
+using Microsoft.EntityFrameworkCore;
 
 namespace MyLibrary;
 
@@ -27,9 +28,10 @@ public class App : IApp
     private readonly IUserCommunication _userCommunication;
     private readonly ICsvReader _csvReader;
     private readonly MyLibraryDbContext _myLibraryDbContext;
+    private readonly IMapper _mapper;
 
     public App(IRepository<Book> fileRepository, IBooksDataProvider booksDataProvider, 
-        IUserCommunication userCommunication, ICsvReader csvReader, MyLibraryDbContext myLibraryDbContext)
+        IUserCommunication userCommunication, ICsvReader csvReader, MyLibraryDbContext myLibraryDbContext, IMapper mapper)
     {
         _fileRepository = fileRepository;
         _booksDataProvider = booksDataProvider;
@@ -37,18 +39,18 @@ public class App : IApp
         _csvReader = csvReader;
         _myLibraryDbContext = myLibraryDbContext;
         _myLibraryDbContext.Database.EnsureCreated();
+        _mapper = mapper;
     }
     public void Run()
     {
         //InsertData();
+        //InsertDataWithAutoMapper();
+        //ReadAllBookFromDb();
 
-        var booksFromDb = _myLibraryDbContext.Books.ToList();
 
-        foreach (var bookFromDb in booksFromDb) 
-        {
-            Console.WriteLine($"{bookFromDb.AuthorName} {bookFromDb.AuthorSurname}{bookFromDb.CollectiveAuthor}," +
-                $"\n\t{bookFromDb.Title} \n\t{bookFromDb.PageNumber} \n\t{bookFromDb.Id}");
-        }
+        var monuka = this.ReadFirst("Monuka Ćwiek (red.)");
+        monuka.CollectiveAuthor = "Monika Ćwiek (red.)";
+        _myLibraryDbContext.SaveChanges();
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
@@ -691,6 +693,59 @@ public class App : IApp
         }
     }
 
+    private BookEntity? ReadFirst(string name)
+    {
+        return _myLibraryDbContext.BookEntities.FirstOrDefault(x => x.CollectiveAuthor == name);
+    }
+
+    private void ReadAllBookFromDb()
+    {
+        var booksFromDb = _myLibraryDbContext.BookEntities.ToList();
+
+        foreach (var bookFromDb in booksFromDb)
+        {
+            Console.WriteLine($"{bookFromDb.AuthorName} {bookFromDb.AuthorSurname}{bookFromDb.CollectiveAuthor}," +
+                $"\n\t{bookFromDb.Title} \n\t{bookFromDb.PageNumber}");
+        }
+    }
+
+    private void InsertDataWithAutoMapper()
+    {
+
+        var optionsBuilder = new DbContextOptionsBuilder<MyLibraryDbContext>();
+
+        using (var context = new MyLibraryDbContext(optionsBuilder.Options))
+        {
+            var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
+            var bookEntities = _mapper.Map<IEnumerable<BookEntity>>(books);
+            context.BookEntities.AddRange(bookEntities);
+            context.SaveChanges();
+        }
+    }
+
+    //==================================================================================
+    //using (var scope = app.Services.CreateScope())
+    //{
+    //    var context = scope.ServiceProvider.GetRequiredService<MyLibraryDbContext>();
+    //    var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+
+    //    var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
+    //    var bookEntities = mapper.Map<IEnumerable<BookEntity>>(books);
+
+    //    context.Books.AddRange(bookEntities);
+    //    context.SaveChanges();
+    //}
+    //=================================================================================
+    //var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
+
+    //var source = new Book { Name = "Test" };
+    //var bookEntities = _mapper.Map<BookEntity>(books);
+
+    //_myLibraryDbContext.AddRange(bookEntities);
+
+    //_myLibraryDbContext.SaveChanges();
+//}
+
     private void InsertData()
     {
         var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
@@ -705,7 +760,7 @@ public class App : IApp
 
         foreach (var book in books)
         {
-            _myLibraryDbContext.Books.Add(new Book
+            _myLibraryDbContext.BookEntities.Add(new BookEntity 
             {
                 AuthorName = book.AuthorName,
 
