@@ -46,12 +46,12 @@ public class App : IApp
         //InsertData();
         //InsertDataWithAutoMapper();
         //ReadAllBookFromDb();
-        ReadGrupedBooksFromDb();
+        //ReadGrupedBooksFromDb();
 
 
-        //var george = this.ReadFirst("Jowi");
-        //george.Owner = "Jowita";
-        //_myLibraryDbContext.SaveChanges();
+        var monika = this.ReadFirst("Nela na wyspie kangura");
+        _myLibraryDbContext.Books.Remove(monika);
+        _myLibraryDbContext.SaveChanges();
 
         //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
@@ -696,7 +696,7 @@ public class App : IApp
 
     private Book? ReadFirst(string name)
     {
-        return _myLibraryDbContext.Books.FirstOrDefault(x => x.Owner == name);
+        return _myLibraryDbContext.Books.FirstOrDefault(x => x.Title == name);
     }
 
     private void ReadGrupedBooksFromDb()
