@@ -16,7 +16,8 @@ public class UserCommunication : IUserCommunication
     public string? MainMenu()
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine("(1) wyświetl wszystkie książki; (2) dodaj nową książkę; (3) usuń książkę; (4) filtry; (q) opuść aplikację");
+        Console.WriteLine("(1) wyświetl wszystkie książki; (2) dodaj nową książkę; (3) usuń książkę; (4) filtry; (5) aktualizacja; " +
+            "\n(q) opuść aplikację");
         Console.ResetColor();
         var input = Console.ReadLine();
         return input;
@@ -138,7 +139,7 @@ public class UserCommunication : IUserCommunication
             "\n(l) książki, których objętość jest większa niż wybrana liczba stron; " +
             "\n(m) książki wypożyczone od kogoś; \n(n) książki pożyczone komuś; \n(o) książki na sprzedaż; " +
             "\n(p) tylko tytuł i lokalizacja w bibliotece??; \n(r) pierwsza książka w bibliotece należąca do danego włąśiciela; " +
-            "\n(s) ostatnia książka na liście, należąca do danego właściciela; \n(t) książka o daym Id; " +
+            "\n(s) ostatnia książka na liście, należąca do danego właściciela; \n(t) książka o danym Id; " +
             "\n(u) pierwsze 'x' książek z listy w kolejności alfabetycznej; " +
             "\n(v) książki w zakresie (x..y) z listy w kolejności alfabetycznej; \n(w) książki o Id mniejszym od 'x'; " +
             "\n(x) książki pomijając pierwszych 'x' w kolejności alfabetycznej; " +

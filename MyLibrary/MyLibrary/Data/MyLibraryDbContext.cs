@@ -8,8 +8,13 @@ public class MyLibraryDbContext : DbContext
     public MyLibraryDbContext(DbContextOptions<MyLibraryDbContext> options) 
         : base(options)
     {
-
     }
 
-    public DbSet<Book> Books { get; set; }
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("Data Source=LAPTOP-R6OVM9N5\\SQLEXPRESS;Initial Catalog=MyLibraryStorage;Integrated Security=True;Trust Server Certificate=True");
+    }
+
+    public DbSet<Book> Books {  get; set; }
+
 }
