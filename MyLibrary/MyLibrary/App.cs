@@ -19,6 +19,7 @@ using static System.Reflection.Metadata.BlobBuilder;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MyLibrary;
 
@@ -150,7 +151,8 @@ public class App : IApp
                         }
                         break;
                     case "5":
-                        _userCommunication.MainMethodsHeaders("Filtry:" + Environment.NewLine + "-------");
+                        _userCommunication.MainMethodsHeaders("Wskaż książkę, której dane chcesz uaktualnić/poprawić; " +
+                            "\n(1) podając tytuł; (2) podając ID; wciśnij Enter, aby wróć do menu głównego ");
                         try
                         {
                             UpdateBooks(dbRepository);
@@ -718,17 +720,39 @@ public class App : IApp
                                 _userCommunication.WriteChunkToConsole(chunkBooks);
                             }
                             break;
+                        case "bx":
+                            input = _userCommunication.InputFilterData("Podaj Id ksiązki");
+                            if (int.TryParse(input, out int result9) && result9 > 0)
+                            {
+                                id = result9;
+                            }
+                            else
+                            {
+                                throw new Exception("\nPodane dane w 'ID' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
+                            }
+                            _userCommunication.FilterHeader($"Książka o Id = {id}:"
+                                + Environment.NewLine + "===================");
+                            var book4 = dbRepository.GetById(id);
+                            if (book4 == null)
+                            {
+                                Console.WriteLine("Nie znaleziono książki o tym Id!");
+                            }
+                            else
+                            {
+                                _userCommunication.WriteFilterBooksToConsole(book4);
+                            }
+                            //var book4 = _booksDataProvider.SingleOrDefaultById(id);
+                            break;
                         default:
                             _userCommunication.ExceptionWrongMenuInput();
                             break;
                     }
                 }
             }
+
             void UpdateBooks(IRepository<Book> dbRepository)
             {
-
-                Console.WriteLine("Wskaż książkę, której dane chcesz uaktualnić/poprawić; (1) podając tytuł; (2) podając ID" +
-                "\n(q) wróć do głównego menu");
+                Console.WriteLine("");
                 Book updateBook;
                 var input = Console.ReadLine();
                 switch (input)
@@ -743,163 +767,170 @@ public class App : IApp
                         throw new Exception("Wrong input value");
                 }
 
-                Console.WriteLine(updateBook);
-                Console.WriteLine("Podaj, którą właściwość książki chcesz uaktualnić:" +
-                    "a - AuthorName; b - AuthorSurname; c - CollectiveAuthor; d - Title; e - PublishingHouse; f - PlaceOfPublication;" +
-                    "g - YearOfPublication; h - PageNumber; i - ISBN; j - PlaceInLibrary; k - Owner; l -IsForSale; m - Price; n - IsLent;" +
-                    "o - IsBorrowed; p - DateOfBorrowedOrLent");
-                var input3 = Console.ReadLine();
-                string? input4;
-                var inf1 = "Informacja obowiązkowa; dane muszą być wprowadzone";
-                var inf2 = "Podana wartość jest null / informacja opcjonalana";
-                switch (input3)
+                _userCommunication.WriteFilterBooksToConsole(updateBook);
+
+                while (true)
                 {
-                    case "a":
-                        input4 = _userCommunication.WriteBookProperties("poprawne imię autora");
-                        updateBook.AuthorName = input4;
+                    Console.WriteLine("Podaj, którą właściwość książki chcesz uaktualnić:" +
+                    "\na - AuthorName; \nb - AuthorSurname; \nc - CollectiveAuthor; \nd - Title; \ne - PublishingHouse; " +
+                    "\nf - PlaceOfPublication; \ng - YearOfPublication; \nh - PageNumber; \ni - ISBN; \nj - PlaceInLibrary; \nk - Owner; " +
+                    "\nl -IsForSale; \nm - Price; \nn - IsLent; \no - IsBorrowed; \np - DateOfBorrowedOrLent; \nq - wróć do menu głównego");
+                    var input3 = Console.ReadLine();
+                    if (input3 == "q")
+                    {
                         break;
-                    case "b":
-                        input4 = _userCommunication.WriteBookProperties("poprawne nazwisko autora");
-                        updateBook.AuthorSurname = input4;
-                        break;
-                    case "c":
-                        input4 = _userCommunication.WriteBookProperties("poprawne dane autora zbiorowego");
-                        updateBook.CollectiveAuthor = input4;
-                        break;
-                    case "d":
-                        input4 = _userCommunication.WriteBookProperties("poprawną tytuł(*)");
-                        updateBook.Title = InputIsNullOrEmpty(input4, inf1); ;
-                        break;
-                    case "e":
-                        input4 = _userCommunication.WriteBookProperties("poprawną nazwę wydawnictwa");
-                        updateBook.PublishingHouse = input4;
-                        break;
-                    case "f":
-                        input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
-                        updateBook.PlaceOfPublication = input4;
-                        break;
-                    case "g":
-                        input4 = _userCommunication.WriteBookProperties("poprawny rok wydania (rrrr)");
-                        int? _yearOfPublication;
-                        if (int.TryParse(input4, out int result) && result > 999 && result < 10000)
-                        {
-                            _yearOfPublication = result;
-                        }
-                        else if (InputIsNullOrEmpty(input4, inf2) == null)
-                        {
-                            _yearOfPublication = null;
-                        }
-                        else
-                        {
-                            throw new Exception("\nPodane dane w 'rok wydania' mają niewłaściwą wartość; wpisz liczbę czterocyfrową dodatnią (rrrr)");
-                        }
-                        updateBook.YearOfPublication = _yearOfPublication;
-                        break;
-                    case "h":
-                        input4 = _userCommunication.WriteBookProperties("poprawną liczbę stron");
-                        int? _pagesNumber;
-                        if (int.TryParse(input4, out int result2) && result2 > 0)
-                        {
-                            _pagesNumber = result2;
-                        }
-                        else if (InputIsNullOrEmpty(input4, inf2) == null)
-                        {
-                            _pagesNumber = null;
-                        }
-                        else
-                        {
-                            throw new Exception("\nPodane dane w 'liczba stron' mają niewłaściwą wartość; wpisz liczbę całkowitą dodatnią");
-                        }
-                        updateBook.PageNumber = _pagesNumber;
-                        break;
-                    case "i":
-                        input4 = _userCommunication.WriteBookProperties("poprawny ISBN");
-                        updateBook.ISBN = input4;
-                        break;
-                    case "j":
-                        input4 = _userCommunication.WriteBookProperties("aktualne miejsce w bibliotece");
-                        updateBook.PlaceInLibrary = input4;
-                        break;
-                    case "k":
-                        input4 = _userCommunication.WriteBookProperties("poprawne dane właściciela");
-                        updateBook.Owner = input4;
-                        break;
-                    case "l":
-                        bool _isForSale;
-                        const string propertyForSale = "książka jest na sprzedaż";
-                        BoolValidation(out input4, out _isForSale, propertyForSale);
-                        updateBook.IsForSale = _isForSale;
-                        break;
-                    case "m":
-                        decimal? _price;
-                        if (updateBook.IsForSale == true)
-                        {
-                            input4 = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
-                            if (decimal.TryParse(input4, out decimal result3) && result3 > 0)
+                    }
+                    string? input4;
+                    var inf1 = "Informacja obowiązkowa; dane muszą być wprowadzone";
+                    var inf2 = "Podana wartość jest null / informacja opcjonalana";
+                    switch (input3)
+                    {
+                        case "a":
+                            input4 = _userCommunication.WriteBookProperties("poprawne imię autora");
+                            updateBook.AuthorName = input4;
+                            break;
+                        case "b":
+                            input4 = _userCommunication.WriteBookProperties("poprawne nazwisko autora");
+                            updateBook.AuthorSurname = input4;
+                            break;
+                        case "c":
+                            input4 = _userCommunication.WriteBookProperties("poprawne dane autora zbiorowego");
+                            updateBook.CollectiveAuthor = input4;
+                            break;
+                        case "d":
+                            input4 = _userCommunication.WriteBookProperties("poprawną tytuł(*)");
+                            updateBook.Title = InputIsNullOrEmpty(input4, inf1); ;
+                            break;
+                        case "e":
+                            input4 = _userCommunication.WriteBookProperties("poprawną nazwę wydawnictwa");
+                            updateBook.PublishingHouse = input4;
+                            break;
+                        case "f":
+                            input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
+                            updateBook.PlaceOfPublication = input4;
+                            break;
+                        case "g":
+                            input4 = _userCommunication.WriteBookProperties("poprawny rok wydania (rrrr)");
+                            int? _yearOfPublication;
+                            if (int.TryParse(input4, out int result) && result > 999 && result < 10000)
                             {
-                                _price = result3;
+                                _yearOfPublication = result;
                             }
                             else if (InputIsNullOrEmpty(input4, inf2) == null)
                             {
-                                _price = null;
+                                _yearOfPublication = null;
                             }
                             else
                             {
-                                throw new Exception("Podana liczba w 'cena książki' ma niewłaściwą wartość; wpisz dowolną liczbę większą od 0 (00,00)");
+                                throw new Exception("\nPodane dane w 'rok wydania' mają niewłaściwą wartość; wpisz liczbę czterocyfrową dodatnią (rrrr)");
                             }
-                        }
-                        else
-                        {
-                            throw new Exception("Jeśli chcesz wpisać cenę ksiązki, najpierw zaznacz, że jest na sprzedaż");
-                        }
-                        updateBook.Price = _price;
-                        break;
-                    case "n":
-                        bool _isLent;
-                        const string propertyIsLent = "książka jest komuś pożyczona";
-                        BoolValidation(out input4, out _isLent, propertyIsLent);
-                        updateBook.IsLent = _isLent;
-                        break;
-                    case "o":
-                        bool _isBorrowed;
-                        const string propertyIsBorrowed = "książka jest wypożyczona";
-                        BoolValidation(out input4, out _isBorrowed, propertyIsBorrowed);
-                        updateBook.IsBorrowed = _isBorrowed;
-                        break;
-                    case "p":
-                        input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
-                        DateTime? _dateOfBorrowedOrLent;
-                        if (updateBook.IsBorrowed == true || updateBook.IsLent == true)
-                        {
-                            input4 = _userCommunication.WriteBookProperties("poprawną datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
-                            if (DateTime.TryParse(input4, out DateTime result4))
+                            updateBook.YearOfPublication = _yearOfPublication;
+                            break;
+                        case "h":
+                            input4 = _userCommunication.WriteBookProperties("poprawną liczbę stron");
+                            int? _pagesNumber;
+                            if (int.TryParse(input4, out int result2) && result2 > 0)
                             {
-                                _dateOfBorrowedOrLent = result4;
+                                _pagesNumber = result2;
                             }
                             else if (InputIsNullOrEmpty(input4, inf2) == null)
                             {
-                                _dateOfBorrowedOrLent = null;
+                                _pagesNumber = null;
                             }
                             else
                             {
-                                throw new Exception("Podane dane w 'data (wy)pożyczenia' mają niewłaściwą wartość; " +
-                                    "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+                                throw new Exception("\nPodane dane w 'liczba stron' mają niewłaściwą wartość; wpisz liczbę całkowitą dodatnią");
                             }
-                        }
-                        else
-                        {
-                            throw new Exception("Aby wpisać datę (wy)pożyczenia, należy najpierw zaznaczyć, że książka jest " +
-                                "komuć pożyczona albo od kogoś wypożyczona");
-                        }
-                        updateBook.DateOfBorrowedOrLent = _dateOfBorrowedOrLent;
-                        break;
-                    default:
-                        _userCommunication.ExceptionWrongMenuInput();
-                        break;
+                            updateBook.PageNumber = _pagesNumber;
+                            break;
+                        case "i":
+                            input4 = _userCommunication.WriteBookProperties("poprawny ISBN");
+                            updateBook.ISBN = input4;
+                            break;
+                        case "j":
+                            input4 = _userCommunication.WriteBookProperties("aktualne miejsce w bibliotece");
+                            updateBook.PlaceInLibrary = input4;
+                            break;
+                        case "k":
+                            input4 = _userCommunication.WriteBookProperties("poprawne dane właściciela");
+                            updateBook.Owner = input4;
+                            break;
+                        case "l":
+                            bool _isForSale;
+                            const string propertyForSale = "książka jest na sprzedaż";
+                            BoolValidation(out input4, out _isForSale, propertyForSale);
+                            updateBook.IsForSale = _isForSale;
+                            break;
+                        case "m":
+                            decimal? _price;
+                            if (updateBook.IsForSale == true)
+                            {
+                                input4 = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
+                                if (decimal.TryParse(input4, out decimal result3) && result3 > 0)
+                                {
+                                    _price = result3;
+                                }
+                                else if (InputIsNullOrEmpty(input4, inf2) == null)
+                                {
+                                    _price = null;
+                                }
+                                else
+                                {
+                                    throw new Exception("Podana liczba w 'cena książki' ma niewłaściwą wartość; wpisz dowolną liczbę większą od 0 (00,00)");
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Jeśli chcesz wpisać cenę ksiązki, najpierw zaznacz, że jest na sprzedaż");
+                            }
+                            updateBook.Price = _price;
+                            break;
+                        case "n":
+                            bool _isLent;
+                            const string propertyIsLent = "książka jest komuś pożyczona";
+                            BoolValidation(out input4, out _isLent, propertyIsLent);
+                            updateBook.IsLent = _isLent;
+                            break;
+                        case "o":
+                            bool _isBorrowed;
+                            const string propertyIsBorrowed = "książka jest wypożyczona";
+                            BoolValidation(out input4, out _isBorrowed, propertyIsBorrowed);
+                            updateBook.IsBorrowed = _isBorrowed;
+                            break;
+                        case "p":
+                            input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
+                            DateTime? _dateOfBorrowedOrLent;
+                            if (updateBook.IsBorrowed == true || updateBook.IsLent == true)
+                            {
+                                input4 = _userCommunication.WriteBookProperties("poprawną datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
+                                if (DateTime.TryParse(input4, out DateTime result4))
+                                {
+                                    _dateOfBorrowedOrLent = result4;
+                                }
+                                else if (InputIsNullOrEmpty(input4, inf2) == null)
+                                {
+                                    _dateOfBorrowedOrLent = null;
+                                }
+                                else
+                                {
+                                    throw new Exception("Podane dane w 'data (wy)pożyczenia' mają niewłaściwą wartość; " +
+                                        "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+                                }
+                            }
+                            else
+                            {
+                                throw new Exception("Aby wpisać datę (wy)pożyczenia, należy najpierw zaznaczyć, że książka jest " +
+                                    "komuć pożyczona albo od kogoś wypożyczona");
+                            }
+                            updateBook.DateOfBorrowedOrLent = _dateOfBorrowedOrLent;
+                            break;
+                        default:
+                            _userCommunication.ExceptionWrongMenuInput();
+                            break;
+                    }
+
+                    dbRepository.Save();
                 }
-
-                dbRepository.Save();
-
             }
         }
     }

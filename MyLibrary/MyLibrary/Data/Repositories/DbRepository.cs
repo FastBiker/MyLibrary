@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using MyLibrary.Data.Entities;
+using System.Linq;
 
 namespace MyLibrary.Data.Repositories;
 
@@ -51,7 +52,10 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
 
     public T? GetById(int id)
     {
-        throw new NotImplementedException();
+        return _dbSet.Find(id);
+        //return _dbSet.FirstOrDefault(x => x.Id == id);
+        //return GetAll().SingleOrDefault(x => x.Id == id);
+
     }
 
     public void Remove(T item)
