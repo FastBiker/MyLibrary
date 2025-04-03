@@ -127,7 +127,8 @@ public class App : IApp
                         break;
 
                     case "3":
-                        _userCommunication.MainMethodsHeaders("Usuń książkę, wpisując jej tytuł:");
+                        _userCommunication.MainMethodsHeaders("Wskaż i usuń książkę;" 
+                            +"\n(1) podając tytuł; (2) podając ID; wciśnij Enter, aby wróć do menu głównego");
                         try
                         {
                             RemoveBook(dbRepository);
@@ -349,33 +350,22 @@ public class App : IApp
 
             void RemoveBook(IRepository<Book> dbRepository)
             {
-                string? input = _userCommunication.WriteRemovedBookTitle();
-                var books = dbRepository.GetAll();
-                var bookToRemove = books.FirstOrDefault(x => x.Title == input);
-                //foreach (var bookToRemove in booksToRemove)
+                Book bookToRemove = FindBookByTitleOrIdMenu(dbRepository);
+
+                dbRepository.Remove(bookToRemove);
+
+                //string? input = _userCommunication.WriteRemovedBookTitle();
+                //var books = dbRepository.GetAll();
+                //var bookToRemove = books.FirstOrDefault(x => x.Title == input);
+
+                //if (bookToRemove != null)
                 //{
-                //    Console.WriteLine(bookToRemove);
-                //}
-                //Console.WriteLine("Podaj 'Id' książki, którą chcesz usunąć:");
-                //var input1 = Console.ReadLine();
-                //int id;
-                //if (int.TryParse(input, out int result) && result > 0)
-                //{
-                //    id = result;
+                //    dbRepository.Remove(bookToRemove);
                 //}
                 //else
                 //{
-                //    throw new Exception("\nPodane dane w 'ID' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
+                //    throw new Exception($"Book '{input}' hasn't found in your library");
                 //}
-
-                if (bookToRemove != null)
-                {
-                    dbRepository.Remove(bookToRemove);
-                }
-                else
-                {
-                    throw new Exception($"Book '{input}' hasn't found in your library");
-                }
 
                 dbRepository.Save();
             }
@@ -752,20 +742,7 @@ public class App : IApp
 
             void UpdateBooks(IRepository<Book> dbRepository)
             {
-                Console.WriteLine("");
-                Book updateBook;
-                var input = Console.ReadLine();
-                switch (input)
-                {
-                    case "1":
-                        updateBook = FindBookByTitle(dbRepository);
-                        break;
-                    case "2":
-                        updateBook = FindBookById(dbRepository);
-                        break;
-                    default:
-                        throw new Exception("Wrong input value");
-                }
+                Book updateBook = FindBookByTitleOrIdMenu(dbRepository);
 
                 _userCommunication.WriteFilterBooksToConsole(updateBook);
 
@@ -935,15 +912,39 @@ public class App : IApp
         }
     }
 
+    private Book FindBookByTitleOrIdMenu(IRepository<Book> dbRepository)
+    {
+        Book foundBook;
+        var input = Console.ReadLine();
+        switch (input)
+        {
+            case "1":
+                foundBook = FindBookByTitle(dbRepository);
+                break;
+            case "2":
+                foundBook = FindBookById(dbRepository);
+                break;
+            default:
+                throw new Exception("Wrong input value");
+        }
+
+        return foundBook;
+    }
+
     private static Book FindBookByTitle(IRepository<Book> dbRepository)
     {
-        Console.WriteLine("Podaj tytuł książki, któą chcesz uaktualnić:");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("Podaj tytuł książki:");
+        Console.ResetColor();
         var input1 = Console.ReadLine();
         var updateBooks = dbRepository.GetAll().Where(x => x.Title == input1).ToList();
         Book updateBook;
         if (updateBooks.Count > 1)
         {
-            throw new Exception($"There are many books with the title '{input1}'; find a book that intrests you by its Id!");
+            List<int> Ids = updateBooks.Select(x => x.Id).ToList();
+
+            throw new Exception($"There are {updateBooks.Count} books (Id: {string.Join(", ", Ids)}) with the title '{input1}';" +
+                $"\nFind a book that intrests you by its Id!");
         }
         else if (updateBooks.Count == 1)
         {
@@ -957,9 +958,11 @@ public class App : IApp
         return updateBook;
     }
 
-    private static Book FindBookById(IRepository<Book> dbRepository)
+    private Book FindBookById(IRepository<Book> dbRepository)
     {
-        Console.WriteLine("Podaj Id książki, któą chcesz uaktualnić:");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine("Podaj Id książki:");
+        Console.ResetColor();
         var input2 = Console.ReadLine();
         int id;
         if (int.TryParse(input2, out int result6) && result6 > 0)
@@ -970,7 +973,7 @@ public class App : IApp
         {
             throw new Exception("\nPodane dane w 'Id' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od 0");
         }
-        var updateBook = dbRepository.GetAll().Single(x => x.Id == id);
+        var updateBook = _booksDataProvider.SingleById(id);//dbRepository.GetAll().Single(x => x.Id == id);
         return updateBook;
     }
 
