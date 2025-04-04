@@ -78,7 +78,16 @@ public class UserCommunication : IUserCommunication
         return input;
     }
 
-    public string? WriteRemovedBookTitle()
+    public string? WriteBookPropertyValue(string property)
+    {
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"Podaj {property} książki:");
+        Console.ResetColor();
+        var input = Console.ReadLine();
+        return input;
+    }
+
+    public string? WriteInput()
     {
         return Console.ReadLine();
     }
@@ -206,5 +215,15 @@ public class UserCommunication : IUserCommunication
             WriteFilterBooksToConsole(item);
         }
         Console.WriteLine("############################################");
+    }
+
+    public string? BookPropertiesUpdateMenu()
+    {
+        Console.WriteLine("Podaj, którą właściwość książki chcesz uaktualnić:" +
+        "\na - AuthorName; \nb - AuthorSurname; \nc - CollectiveAuthor; \nd - Title; \ne - PublishingHouse; " +
+        "\nf - PlaceOfPublication; \ng - YearOfPublication; \nh - PageNumber; \ni - ISBN; \nj - PlaceInLibrary; \nk - Owner; " +
+        "\nl -IsForSale; \nm - Price; \nn - IsLent; \no - IsBorrowed; \np - DateOfBorrowedOrLent; \nq - wróć do menu głównego");
+        var input3 = Console.ReadLine();
+        return input3;
     }
 }

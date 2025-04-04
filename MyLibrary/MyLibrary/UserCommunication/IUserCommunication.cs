@@ -22,7 +22,9 @@ public interface IUserCommunication
 
     string? SaveBook();
 
-    string? WriteRemovedBookTitle();
+    string? WriteBookPropertyValue(string property);
+
+    string? WriteInput();
 
     void WriteCopyBookToConsole(Book? copyBook);
 
@@ -51,4 +53,6 @@ public interface IUserCommunication
     void InputRange(out string? input1, out string? input2);
 
     void WriteChunkToConsole(Book[] chunkBooks);
+
+    string? BookPropertiesUpdateMenu();
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using MyLibrary.Data.Entities;
 using System.Linq;
 
@@ -7,7 +8,6 @@ namespace MyLibrary.Data.Repositories;
 public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
     private readonly MyLibraryDbContext _myLibraryDbContext;
-    //private readonly DbContext _dbContext;
     private readonly DbSet<T> _dbSet;
     private readonly Action<T>? _itemAddedCallback;
     private readonly Action<T>? _itemRemovedCallback;
@@ -16,7 +16,6 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
     {
         _myLibraryDbContext = myLibraryDbContext;
         _dbSet = _myLibraryDbContext.Set<T>();
-        //_myLibraryDbContext.Database.EnsureCreated();
         _itemAddedCallback = itemAddedCallback;
         _itemRemovedCallback = itemRemovedCallback;
     }
@@ -70,3 +69,23 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
         _myLibraryDbContext.SaveChanges();
     }
 }
+
+//``csharp
+//public class EmployeeRepository
+//{
+//    private string connectionString;
+
+//    public EmployeeRepository(string connString)
+//    {
+//        connectionString = connString;
+//    }
+
+//    public List<Employee> GetAllEmployees()
+//    {
+//        using (SqlConnection connection = new SqlConnection(connectionString))
+//        {
+//            connection.Open();
+//            // Tutaj możesz wykonywać zapytania do bazy danych
+//        }
+//    }
+//}
