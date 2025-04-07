@@ -11,6 +11,7 @@ using MyLibrary.UserCommunication;
 using MyLibrary.Data;
 using Microsoft.EntityFrameworkCore;
 using static System.Runtime.InteropServices.JavaScript.JSType;
+using MyLibrary.Components.InputDataValidation;
 //using MyLibrary.Components.MappingProfile;
 
 var services = new ServiceCollection();
@@ -18,6 +19,7 @@ services.AddSingleton<IApp, App>();
 services.AddSingleton<IRepository<Book>, DbRepository<Book>>();
 services.AddSingleton<IBooksDataProvider, BooksDataProvider>();
 services.AddSingleton<IUserCommunication, UserCommunication>();
+services.AddSingleton<IInputDataValidation, InputDataValidation>();
 services.AddSingleton<ICsvReader, ProjectCsvReader>();
 services.AddSingleton<IConvertFileToCsv, ConvertFileToCsv>();
 services.AddDbContext<MyLibraryDbContext>();//(options => options

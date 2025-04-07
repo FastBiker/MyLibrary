@@ -1,6 +1,7 @@
 ﻿using MyLibrary.Components.DataProviders.Extensions;
 using MyLibrary.Data.Entities;
 using MyLibrary.Data.Repositories;
+using MyLibrary.UserCommunication;
 using System.Text;
 
 namespace MyLibrary.Components.DataProviders;
@@ -8,9 +9,11 @@ namespace MyLibrary.Components.DataProviders;
 public class BooksDataProvider : IBooksDataProvider
 {
     private readonly IRepository<Book> _bookRepository;
-    public BooksDataProvider(IRepository<Book> bookRepository)
+    private readonly IUserCommunication _userCommunication;
+    public BooksDataProvider(IRepository<Book> bookRepository, IUserCommunication userCommunication)
     {
         _bookRepository = bookRepository;
+        _userCommunication = userCommunication;
     }
 
     //select
@@ -316,5 +319,56 @@ public class BooksDataProvider : IBooksDataProvider
         return chunkBooks;
 
 
+    }
+
+    public Book FindBookByTitle(IRepository<Book> dbRepository)
+    {
+        string? input1 = _userCommunication.WriteBookPropertyValue("tytuł");
+        var foundBooks = dbRepository.GetAll().Where(x => x.Title == input1).ToList();
+        Book foundBook;
+        if (foundBooks.Count > 1)
+        {
+            List<int> Ids = foundBooks.Select(x => x.Id).ToList();
+
+            throw new Exception($"There are {foundBooks.Count} books (Id: {string.Join(", ", Ids)}) with the title '{input1}';" +
+                $"\nFind a book that intrests you by its Id!");
+        }
+        else if (foundBooks.Count == 1)
+        {
+            foundBook = foundBooks.Single();
+        }
+        else
+        {
+            throw new Exception($"Book '{input1}' hasn't found in your library");
+        }
+
+        return foundBook;
+    }
+
+    public Book FindBookById(IRepository<Book> dbRepository)
+    {
+        var input2 = _userCommunication.WriteBookPropertyValue("Id");
+        int id;
+        Book foundBook;
+        if (int.TryParse(input2, out int result6) && result6 > 0)
+        {
+            id = result6;
+        }
+        else
+        {
+            throw new Exception("\nPodane dane w 'Id' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od 0");
+        }
+
+        var book = dbRepository.GetById(id);
+
+        if (book != null)
+        {
+            foundBook = book;
+        }
+        else
+        {
+            throw new Exception($"Book '{input2}' hasn't found in your library");
+        }
+        return foundBook;
     }
 }

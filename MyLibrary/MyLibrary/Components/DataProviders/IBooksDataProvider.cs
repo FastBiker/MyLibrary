@@ -1,4 +1,5 @@
 ﻿using MyLibrary.Data.Entities;
+using MyLibrary.Data.Repositories;
 
 namespace MyLibrary.Components.DataProviders;
 
@@ -75,4 +76,8 @@ public interface IBooksDataProvider
 
     // Chunk
     List<Book[]> ChunkBooks(int size);
+
+    Book FindBookByTitle(IRepository<Book> dbRepository);
+
+    Book FindBookById(IRepository<Book> dbRepository);
 }
