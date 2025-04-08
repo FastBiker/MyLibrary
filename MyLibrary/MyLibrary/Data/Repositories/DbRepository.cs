@@ -11,17 +11,23 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
     private readonly DbSet<T> _dbSet;
     private readonly Action<T>? _itemAddedCallback;
     private readonly Action<T>? _itemRemovedCallback;
+    private readonly Action<T>? _itemUpdatedCallback;
 
-    public DbRepository(MyLibraryDbContext myLibraryDbContext, Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
+    public DbRepository(MyLibraryDbContext myLibraryDbContext, Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null, 
+        Action<T>? itemUpdatedCallback = null)
     {
         _myLibraryDbContext = myLibraryDbContext;
         _dbSet = _myLibraryDbContext.Set<T>();
         _itemAddedCallback = itemAddedCallback;
         _itemRemovedCallback = itemRemovedCallback;
+        _itemUpdatedCallback = itemUpdatedCallback;
     }
+
+    public T Property {  get; set; }
 
     public event EventHandler<T> ItemAdded;
     public event EventHandler<T> ItemRemoved;
+    //public event EventHandler<T> ItemUpdated;
 
     public void Add(T item) 
     {
@@ -52,9 +58,6 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
     public T? GetById(int id)
     {
         return _dbSet.Find(id);
-        //return _dbSet.FirstOrDefault(x => x.Id == id);
-        //return GetAll().SingleOrDefault(x => x.Id == id);
-
     }
 
     public void Remove(T item)
@@ -64,28 +67,47 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
         ItemRemoved?.Invoke(this, item);
     }
 
+    public void UpdateProperty<T>(T item, Action<T> updateAction)
+    {
+        updateAction(item);
+        //_itemUpdatedCallback?.Invoke(item);
+        //ItemUpdated?.Invoke(this, item);
+    }
+
     public void Save()
     {
         _myLibraryDbContext.SaveChanges();
     }
 }
 
-//``csharp
-//public class EmployeeRepository
-//{
-//    private string connectionString;
 
-//    public EmployeeRepository(string connString)
+//implementacja EventHandler dla UpdateProperty()
+//``csharp
+//public class YourClass
+//{
+//    public event EventHandler<ItemUpdatedEventArgs<T>> ItemUpdated;
+
+//    public void UpdateProperty<T>(T item, Action<T> updateAction)
 //    {
-//        connectionString = connString;
+//        updateAction(item);
+
+//        // Wywołanie zdarzenia
+//        OnItemUpdated(new ItemUpdatedEventArgs<T>(item));
 //    }
 
-//    public List<Employee> GetAllEmployees()
+//    protected virtual void OnItemUpdated(ItemUpdatedEventArgs<T> e)
 //    {
-//        using (SqlConnection connection = new SqlConnection(connectionString))
-//        {
-//            connection.Open();
-//            // Tutaj możesz wykonywać zapytania do bazy danych
-//        }
+//        ItemUpdated?.Invoke(this, e);
 //    }
 //}
+
+//public class ItemUpdatedEventArgs<T> : EventArgs
+//{
+//    public T Item { get; }
+
+//    public ItemUpdatedEventArgs(T item)
+//    {
+//        Item = item;
+//    }
+//}
+//```

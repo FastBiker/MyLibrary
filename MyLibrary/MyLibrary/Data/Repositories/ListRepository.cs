@@ -28,4 +28,9 @@ public class ListRepository<T> : IRepository<T> where T : class, IEntity, new()
     {
         // Save is not required with List
     }
+
+    public void UpdateProperty<T1>(T1 item, Action<T1> updateAction)
+    {
+        throw new NotImplementedException();
+    }
 }

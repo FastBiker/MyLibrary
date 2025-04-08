@@ -118,4 +118,9 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
         Console.ResetColor();
         // Save is not required with file
     }
+
+    public void UpdateProperty<T1>(T1 item, Action<T1> updateAction)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -72,6 +72,7 @@ public class App : IApp
             var dbRepository = new DbRepository<Book>(myLibraryDbContext, BookAdded, BookRemoved);
             dbRepository.ItemAdded += BookOnItemAdded;
             dbRepository.ItemRemoved += BookOnItemRemoved;
+            dbRepository.ItemUpdated += BookOnItemUpdated;
 
             void BookRemoved(Book item)
             {
@@ -91,6 +92,11 @@ public class App : IApp
             void BookOnItemRemoved(object? sender, Book e)
             {
                 WriteAuditInfoToFileAndConsole(sender, e, auditFileName, "BookDeleted");
+            }
+
+            void BookOnItemUpdated(object? sender, Book e)
+            {
+                WriteAuditInfoToFileAndConsole(sender, e, auditFileName, "BookUpdated");
             }
 
 
@@ -677,27 +683,33 @@ public class App : IApp
                     {
                         case "a":
                             input4 = _userCommunication.WriteBookProperties("poprawne imię autora");
-                            updateBook.AuthorName = input4;
+                            //updateBook.AuthorName = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.AuthorName = input4);
                             break;
                         case "b":
                             input4 = _userCommunication.WriteBookProperties("poprawne nazwisko autora");
-                            updateBook.AuthorSurname = input4;
+                            //updateBook.AuthorSurname = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.AuthorSurname = input4);
                             break;
                         case "c":
                             input4 = _userCommunication.WriteBookProperties("poprawne dane autora zbiorowego");
-                            updateBook.CollectiveAuthor = input4;
+                            //updateBook.CollectiveAuthor = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.CollectiveAuthor = input4);
                             break;
                         case "d":
                             input4 = _userCommunication.WriteBookProperties("poprawną tytuł(*)");
-                            updateBook.Title = _inputValidation.InputIsNullOrEmpty(input4, inf1); ;
+                            //updateBook.Title = _inputValidation.InputIsNullOrEmpty(input4, inf1);
+                            _dbRepository.UpdateProperty(updateBook, x => x.Title = _inputValidation.InputIsNullOrEmpty(input4, inf1));
                             break;
                         case "e":
                             input4 = _userCommunication.WriteBookProperties("poprawną nazwę wydawnictwa");
-                            updateBook.PublishingHouse = input4;
+                            //updateBook.PublishingHouse = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.PublishingHouse = input4);
                             break;
                         case "f":
                             input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
-                            updateBook.PlaceOfPublication = input4;
+                            //updateBook.PlaceOfPublication = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.PlaceOfPublication = input4);
                             break;
                         case "g":
                             input4 = _userCommunication.WriteBookProperties("poprawny rok wydania (rrrr)");
@@ -715,7 +727,8 @@ public class App : IApp
                                 InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
                                 return;
                             }
-                            updateBook.YearOfPublication = _yearOfPublication;
+                            //updateBook.YearOfPublication = _yearOfPublication;
+                            _dbRepository.UpdateProperty(updateBook, x => x.YearOfPublication = _yearOfPublication);
                             break;
                         case "h":
                             input4 = _userCommunication.WriteBookProperties("poprawną liczbę stron");
@@ -733,25 +746,30 @@ public class App : IApp
                                 InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
                                 return;
                             }
-                            updateBook.PageNumber = _pagesNumber;
+                            //updateBook.PageNumber = _pagesNumber;
+                            _dbRepository.UpdateProperty(updateBook, x => x.PageNumber = _pagesNumber);
                             break;
                         case "i":
                             input4 = _userCommunication.WriteBookProperties("poprawny ISBN");
-                            updateBook.ISBN = input4;
+                            //updateBook.ISBN = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.ISBN = input4);
                             break;
                         case "j":
                             input4 = _userCommunication.WriteBookProperties("aktualne miejsce w bibliotece");
-                            updateBook.PlaceInLibrary = input4;
+                            //updateBook.PlaceInLibrary = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.PlaceInLibrary = input4);
                             break;
                         case "k":
                             input4 = _userCommunication.WriteBookProperties("poprawne dane właściciela");
-                            updateBook.Owner = input4;
+                            //updateBook.Owner = input4;
+                            _dbRepository.UpdateProperty(updateBook, x => x.Owner = input4);
                             break;
                         case "l":
                             bool _isForSale;
                             const string propertyForSale = "książka jest na sprzedaż";
                             _inputValidation.BoolValidation(out input4, out _isForSale, propertyForSale);
-                            updateBook.IsForSale = _isForSale;
+                            //updateBook.IsForSale = _isForSale;
+                            _dbRepository.UpdateProperty(updateBook, x => x.IsForSale = _isForSale);
                             break;
                         case "m":
                             decimal? _price;
@@ -776,19 +794,22 @@ public class App : IApp
                             {
                                 throw new Exception("Jeśli chcesz wpisać cenę ksiązki, najpierw zaznacz, że jest na sprzedaż");
                             }
-                            updateBook.Price = _price;
+                            //updateBook.Price = _price;
+                            _dbRepository.UpdateProperty(updateBook, x => x.Price = _price);
                             break;
                         case "n":
                             bool _isLent;
                             const string propertyIsLent = "książka jest komuś pożyczona";
                             _inputValidation.BoolValidation(out input4, out _isLent, propertyIsLent);
-                            updateBook.IsLent = _isLent;
+                            //updateBook.IsLent = _isLent;
+                            _dbRepository.UpdateProperty(updateBook, x => x.IsLent = _isLent);
                             break;
                         case "o":
                             bool _isBorrowed;
                             const string propertyIsBorrowed = "książka jest wypożyczona";
                             _inputValidation.BoolValidation(out input4, out _isBorrowed, propertyIsBorrowed);
-                            updateBook.IsBorrowed = _isBorrowed;
+                            //updateBook.IsBorrowed = _isBorrowed;
+                            _dbRepository.UpdateProperty(updateBook, x => x.IsBorrowed = _isBorrowed);
                             break;
                         case "p":
                             input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
@@ -815,7 +836,8 @@ public class App : IApp
                                 throw new Exception("Aby wpisać datę (wy)pożyczenia, należy najpierw zaznaczyć, że książka jest " +
                                     "komuć pożyczona albo od kogoś wypożyczona");
                             }
-                            updateBook.DateOfBorrowedOrLent = _dateOfBorrowedOrLent;
+                            //updateBook.DateOfBorrowedOrLent = _dateOfBorrowedOrLent;
+                            _dbRepository.UpdateProperty(updateBook, x => x.DateOfBorrowedOrLent = _dateOfBorrowedOrLent);
                             break;
                         default:
                             _userCommunication.ExceptionWrongMenuInput();
@@ -826,6 +848,11 @@ public class App : IApp
                 }
             }
         }
+    }
+
+    private void BookOnItemUpdated(object? sender, Book e)
+    {
+        throw new NotImplementedException();
     }
 
     private static int IntInputValidation(string? input, string property)
