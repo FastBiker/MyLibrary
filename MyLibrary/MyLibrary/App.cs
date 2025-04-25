@@ -21,6 +21,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using MyLibrary.Components.InputDataValidation;
+using MyLibrary.Components.ExceptionsHandler;
 
 namespace MyLibrary;
 
@@ -31,11 +32,12 @@ public class App : IApp
     private readonly ICsvReader _csvReader;
     private readonly MyLibraryDbContext _myLibraryDbContext;
     private readonly IInputDataValidation _inputValidation;
+    private readonly IExceptionsHandler _exceptionsHandler;
     //private readonly IMapper _mapper;
 
     public App(IBooksDataProvider booksDataProvider,
         IUserCommunication userCommunication, ICsvReader csvReader, MyLibraryDbContext myLibraryDbContext, 
-        IInputDataValidation inputDataValidation)//, IMapper mapper)
+        IInputDataValidation inputDataValidation, IExceptionsHandler exceptionsHandler)//, IMapper mapper)
     {
         _booksDataProvider = booksDataProvider;
         _userCommunication = userCommunication;
@@ -43,6 +45,7 @@ public class App : IApp
         _myLibraryDbContext = myLibraryDbContext;
         _myLibraryDbContext.Database.EnsureCreated();
         _inputValidation = inputDataValidation;
+        _exceptionsHandler = exceptionsHandler;
         //_mapper = mapper;
     }
     public void Run()
@@ -176,6 +179,10 @@ public class App : IApp
                             _userCommunication.ExceptionCatchedMainMethods(e);
                         }
                         break;
+                    case "6":
+                        break;
+                    case "7":
+                        break;
                     default:
                         _userCommunication.ExceptionWrongMenuInput();
                         break;
@@ -240,7 +247,7 @@ public class App : IApp
                     }
                     else
                     {
-                        InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
+                        _exceptionsHandler.InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
                         return;
                     }
 
@@ -256,7 +263,7 @@ public class App : IApp
                     }
                     else
                     {
-                        InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
+                        _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
                         return;
                     }
 
@@ -288,7 +295,7 @@ public class App : IApp
                         }
                         else
                         {
-                            InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
+                            _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
                             return;
                         }
                     }
@@ -322,7 +329,7 @@ public class App : IApp
                         }
                         else
                         {
-                            InputInvalidValueException("data (wy)pożyczenia", "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+                            _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
                             return;
                         }
                     }
@@ -371,9 +378,15 @@ public class App : IApp
             {
                 Book bookToRemove = FindBookByTitleOrIdMenu(dbRepository);
 
-                dbRepository.Remove(bookToRemove);
+                string? input = _userCommunication.QueryIfSureRemoveBook(bookToRemove);
 
-                dbRepository.Save();
+                if (input == "1")
+                {
+                    dbRepository.Remove(bookToRemove);
+
+                    dbRepository.Save();
+                }
+
             }
 
             var originalBook = new Book { Id = 101, AuthorName = "John Ronald Reuel", AuthorSurname = "Tolkien", Title = "Władca pierścieni" };
@@ -458,7 +471,7 @@ public class App : IApp
                             }
                             else
                             {
-                                InputInvalidValueException("minimalny koszt książki", "wpisz liczbę większą od '0'");
+                                _exceptionsHandler.InputInvalidValueException("minimalny koszt książki", "wpisz liczbę większą od '0'");
                                 return;
                             }
                             _userCommunication.FilterHeader($"Książki, które zaczynają się na literę '{input1}' i kosztują więcej niż {cost:c}:"
@@ -724,7 +737,7 @@ public class App : IApp
                             }
                             else
                             {
-                                InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
+                                _exceptionsHandler.InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
                                 return;
                             }
                             dbRepository.UpdateProperty(updateBook, x => x.YearOfPublication = _yearOfPublication);
@@ -742,7 +755,7 @@ public class App : IApp
                             }
                             else
                             {
-                                InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
+                                _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
                                 return;
                             }
                             dbRepository.UpdateProperty(updateBook, x => x.PageNumber = _pagesNumber);
@@ -781,7 +794,7 @@ public class App : IApp
                                 }
                                 else
                                 {
-                                    InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
+                                    _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
                                     return;
                                 }
                             }
@@ -821,7 +834,7 @@ public class App : IApp
                                 }
                                 else
                                 {
-                                    InputInvalidValueException("data (wy)pożyczenia", "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+                                    _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
                                     return;
                                 }
                             }
@@ -843,10 +856,15 @@ public class App : IApp
         }
     }
 
-    private static void InputInvalidValueException(string property, string action)
-    {
-        throw new Exception(message: $"\nPodane dane w '{property}' mają niewłaściwą wartość; {action}!");
-    }
+    //private static string? QueryIfSureRemoveBook(Book bookToRemove)
+    //{
+    //    Console.ForegroundColor = ConsoleColor.Red;
+    //    Console.WriteLine($"Czy na pewno chcesz usunąć książkę '{bookToRemove.Title}' (Id: {bookToRemove.Id}) ze swojej biblioteki?");
+    //    Console.WriteLine("Wpisz '1', żeby usunąć książkę albo wciśnij Enter, aby powrócić do menu!");
+    //    Console.ResetColor();
+    //    var input = Console.ReadLine();
+    //    return input;
+    //}
 
     private void WriteAuditInfoToFileAndConsole(object? sender, Book e, string auditFileName, string auditInfo)
     {

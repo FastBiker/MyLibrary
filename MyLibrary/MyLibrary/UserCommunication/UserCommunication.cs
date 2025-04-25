@@ -72,7 +72,17 @@ public class UserCommunication : IUserCommunication
     public string? SaveBook()
     {
         Console.ForegroundColor = ConsoleColor.DarkYellow;
-        Console.WriteLine($"\nWpisz 'q', żeby zapisać książkę i powrócić do menu albo wciśnij Enter, aby zapisać książkę i dodać kolejną");
+        Console.WriteLine($"\nWpisz 'q', żeby zapisać książkę i powrócić do menu albo wciśnij Enter, aby zapisać książkę i dodać kolejną!");
+        Console.ResetColor();
+        var input = Console.ReadLine();
+        return input;
+    }
+
+    public string? QueryIfSureRemoveBook(Book bookToRemove)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"Czy na pewno chcesz usunąć książkę '{bookToRemove.Title}' (Id: {bookToRemove.Id}) ze swojej biblioteki?");
+        Console.WriteLine("Wpisz '1', żeby usunąć książkę albo wciśnij Enter, aby powrócić do menu!");
         Console.ResetColor();
         var input = Console.ReadLine();
         return input;
@@ -226,4 +236,5 @@ public class UserCommunication : IUserCommunication
         var input3 = Console.ReadLine();
         return input3;
     }
+
 }

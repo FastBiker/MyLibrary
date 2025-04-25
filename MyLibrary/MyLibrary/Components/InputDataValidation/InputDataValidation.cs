@@ -1,13 +1,16 @@
-﻿using MyLibrary.UserCommunication;
+﻿using MyLibrary.Components.ExceptionsHandler;
+using MyLibrary.UserCommunication;
 
 namespace MyLibrary.Components.InputDataValidation;
 
 public class InputDataValidation : IInputDataValidation
 {
     private readonly IUserCommunication _userCommunication;
-    public InputDataValidation(IUserCommunication userCommunication)
+    private readonly IExceptionsHandler _exceptionsHandler;
+    public InputDataValidation(IUserCommunication userCommunication, IExceptionsHandler exceptionsHandler)
     {
         _userCommunication = userCommunication;
+        _exceptionsHandler = exceptionsHandler;
     }
 
     public bool BoolValidation(string? input, string property)
@@ -23,8 +26,9 @@ public class InputDataValidation : IInputDataValidation
         }
         else
         {
-            throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
-                "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+            _exceptionsHandler.InputInvalidValueException(property, "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+            //throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
+            //    "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
         }
         
         return _isProperty = bool.Parse(input);
@@ -61,9 +65,11 @@ public class InputDataValidation : IInputDataValidation
         }
         else
         {
-            throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
+            _exceptionsHandler.InputInvalidValueException(property, "wpisz liczbę całkowitą większą od '0'!");
+            id = -1;
+            //throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
         }
-
+        
         return id;
     }
 }

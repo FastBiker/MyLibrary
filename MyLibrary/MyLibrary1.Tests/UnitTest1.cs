@@ -5,6 +5,7 @@ using MyLibrary.Data.Repositories;
 using MyLibrary.Components.InputDataValidation;
 using MyLibrary;
 using MyLibrary.UserCommunication;
+using MyLibrary.Components.ExceptionsHandler;
 
 namespace MyLibrary1.Tests
 {
@@ -17,7 +18,7 @@ namespace MyLibrary1.Tests
             //var optionsBuilder = new DbContextOptionsBuilder<MyLibraryDbContext>()
             //.Options;
             //var dbRepository = new DbRepository<Book>(new MyLibraryDbContext(optionsBuilder));
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string inf = "Podana wartoœæ jest null / informacja opcjonalana";
             string? input = "";
             // act
@@ -31,7 +32,7 @@ namespace MyLibrary1.Tests
         public void InputStringNumber_ShouldGetInt()
         {
             // arrange
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string input = "67";
             string property = "testProperty";
             int id;
@@ -46,7 +47,7 @@ namespace MyLibrary1.Tests
         public void InputWrongStringNumber_ShouldGetException()
         {
             // arrange
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string invalidInput = "23,45";
             string property = "testProperty";
             int id;
@@ -61,7 +62,7 @@ namespace MyLibrary1.Tests
         public void InputSignPlus_ShouldGetBoolTrue()
         {
             // arrange
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string testInput = "+";
             string property = "testProperty";
             bool _isTest;
@@ -76,7 +77,7 @@ namespace MyLibrary1.Tests
         public void InputSignMinus_ShouldGetBoolFalse()
         {
             // arrange
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string testInput = "-";
             string property = "testProperty";
             bool _isTest;
@@ -91,7 +92,7 @@ namespace MyLibrary1.Tests
         public void InputIsEmpty_ShouldGetBoolFalse()
         {
             // arrange
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string testInput = "";
             string property = "testProperty";
             bool _isTest;
@@ -106,7 +107,7 @@ namespace MyLibrary1.Tests
         public void WrongInputBoolValidation_ShouldGetException()
         {
             // arrange
-            var _inputDataValidation = new InputDataValidation(new UserCommunication());
+            var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string invalidInput = "test";
             string property = "testProperty";
             // act & assert

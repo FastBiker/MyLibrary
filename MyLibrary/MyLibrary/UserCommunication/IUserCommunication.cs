@@ -22,6 +22,8 @@ public interface IUserCommunication
 
     string? SaveBook();
 
+    string? QueryIfSureRemoveBook(Book bookToRemove);
+
     string? WriteBookPropertyValue(string property);
 
     string? WriteInput();
