@@ -154,7 +154,7 @@ public class UserCommunication : IUserCommunication
             "\n(x) książki pomijając pierwszych 'x' w kolejności alfabetycznej; " +
             "\n(y) pomiń pierwszą ksiązkę w kolejności alfabetycznej i książki, któych tytuł zaczyna się na 'A';" +
             "\n(z) lista pierwszych książek wszystkich właścicieli, alfabetycznie wg właścicieli;" +
-            "\n(ax) podział książek na paczki x-elementowe");
+            "\n(ax) podział książek na paczki x-elementowe; \n(bx) wyszukaj ksiązkę po Id");
         Console.ResetColor();
         var input = Console.ReadLine();
         return input;
@@ -222,7 +222,7 @@ public class UserCommunication : IUserCommunication
         Console.WriteLine("Podaj, którą właściwość książki chcesz uaktualnić:" +
         "\na - AuthorName; \nb - AuthorSurname; \nc - CollectiveAuthor; \nd - Title; \ne - PublishingHouse; " +
         "\nf - PlaceOfPublication; \ng - YearOfPublication; \nh - PageNumber; \ni - ISBN; \nj - PlaceInLibrary; \nk - Owner; " +
-        "\nl -IsForSale; \nm - Price; \nn - IsLent; \no - IsBorrowed; \np - DateOfBorrowedOrLent; \nq - wróć do menu głównego");
+        "\nl - IsForSale; \nm - Price; \nn - IsLent; \no - IsBorrowed; \np - DateOfBorrowedOrLent; \nq - wróć do menu głównego");
         var input3 = Console.ReadLine();
         return input3;
     }

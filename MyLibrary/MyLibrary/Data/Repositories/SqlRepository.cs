@@ -44,7 +44,7 @@ public class SqlRepository<T> : IRepository<T> where T : class, IEntity, new()
         _dbContext.SaveChanges();
     }
 
-    public void UpdateProperty<T1>(T1 item, Action<T1> updateAction)
+    public void UpdateProperty(T item, Action<T> updateAction)
     {
         throw new NotImplementedException();
     }

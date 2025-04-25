@@ -9,9 +9,10 @@ public class InputDataValidation : IInputDataValidation
     {
         _userCommunication = userCommunication;
     }
-    public void BoolValidation(out string? input, out bool _isProperty, string property)
+
+    public bool BoolValidation(string? input, string property)
     {
-        input = _userCommunication.WriteBoolPropertyValue(property);
+        bool _isProperty;
         if (input == "+")
         {
             input = "true";
@@ -22,10 +23,11 @@ public class InputDataValidation : IInputDataValidation
         }
         else
         {
-            throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość;" +
+            throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
                 "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
         }
-        _isProperty = bool.Parse(input);
+        
+        return _isProperty = bool.Parse(input);
     }
 
     public string InputIsNullOrEmpty(string? input, string inf)
@@ -48,5 +50,20 @@ public class InputDataValidation : IInputDataValidation
         }
 
         return input;
+    }
+
+    public int IntInputValidation(string? input, string property)
+    {
+        int id;
+        if (int.TryParse(input, out int result) && result > 0)
+        {
+            id = result;
+        }
+        else
+        {
+            throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
+        }
+
+        return id;
     }
 }

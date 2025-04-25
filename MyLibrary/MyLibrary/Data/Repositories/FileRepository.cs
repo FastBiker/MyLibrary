@@ -119,7 +119,7 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
         // Save is not required with file
     }
 
-    public void UpdateProperty<T1>(T1 item, Action<T1> updateAction)
+    public void UpdateProperty(T item, Action<T> updateAction)
     {
         throw new NotImplementedException();
     }

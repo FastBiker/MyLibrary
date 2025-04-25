@@ -23,11 +23,9 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
         _itemUpdatedCallback = itemUpdatedCallback;
     }
 
-    public T Property {  get; set; }
-
     public event EventHandler<T> ItemAdded;
     public event EventHandler<T> ItemRemoved;
-    //public event EventHandler<T> ItemUpdated;
+    public event EventHandler<T> ItemUpdated;
 
     public void Add(T item) 
     {
@@ -67,11 +65,11 @@ public class DbRepository<T> : IRepository<T> where T : class, IEntity, new()
         ItemRemoved?.Invoke(this, item);
     }
 
-    public void UpdateProperty<T>(T item, Action<T> updateAction)
+    public void UpdateProperty(T item, Action<T> updateAction)
     {
         updateAction(item);
-        //_itemUpdatedCallback?.Invoke(item);
-        //ItemUpdated?.Invoke(this, item);
+        _itemUpdatedCallback?.Invoke(item);
+        ItemUpdated?.Invoke(this, item);
     }
 
     public void Save()

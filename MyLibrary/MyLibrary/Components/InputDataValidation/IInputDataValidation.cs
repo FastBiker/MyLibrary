@@ -4,5 +4,7 @@ public interface IInputDataValidation
 {
     string InputIsNullOrEmpty(string? input, string inf);
 
-    void BoolValidation(out string? input, out bool _isProperty, string property);
+    bool BoolValidation(string? input, string property);
+
+    int IntInputValidation(string? input, string property);
 }
