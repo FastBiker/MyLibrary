@@ -34,6 +34,19 @@ public class InputDataValidation : IInputDataValidation
         return _isProperty = bool.Parse(input);
     }
 
+    public void FileNameValidation(string? inputFileName, string forbiddenCharacters)
+    {
+        //string forbiddenCharacters = ":*?\"<>/|\\";
+        foreach (char c in forbiddenCharacters)
+        {
+            if (inputFileName.Contains(c) || inputFileName.EndsWith(".") || inputFileName.Length == 0)
+            {
+                throw new Exception($"Niewłaściwa nazwa pliku! \nNazwa pliku powinna mieć przynajmniej jeden znak, " +
+                    $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy!");
+            }
+        }
+    }
+
     public string InputIsNullOrEmpty(string? input, string inf)
     {
         switch (inf)

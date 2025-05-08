@@ -8,20 +8,9 @@ using MyLibrary.Data.Entities.Extensions;
 using MyLibrary.Data.Repositories;
 using MyLibrary.Data.Repositories.Extensions;
 using MyLibrary.UserCommunication;
-using System.ComponentModel.DataAnnotations;
-using System.Reflection;
-using System.Xml.Linq;
-using System.Threading.Tasks;
-using System;
-using static System.Reflection.Metadata.BlobBuilder;
-using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using MyLibrary.Components.InputDataValidation;
 using MyLibrary.Components.ExceptionsHandler;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using Microsoft.IdentityModel.Tokens;
 
 namespace MyLibrary;
 
@@ -34,7 +23,6 @@ public class App : IApp
     private readonly IInputDataValidation _inputValidation;
     private readonly IExceptionsHandler _exceptionsHandler;
     private const string auditFileName = "audit_library.txt";
-    private string fileName;
     private const string forbiddenCharacters = ":*?\"<>/|\\";
 
     public App(IBooksDataProvider booksDataProvider,
@@ -167,7 +155,7 @@ public class App : IApp
                             _userCommunication.ExceptionCatchedMainMethods(e);
                         }
                         break;
-                    case "6": 
+                    case "6":
                         _userCommunication.MainMethodsHeaders("Utwórz unikalną nazwę pliku CSV, do którego chcesz zapisać dane " +
                             "\n(powinna mieć przynajmniej jeden znak, " +
                             $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy):");
@@ -180,8 +168,13 @@ public class App : IApp
                             _userCommunication.ExceptionCatchedMainMethods(e);
                         }
                         break;
-                    case "7": // zapis książek z pliku csv do bazy danych
-                        _userCommunication.MainMethodsHeaders("Zapisz książki z pliku CSV do biblioteki w bazie danych");
+                    case "7":
+                        _userCommunication.MainMethodsHeaders("Podaj ścieżkę dostępu do pliku CSV, z którego dane chcesz zapisać " +
+                            "do biblioteki w bazie danych: \n/aby to się udało przygotuj najpierw plik CSV wg wzoru: " +
+                            "\n------------------------------------------------------" +
+                            "\n(1)nagłówek: \n[Id;AuthorName;AuthorSurname;CollectiveAuthor;Title;PublishingHouse;PlaceOfPublication;" +
+                            "YearOfPublication;\nPageNumber;ISBN;PlaceInLibrary;Owner;IsForSale;Price;IsLent;IsBorrowed;DateOfBorrowedOrLent], " +
+                            "\n(2)pola które muszą być wypełnione: \nId, Title, (AuthorName, AuthorSurname), albo CollectiveAuthor/");
                         try
                         {
                             InsertBooksFromCsvToDb(dbRepository);
@@ -865,18 +858,11 @@ public class App : IApp
 
             void InsertBooksFromDbToCsv(IRepository<Book> repository)
             {
-                var inputFileName = Console.ReadLine();
+                var inputFileName = _userCommunication.WriteInput();
 
-                foreach (char c in forbiddenCharacters)
-                {
-                    if (inputFileName.Contains(c) || inputFileName.EndsWith(".") || inputFileName.Length == 0)
-                    {
-                        throw new Exception($"Niewłaściwa nazwa pliku! \nNazwa pliku powinna mieć przynajmniej jeden znak, " +
-                            $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy!");
-                    }
-                }
+                _inputValidation.FileNameValidation(inputFileName, forbiddenCharacters);
 
-                if (File.Exists($"{inputFileName}.csv")) 
+                if (File.Exists($"{inputFileName}.csv"))
                 {
                     throw new Exception($"Plik '{inputFileName}.csv' już istnieje! Podaj inną nazwę!");
                 }
@@ -890,14 +876,14 @@ public class App : IApp
 
             void InsertBooksFromCsvToDb(IRepository<Book> dbRepository)
             {
-                var items = _csvReader.ProcessMyLibraryBookWithCsvHelper("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
-                
-                foreach (var item in items)
+                var inputFilePath = _userCommunication.WriteInput();
+                var items = _csvReader.ProcessMyLibraryBook(inputFilePath).ToArray();
+                if (!File.Exists(inputFilePath))
                 {
-                    Console.WriteLine(item);
+                    throw new Exception($"Podany plik nie została znaleziony!");
                 }
-                
-                //dbRepository.AddBatch(items);
+                //C:\Projekty\MyLibrary\MyLibrary\MyLibrary\Resources\Files\My_Home_Library.csv"
+                dbRepository.AddBatch(items);
             }
         }
     }

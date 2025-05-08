@@ -17,7 +17,7 @@ public class UserCommunication : IUserCommunication
     {
         Console.ForegroundColor = ConsoleColor.Yellow;
         Console.WriteLine("(1) wyświetl wszystkie książki; (2) dodaj nową książkę; (3) usuń książkę; (4) filtry; (5) aktualizacja; " +
-            "\n(6) zapisz książki do pliku CSV; (q) opuść aplikację");
+            "\n(6) zapisz książki do pliku CSV;(7) zapisz książki z pliku CSV do bazy danych (q) opuść aplikację");
         Console.ResetColor();
         var input = Console.ReadLine();
         return input;
