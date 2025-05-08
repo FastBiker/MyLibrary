@@ -26,7 +26,7 @@ public class InputDataValidation : IInputDataValidation
         }
         else
         {
-            _exceptionsHandler.InputInvalidValueException(property, "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+            _exceptionsHandler.InputInvalidValueException(property, "wpisz '+' jeśli jest (wy)pożyczona/na sprzedaż, '-' jeśli nie jest, albo zostaw pole puste");
             //throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
             //    "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
         }

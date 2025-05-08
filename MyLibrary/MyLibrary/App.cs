@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using MyLibrary.Components.ProjectCsvReader;
-using MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
+using MyLibrary.Components.CsvHandler;
+using MyLibrary.Components.CsvHandler.VariousBooksCollections;
 using MyLibrary.Components.DataProviders;
 using MyLibrary.Data;
 using MyLibrary.Data.Entities;
@@ -11,17 +11,17 @@ using MyLibrary.UserCommunication;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Xml.Linq;
-//using AutoMapper;
 using System.Threading.Tasks;
 using System;
 using static System.Reflection.Metadata.BlobBuilder;
-//using MyLibrary.Components.MappingProfile;
 using System.Diagnostics;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using MyLibrary.Components.InputDataValidation;
 using MyLibrary.Components.ExceptionsHandler;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Microsoft.IdentityModel.Tokens;
 
 namespace MyLibrary;
 
@@ -33,11 +33,13 @@ public class App : IApp
     private readonly MyLibraryDbContext _myLibraryDbContext;
     private readonly IInputDataValidation _inputValidation;
     private readonly IExceptionsHandler _exceptionsHandler;
-    //private readonly IMapper _mapper;
+    private const string auditFileName = "audit_library.txt";
+    private string fileName;
+    private const string forbiddenCharacters = ":*?\"<>/|\\";
 
     public App(IBooksDataProvider booksDataProvider,
         IUserCommunication userCommunication, ICsvReader csvReader, MyLibraryDbContext myLibraryDbContext, 
-        IInputDataValidation inputDataValidation, IExceptionsHandler exceptionsHandler)//, IMapper mapper)
+        IInputDataValidation inputDataValidation, IExceptionsHandler exceptionsHandler)
     {
         _booksDataProvider = booksDataProvider;
         _userCommunication = userCommunication;
@@ -46,24 +48,10 @@ public class App : IApp
         _myLibraryDbContext.Database.EnsureCreated();
         _inputValidation = inputDataValidation;
         _exceptionsHandler = exceptionsHandler;
-        //_mapper = mapper;
     }
     public void Run()
     {
-        //InsertData();
-        //InsertDataWithAutoMapper();
-        //ReadAllBookFromDb();
-        //ReadGrupedBooksFromDb();
-
-
-        //var monika = this.ReadFirst("Nela na wyspie kangura");
-        //_myLibraryDbContext.Books.Remove(monika);
-        //_myLibraryDbContext.SaveChanges();
-
-        //zapisywanie nowych książek do pliku JSON, usuwanie, odczytywanie, filtrowanie
         _userCommunication.Welcome();
-
-        string auditFileName = "audit_library.txt";
 
         var optionsBuilder = new DbContextOptionsBuilder<MyLibraryDbContext>()
             .Options;
@@ -179,9 +167,29 @@ public class App : IApp
                             _userCommunication.ExceptionCatchedMainMethods(e);
                         }
                         break;
-                    case "6":
+                    case "6": 
+                        _userCommunication.MainMethodsHeaders("Utwórz unikalną nazwę pliku CSV, do którego chcesz zapisać dane " +
+                            "\n(powinna mieć przynajmniej jeden znak, " +
+                            $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy):");
+                        try
+                        {
+                            InsertBooksFromDbToCsv(dbRepository);
+                        }
+                        catch (Exception e)
+                        {
+                            _userCommunication.ExceptionCatchedMainMethods(e);
+                        }
                         break;
-                    case "7":
+                    case "7": // zapis książek z pliku csv do bazy danych
+                        _userCommunication.MainMethodsHeaders("Zapisz książki z pliku CSV do biblioteki w bazie danych");
+                        try
+                        {
+                            InsertBooksFromCsvToDb(dbRepository);
+                        }
+                        catch (Exception e)
+                        {
+                            _userCommunication.ExceptionCatchedMainMethods(e);
+                        }
                         break;
                     default:
                         _userCommunication.ExceptionWrongMenuInput();
@@ -277,7 +285,7 @@ public class App : IApp
                     var _owner = _inputValidation.InputIsNullOrEmpty(input, inf2);
 
                     bool _isForSale;
-                    const string propertyForSale = "książka jest na sprzedaż";
+                    const string propertyForSale = "czy książka jest na sprzedaż";
                     input = _userCommunication.WriteBookProperties(propertyForSale);
                     _isForSale = _inputValidation.BoolValidation(input, propertyForSale);
 
@@ -306,12 +314,12 @@ public class App : IApp
 
 
                     bool _isLent;
-                    const string propertyIsLent = "książka jest komuś pożyczona";
+                    const string propertyIsLent = "czy książka jest komuś pożyczona";
                     input = _userCommunication.WriteBookProperties(propertyIsLent);
                     _isLent = _inputValidation.BoolValidation(input, propertyIsLent);
 
                     bool _isBorrowed;
-                    const string propertyIsBorrowed = "książka jest wypożyczona";
+                    const string propertyIsBorrowed = "czy książka jest wypożyczona";
                     input = _userCommunication.WriteBookProperties(propertyIsBorrowed);
                     _isBorrowed = _inputValidation.BoolValidation(input, propertyIsBorrowed);
 
@@ -329,7 +337,7 @@ public class App : IApp
                         }
                         else
                         {
-                            _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
+                            _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: rrrr,mm,dd");
                             return;
                         }
                     }
@@ -362,6 +370,7 @@ public class App : IApp
                     }};
 
                     dbRepository.AddBatch(books);
+                    //fileRepository.AddBatch(books);
 
                     if (inputBreak == "q")
                     {
@@ -853,18 +862,45 @@ public class App : IApp
                     dbRepository.Save();
                 }
             }
+
+            void InsertBooksFromDbToCsv(IRepository<Book> repository)
+            {
+                var inputFileName = Console.ReadLine();
+
+                foreach (char c in forbiddenCharacters)
+                {
+                    if (inputFileName.Contains(c) || inputFileName.EndsWith(".") || inputFileName.Length == 0)
+                    {
+                        throw new Exception($"Niewłaściwa nazwa pliku! \nNazwa pliku powinna mieć przynajmniej jeden znak, " +
+                            $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy!");
+                    }
+                }
+
+                if (File.Exists($"{inputFileName}.csv")) 
+                {
+                    throw new Exception($"Plik '{inputFileName}.csv' już istnieje! Podaj inną nazwę!");
+                }
+
+                var fileRepository = new FileRepository<Book>(new ProjectCsvReader(), inputFileName, BookAdded);
+                fileRepository.ItemAdded += BookOnItemAdded;
+
+                var items = repository.GetAll().ToArray();
+                fileRepository.AddBatch(items);
+            }
+
+            void InsertBooksFromCsvToDb(IRepository<Book> dbRepository)
+            {
+                var items = _csvReader.ProcessMyLibraryBookWithCsvHelper("C:\\Projekty\\MyLibrary\\MyLibrary\\MyLibrary\\Resources\\Files\\My_Home_Library.csv");
+                
+                foreach (var item in items)
+                {
+                    Console.WriteLine(item);
+                }
+                
+                //dbRepository.AddBatch(items);
+            }
         }
     }
-
-    //private static string? QueryIfSureRemoveBook(Book bookToRemove)
-    //{
-    //    Console.ForegroundColor = ConsoleColor.Red;
-    //    Console.WriteLine($"Czy na pewno chcesz usunąć książkę '{bookToRemove.Title}' (Id: {bookToRemove.Id}) ze swojej biblioteki?");
-    //    Console.WriteLine("Wpisz '1', żeby usunąć książkę albo wciśnij Enter, aby powrócić do menu!");
-    //    Console.ResetColor();
-    //    var input = Console.ReadLine();
-    //    return input;
-    //}
 
     private void WriteAuditInfoToFileAndConsole(object? sender, Book e, string auditFileName, string auditInfo)
     {
@@ -893,134 +929,4 @@ public class App : IApp
 
         return foundBook;
     }
-
-    //private Book? ReadFirst(string name)
-    //{
-    //    return _myLibraryDbContext.Books.FirstOrDefault(x => x.Title == name);
-    //}
-
-    //private void ReadGrupedBooksFromDb()
-    //{
-    //    var grups = _myLibraryDbContext.Books
-    //        .GroupBy(x => x.Owner)
-    //        .Select(x => new
-    //        {
-    //            Owner = x.Key,
-    //            Books = x.OrderBy(book => book.Title).ToList()
-    //        })
-    //        .ToList();
-
-    //    foreach (var grup in grups)
-    //    {
-    //        Console.WriteLine($"Owner: {grup.Owner}");
-    //        Console.WriteLine("===================");
-
-    //        foreach(var book in grup.Books)
-    //        {
-    //            Console.WriteLine($"\t{book.AuthorName} {book.AuthorSurname}{book.CollectiveAuthor}, \"{book.Title}\"");
-    //        }
-    //        Console.WriteLine();
-    //    }
-    //}
-
-    //private void ReadAllBookFromDb()
-    //{
-    //    var booksFromDb = _myLibraryDbContext.Books.ToList();
-
-    //    foreach (var bookFromDb in booksFromDb)
-    //    {
-    //        Console.WriteLine($"{bookFromDb.AuthorName} {bookFromDb.AuthorSurname}{bookFromDb.CollectiveAuthor}," +
-    //            $"\n\t{bookFromDb.Title} \n\t{bookFromDb.PageNumber}");
-    //    }
-    //}
-
-    //private void InsertDataWithAutoMapper()
-    //{
-
-    //    var optionsBuilder = new DbContextOptionsBuilder<MyLibraryDbContext>();
-
-    //    using (var context = new MyLibraryDbContext(optionsBuilder.Options))
-    //    {
-    //        var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
-    //        var bookEntities = _mapper.Map<IEnumerable<BookEntity>>(books);
-    //        context.BookEntities.AddRange(bookEntities);
-    //        context.SaveChanges();
-    //    }
-    //}
-
-    //==================================================================================
-    //using (var scope = app.Services.CreateScope())
-    //{
-    //    var context = scope.ServiceProvider.GetRequiredService<MyLibraryDbContext>();
-    //    var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-
-    //    var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
-    //    var bookEntities = mapper.Map<IEnumerable<BookEntity>>(books);
-
-    //    context.Books.AddRange(bookEntities);
-    //    context.SaveChanges();
-    //}
-    //=================================================================================
-    //var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
-
-    //var source = new Book { Name = "Test" };
-    //var bookEntities = _mapper.Map<BookEntity>(books);
-
-    //_myLibraryDbContext.AddRange(bookEntities);
-
-    //_myLibraryDbContext.SaveChanges();
-    //}
-
-    //    private void InsertData()
-    //    {
-    //        var books = _csvReader.ProcessMyLibraryBook("Resources\\Files\\mylibrary.csv");
-
-    //        //var config = new MapperConfiguration(cfg => cfg.CreateMap<Book, BookEntity>());
-
-    //        //var mapper = config.CreateMapper();
-
-    //        //var bookEntities = mapper.Map<List<BookEntity>>(books);
-
-    //        //_myLibraryDbContext.AddRange(bookEntities);
-
-    //        foreach (var book in books)
-    //        {
-    //            _myLibraryDbContext.Books.Add(new Book
-    //            {
-    //                AuthorName = book.AuthorName,
-
-    //                AuthorSurname = book.AuthorSurname,
-
-    //                CollectiveAuthor = book.CollectiveAuthor,
-
-    //                Title = book.Title,
-
-    //                PublishingHouse = book.PublishingHouse,
-
-    //                PlaceOfPublication = book.PlaceOfPublication,
-
-    //                YearOfPublication = book.YearOfPublication,
-
-    //                PageNumber = book.PageNumber,
-
-    //                ISBN = book.ISBN,
-
-    //                PlaceInLibrary = book.PlaceInLibrary,
-
-    //                Owner = book.Owner,
-
-    //                IsForSale = book.IsForSale,
-
-    //                Price = book.Price,
-
-    //                IsLent = book.IsLent,
-
-    //                IsBorrowed = book.IsBorrowed,
-
-    //                DateOfBorrowedOrLent = book.DateOfBorrowedOrLent,
-    //            });
-    //        }
-
-    //        _myLibraryDbContext.SaveChanges();
-    //    }
 }

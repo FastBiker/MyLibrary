@@ -1,20 +1,31 @@
-﻿using MyLibrary.Data.Entities;
+﻿using CsvHelper;
+using CsvHelper.Configuration;
+using MyLibrary.Components.CsvHandler;
+using MyLibrary.Data.Entities;
+using System.Globalization;
 using System.Text.Json;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MyLibrary.Data.Repositories;
 
 public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
-    private const string fileName = "mylibrary.json";
+    private readonly ICsvReader _csvReader;
+    private const string jsonFileName = "mylibrary.json";
+    private string fullCsvFileName;
+    private const string csvFileExtension = ".csv";
     private readonly Action<T>? _itemAddedCallback;
     private readonly Action<T>? _itemRemovedCallback;
     private static int lastId = 0;
     protected List<T> _items = [];
 
-    public FileRepository(Action<T>? itemAddedCallback = null, Action<T>? itemRemovedCallback = null)
+    public FileRepository(ICsvReader csvReader, string fileName,  Action<T>? itemAddedCallback = null, 
+        Action<T>? itemRemovedCallback = null)
     {
+        _csvReader = csvReader;
         _itemAddedCallback = itemAddedCallback;
         _itemRemovedCallback = itemRemovedCallback;
+        fullCsvFileName = $"{fileName}{csvFileExtension}";
     }
 
     public event EventHandler<T> ItemAdded;
@@ -22,9 +33,9 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
 
     public IEnumerable<T> GetAll()
     {
-        if (File.Exists(fileName))
+        if (File.Exists(jsonFileName))
         {
-            using (var streamReader = new StreamReader(fileName))
+            using (var streamReader = new StreamReader(jsonFileName))
             {
                 var json = streamReader.ReadToEnd();
                 if (string.IsNullOrWhiteSpace(json))
@@ -48,35 +59,55 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
         throw new NotImplementedException();
     }
 
-    public void Add(T item)
+    //public void Add(T item) // to json
+    //{
+    //    if (File.Exists(jsonFileName))
+    //    {
+    //        using (var reader = new StreamReader(jsonFileName))
+    //        {
+    //            var json = reader.ReadToEnd();
+    //            _items = string.IsNullOrWhiteSpace(json)
+    //                ? new List<T>()
+    //                : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+    //        }
+    //    }
+    //    else
+    //    {
+    //        _items = new List<T>();
+    //    }
+
+    //    lastId = _items.Count > 0
+    //        ? _items.Max(x => x.Id)
+    //        : 0;
+
+    //    item.Id = ++lastId;
+
+    //    _items.Add(item);
+
+    //    using (var writer = new StreamWriter(jsonFileName))
+    //    {
+    //        var newJson = JsonSerializer.Serialize(_items);
+    //        writer.Write(newJson);
+    //    }
+    //    _itemAddedCallback?.Invoke(item);
+    //    ItemAdded?.Invoke(this, item);
+    //}
+
+    public void Add(T item) // to CSV
     {
-        if (File.Exists(fileName))
+        using (var writer = new StreamWriter(fullCsvFileName, true, System.Text.Encoding.UTF8))
+        using (var csv = new CsvWriter(writer, new CultureInfo("pl-PL")))
         {
-            using (var reader = new StreamReader(fileName))
+            csv.Context.RegisterClassMap<CsvHelperConfiguration>();
+            FileInfo file = new FileInfo(fullCsvFileName);
+            if (file.Length == 0)
             {
-                var json = reader.ReadToEnd();
-                _items = string.IsNullOrWhiteSpace(json)
-                    ? new List<T>()
-                    : JsonSerializer.Deserialize<List<T>>(json) ?? new List<T>();
+                csv.WriteHeader<T>();
+                csv.NextRecord();
             }
-        }
-        else
-        {
-            _items = new List<T>();
-        }
 
-        lastId = _items.Count > 0
-            ? _items.Max(x => x.Id)
-            : 0;
-
-        item.Id = ++lastId;
-
-        _items.Add(item);
-
-        using (var writer = new StreamWriter(fileName))
-        {
-            var newJson = JsonSerializer.Serialize(_items);
-            writer.Write(newJson);
+            csv.WriteRecord(item);
+            csv.NextRecord();
         }
         _itemAddedCallback?.Invoke(item);
         ItemAdded?.Invoke(this, item);
@@ -84,9 +115,9 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
 
     public void Remove(T item)
     {
-        if (File.Exists(fileName))
+        if (File.Exists(jsonFileName))
         {
-            using (var streamReader = new StreamReader(fileName))
+            using (var streamReader = new StreamReader(jsonFileName))
             {
                 var json = streamReader.ReadToEnd();
                 _items = string.IsNullOrWhiteSpace(json)
@@ -104,7 +135,7 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
         _itemRemovedCallback?.Invoke(item);
         ItemRemoved?.Invoke(this, item);
 
-        using (var streamWriter = new StreamWriter(fileName))
+        using (var streamWriter = new StreamWriter(jsonFileName))
         {
             var newJson = JsonSerializer.Serialize(_items);
             streamWriter.Write(newJson);
@@ -114,7 +145,7 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
     public void Save()
     {
         Console.ForegroundColor = ConsoleColor.DarkGreen;
-        Console.WriteLine("The book was saved in the 'mylibrary.json' file" + Environment.NewLine);
+        Console.WriteLine($"Książki zostały zapisane w pliku {fullCsvFileName}" + Environment.NewLine);
         Console.ResetColor();
         // Save is not required with file
     }

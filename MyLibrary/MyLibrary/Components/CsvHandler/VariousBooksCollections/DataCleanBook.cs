@@ -1,4 +1,4 @@
-﻿namespace MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
+﻿namespace MyLibrary.Components.CsvHandler.VariousBooksCollections;
 
 public class DataCleanBook
 {

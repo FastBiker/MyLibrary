@@ -1,4 +1,9 @@
-﻿using System.Text;
+﻿using Microsoft.SqlServer.Server;
+using System;
+using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
+using System.Threading.Tasks;
+using static Azure.Core.HttpHeader;
 
 namespace MyLibrary.Data.Entities;
 
@@ -36,10 +41,8 @@ public class Book : EntityBase
 
     public DateTime? DateOfBorrowedOrLent { get; set; }
 
-    //public override string ToString() => $"{Id};{AuthorName};{AuthorSurname};{CollectiveAuthor};{Title};{PublishingHouse};{PlaceOfPublication};" +
-    //    $"{YearOfPublication};{PageNumber};{ISBN};{PlaceInLibrary};{Owner};{IsForSale};{Price};{IsLent};{IsBorrowed};{DateOfBorrowedOrLent}";
 
-    #region ToString Override
+    #region ToString Override 
     public override string ToString()
     {
         StringBuilder sb = new(1024);
@@ -105,25 +108,5 @@ public class Book : EntityBase
 
         return sb.ToString();
     }
-
-
-
-    //$"Id: {Id}," +
-    //$"\n Author: {AuthorName} {AuthorSurname}, " +
-    //$"\n Title: {Title}," +
-    //$"\n \tPublishingHouse: {PublishingHouse}," +
-    //$"\n \tPlaceOfPublication: {PlaceOfPublication}," +
-    //$"\n \tYearOfPublication: {YearOfPublication}, " +
-    //$"\n \tPageNumber: {PageNumber}," +
-    //$"\n \tISBN: {ISBN}," +
-    //$"\n \tPlaceInLibrary: {PlaceInLibrary}," +
-    //$"\n \tOwner: {Owner}, " +
-    //$"\n \tIsForSale: {IsForSale}" +
-    //$"\n \tPrice: {Price}," +
-    //$"\n \tIsLent: {IsLent}, " +
-    //$"\n \tIsBorrowed: {IsBorrowed}, " +
-    //$"\n \tDateOfBorrowed: {DateOfBorrowed} " +
-    //$"\n==============================================="
-    //+ Environment.NewLine;
     #endregion
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace MyLibrary.Components.ProjectCsvReader.VariousBooksCollections;
+namespace MyLibrary.Components.CsvHandler.VariousBooksCollections;
 
 public class RealBook
 {
