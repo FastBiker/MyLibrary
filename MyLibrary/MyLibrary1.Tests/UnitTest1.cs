@@ -109,5 +109,4 @@ namespace MyLibrary1.Tests
                 "wpisz '+' jeœli jest wypo¿yczona, '-' jeœli nie jest, albo zostaw pole puste"));
         }
     }
-    //hgjkgvb
 }
