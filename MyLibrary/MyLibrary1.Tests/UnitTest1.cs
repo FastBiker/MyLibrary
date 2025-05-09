@@ -1,9 +1,4 @@
-using Microsoft.EntityFrameworkCore;
-using MyLibrary.Data;
-using MyLibrary.Data.Entities;
-using MyLibrary.Data.Repositories;
 using MyLibrary.Components.InputDataValidation;
-using MyLibrary;
 using MyLibrary.UserCommunication;
 using MyLibrary.Components.ExceptionsHandler;
 
@@ -15,9 +10,6 @@ namespace MyLibrary1.Tests
         public void MandatoryInputNotEntered_ShouldEnterInputOneMoreTime()
         {
             // arrange
-            //var optionsBuilder = new DbContextOptionsBuilder<MyLibraryDbContext>()
-            //.Options;
-            //var dbRepository = new DbRepository<Book>(new MyLibraryDbContext(optionsBuilder));
             var _inputDataValidation = new InputDataValidation(new UserCommunication(), new ExceptionsHandler());
             string inf = "Podana wartoœæ jest null / informacja opcjonalana";
             string? input = "";

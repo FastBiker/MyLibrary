@@ -1,7 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using MyLibrary.Data.Entities;
-using System.Linq;
 
 namespace MyLibrary.Data.Repositories;
 

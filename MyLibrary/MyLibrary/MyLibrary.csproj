@@ -17,12 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Resources\Files\BooksTop100.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-    <None Update="Resources\Files\BooksTop259.csv">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
     <None Update="Resources\Files\Books_Data_Clean.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

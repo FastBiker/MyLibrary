@@ -1,16 +1,13 @@
 ﻿using CsvHelper;
-using CsvHelper.Configuration;
 using MyLibrary.Components.CsvHandler;
 using MyLibrary.Data.Entities;
 using System.Globalization;
 using System.Text.Json;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace MyLibrary.Data.Repositories;
 
 public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
 {
-    private readonly ICsvReader _csvReader;
     private const string jsonFileName = "mylibrary.json";
     private string fullCsvFileName;
     private const string csvFileExtension = ".csv";
@@ -19,10 +16,9 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
     private static int lastId = 0;
     protected List<T> _items = [];
 
-    public FileRepository(ICsvReader csvReader, string fileName,  Action<T>? itemAddedCallback = null, 
+    public FileRepository(string fileName,  Action<T>? itemAddedCallback = null, 
         Action<T>? itemRemovedCallback = null)
     {
-        _csvReader = csvReader;
         _itemAddedCallback = itemAddedCallback;
         _itemRemovedCallback = itemRemovedCallback;
         fullCsvFileName = $"{fileName}{csvFileExtension}";
@@ -93,7 +89,7 @@ public class FileRepository<T> : IRepository<T> where T : class, IEntity, new()
     //    ItemAdded?.Invoke(this, item);
     //}
 
-    public void Add(T item) // to CSV
+    public void Add(T item) // do csv
     {
         using (var writer = new StreamWriter(fullCsvFileName, true, System.Text.Encoding.UTF8))
         using (var csv = new CsvWriter(writer, new CultureInfo("pl-PL")))

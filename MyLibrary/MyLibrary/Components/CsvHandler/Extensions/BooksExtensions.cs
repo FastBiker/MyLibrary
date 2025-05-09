@@ -1,10 +1,10 @@
-﻿using MyLibrary.Components.CsvHandler.VariousBooksCollections;
+﻿using MyLibrary.Data.Entities;
 
 namespace MyLibrary.Components.CsvHandler.Extensions;
 
 public static class BooksExtensions
 {
-    public static IEnumerable<RealBook> ToBook(this IEnumerable<string> source)
+    public static IEnumerable<Book> ToBook(this IEnumerable<string> source)
     {
         foreach (var line in source)
         {
@@ -45,9 +45,9 @@ public static class BooksExtensions
                 _price = null;
             }
 
-            yield return new RealBook
+            yield return new Book
             {
-                Index = columns[0],
+                PublishingHouse = columns[0],
                 AuthorName = columns[1],
                 AuthorSurname = columns[2],
                 CollectiveAuthor = columns[3],
@@ -55,7 +55,7 @@ public static class BooksExtensions
                 PlaceInLibrary = columns[5],
                 IsForSale = _isForSale,
                 Price = _price, 
-                Comments = columns[8]
+                PlaceOfPublication = columns[8]
             };
         }
 

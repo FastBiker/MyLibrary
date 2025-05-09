@@ -7,9 +7,9 @@ public interface ICsvReader
 {
     List<Book> ProcessMyLibraryBookWithCsvHelper(string filePath);
 
-    List<RealBook> ProcessRealBooks(string filePath);
+    List<Book> ProcessRealBooks(string filePath);
 
-    List<TopBook> ProcessTopBooks(string filePath);
+    List<Book> ProcessTopBooks(string filePath);
 
     List<Book> ProcessMyLibraryBook(string filePath);
 

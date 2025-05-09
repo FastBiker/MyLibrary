@@ -3,7 +3,6 @@ using MyLibrary.Components.CsvHandler.VariousBooksCollections;
 using MyLibrary.Data.Entities;
 using System.Globalization;
 using CsvHelper;
-using Microsoft.Extensions.Configuration.EnvironmentVariables;
 using CsvHelper.Configuration;
 
 
@@ -180,12 +179,12 @@ public class ProjectCsvReader : ICsvReader
         return books.ToList();
     }
 
-    public List<RealBook> ProcessRealBooks(string filePath)
+    public List<Book> ProcessRealBooks(string filePath)
     {
         if (!File.Exists(filePath))
         {
             Console.WriteLine("Nie znaleziono pliku MyHome!");
-            return new List<RealBook>();
+            return new List<Book>();
         }
 
         var books =
@@ -197,12 +196,12 @@ public class ProjectCsvReader : ICsvReader
         return books.ToList();
     }
 
-    public List<TopBook> ProcessTopBooks(string filePath)
+    public List<Book> ProcessTopBooks(string filePath)
     {
         if (!File.Exists(filePath))
         {
             Console.WriteLine("Nie znaleziono pliku książkaTop!");
-            return new List<TopBook>();
+            return new List<Book>();
         }
 
         var books =
@@ -220,9 +219,9 @@ public class ProjectCsvReader : ICsvReader
                     }
                 }
 
-                return new TopBook()
+                return new Book()
                 {
-                    Index = int.Parse(columns[0], CultureInfo.InvariantCulture),
+                    Id = int.Parse(columns[0], CultureInfo.InvariantCulture),
                     Title = columns[1],
                     AuthorName = columns[2],
                     AuthorSurname = columns[3]

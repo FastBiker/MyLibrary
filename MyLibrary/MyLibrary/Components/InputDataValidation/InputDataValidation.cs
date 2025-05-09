@@ -26,9 +26,9 @@ public class InputDataValidation : IInputDataValidation
         }
         else
         {
-            _exceptionsHandler.InputInvalidValueException(property, "wpisz '+' jeśli jest (wy)pożyczona/na sprzedaż, '-' jeśli nie jest, albo zostaw pole puste");
-            //throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
-            //    "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
+            //_exceptionsHandler.InputInvalidValueException(property, "wpisz '+' jeśli jest (wy)pożyczona/na sprzedaż, '-' jeśli nie jest, albo zostaw pole puste");
+            throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
+                "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
         }
         
         return _isProperty = bool.Parse(input);
@@ -78,9 +78,9 @@ public class InputDataValidation : IInputDataValidation
         }
         else
         {
-            _exceptionsHandler.InputInvalidValueException(property, "wpisz liczbę całkowitą większą od '0'!");
-            id = -1;
-            //throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
+            //_exceptionsHandler.InputInvalidValueException(property, "wpisz liczbę całkowitą większą od '0'!");
+            //id = -1;
+            throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
         }
         
         return id;

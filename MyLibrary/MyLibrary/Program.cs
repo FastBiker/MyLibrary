@@ -22,9 +22,7 @@ services.AddSingleton<IInputDataValidation, InputDataValidation>();
 services.AddSingleton<IExceptionsHandler, ExceptionsHandler>();
 services.AddSingleton<ICsvReader, ProjectCsvReader>();
 services.AddSingleton<IConvertFileToCsv, ConvertFileToCsv>();
-services.AddDbContext<MyLibraryDbContext>();//(options => options
-    //.UseSqlServer("Data Source=LAPTOP-R6OVM9N5\\SQLEXPRESS;Initial Catalog=MyLibraryStorage;Integrated Security=True;Trust Server Certificate=True"));
-//services.AddAutoMapper(typeof(MappingProfile));
+services.AddDbContext<MyLibraryDbContext>();
 
 var serviceProvider = services.BuildServiceProvider();
 var app = serviceProvider.GetService<IApp>()!;

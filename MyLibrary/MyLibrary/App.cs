@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-using MyLibrary.Components.CsvHandler;
-using MyLibrary.Components.CsvHandler.VariousBooksCollections;
+﻿using MyLibrary.Components.CsvHandler;
 using MyLibrary.Components.DataProviders;
 using MyLibrary.Data;
 using MyLibrary.Data.Entities;
@@ -776,7 +774,7 @@ public class App : IApp
                             break;
                         case "l":
                             bool _isForSale;
-                            const string propertyForSale = "książka jest na sprzedaż";
+                            const string propertyForSale = "czy książka jest na sprzedaż";
                             input4 = _userCommunication.WriteBookProperties(propertyForSale);
                             _isForSale = _inputValidation.BoolValidation(input4, propertyForSale);
                             dbRepository.UpdateProperty(updateBook, x => x.IsForSale = _isForSale);
@@ -808,14 +806,14 @@ public class App : IApp
                             break;
                         case "n":
                             bool _isLent;
-                            const string propertyIsLent = "książka jest komuś pożyczona";
+                            const string propertyIsLent = "czy książka jest komuś pożyczona";
                             input4 = _userCommunication.WriteBookProperties(propertyIsLent);
                             _isLent = _inputValidation.BoolValidation(input4, propertyIsLent);
                             dbRepository.UpdateProperty(updateBook, x => x.IsLent = _isLent);
                             break;
                         case "o":
                             bool _isBorrowed;
-                            const string propertyIsBorrowed = "książka jest wypożyczona";
+                            const string propertyIsBorrowed = "czy książka jest wypożyczona";
                             input4 = _userCommunication.WriteBookProperties(propertyIsBorrowed);
                             _isBorrowed = _inputValidation.BoolValidation(input4, propertyIsBorrowed);
                             dbRepository.UpdateProperty(updateBook, x => x.IsBorrowed = _isBorrowed);
@@ -867,7 +865,7 @@ public class App : IApp
                     throw new Exception($"Plik '{inputFileName}.csv' już istnieje! Podaj inną nazwę!");
                 }
 
-                var fileRepository = new FileRepository<Book>(new ProjectCsvReader(), inputFileName, BookAdded);
+                var fileRepository = new FileRepository<Book>(inputFileName, BookAdded);
                 fileRepository.ItemAdded += BookOnItemAdded;
 
                 var items = repository.GetAll().ToArray();
@@ -882,7 +880,7 @@ public class App : IApp
                 {
                     throw new Exception($"Podany plik nie została znaleziony!");
                 }
-                //C:\Projekty\MyLibrary\MyLibrary\MyLibrary\Resources\Files\My_Home_Library.csv"
+                //C:\Projekty\MyLibrary\MyLibrary\MyLibrary\Resources\Files\My_Home_Library.csv
                 dbRepository.AddBatch(items);
             }
         }
