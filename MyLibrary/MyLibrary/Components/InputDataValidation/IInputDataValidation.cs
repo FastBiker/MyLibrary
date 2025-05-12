@@ -9,4 +9,6 @@ public interface IInputDataValidation
     bool BoolValidation(string? input, string property);
 
     int IntInputValidation(string? input, string property);
+
+    bool ValidatePrice(string input, string inf2);
 }

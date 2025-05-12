@@ -251,6 +251,11 @@ public class App : IApp
                     }
 
                     input = _userCommunication.WriteBookProperties("liczbę stron");
+                    //int? _pageesNumber = int.TryParse(input, out int result2) && result2 > 0 ? result2
+                    //    : _inputValidation.InputIsNullOrEmpty(input, inf2) == null ? (int?)null
+                    //    : throw _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
+
+
                     int? _pagesNumber;
                     if (int.TryParse(input, out int result2) && result2 > 0)
                     {
@@ -281,28 +286,29 @@ public class App : IApp
                     _isForSale = _inputValidation.BoolValidation(input, propertyForSale);
 
                     decimal? _price;
-                    if (_isForSale == true)
+                    if (_isForSale)
                     {
-                        input = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
-                        if (decimal.TryParse(input, out decimal result3) && result3 > 0)
-                        {
-                            _price = result3;
-                        }
-                        else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
-                        {
-                            _price = null;
-                        }
-                        else
-                        {
-                            _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
-                            return;
-                        }
+                        input = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), " +
+                            "wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
+                        _price = _inputValidation.ValidatePrice(input, inf2) ? decimal.Parse(input) : (decimal?)null;
+                        //if (decimal.TryParse(input, out decimal result3) && result3 > 0)
+                        //{
+                        //    _price = result3;
+                        //}
+                        //else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
+                        //{
+                        //    _price = null;
+                        //}
+                        //else
+                        //{
+                        //    _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
+                        //    return;
+                        //}
                     }
                     else
                     {
                         _price = null;
                     }
-
 
                     bool _isLent;
                     const string propertyIsLent = "czy książka jest komuś pożyczona";
@@ -361,7 +367,6 @@ public class App : IApp
                     }};
 
                     dbRepository.AddBatch(books);
-                    //fileRepository.AddBatch(books);
 
                     if (inputBreak == "q")
                     {

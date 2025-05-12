@@ -20,7 +20,6 @@ public class BooksDataProvider : IBooksDataProvider
         _inputValidation = inputDataValidation;
     }
 
-    //select
     public decimal GetMinimumPriceOffAllBooks()
     {
         var books = _bookRepository.GetAll();
@@ -73,7 +72,6 @@ public class BooksDataProvider : IBooksDataProvider
         return sb.ToString();
     }
 
-    //order by
     public List<Book> OrderByTitle()
     {
         var books = _bookRepository.GetAll();
@@ -103,8 +101,6 @@ public class BooksDataProvider : IBooksDataProvider
             .ThenByDescending(x => x.Title)
             .ToList();
     }
-
-    //where
     public List<Book> WhereStartsWith(string prefix)
     {
         var books = _bookRepository.GetAll();
@@ -174,7 +170,7 @@ public class BooksDataProvider : IBooksDataProvider
     public List<Book> WhereIsForSale()
     {
         var books = _bookRepository.GetAll();
-        var list = books.Where(x => x.IsForSale.HasValue && x.IsForSale.Value).ToList();
+        var list = books.Where(x => x.IsForSale).ToList();
         if (list.Count == 0)
         {
             throw new Exception($"NOT FOUND");
@@ -208,8 +204,6 @@ public class BooksDataProvider : IBooksDataProvider
         return titlesOfOwner;
     }
 
-
-    //first, last, single
     public Book FirstByOwner(string owner)
     {
         var books = _bookRepository.GetAll();
@@ -246,7 +240,6 @@ public class BooksDataProvider : IBooksDataProvider
         return books.SingleOrDefault(x => x.Id == id, new Book { Id = -1, Title = "NOT FOUND" });
     }
 
-    // Take, TakeWhile
     public List<Book> TakeBooks(int howMany)
     {
         var books = _bookRepository.GetAll();
@@ -274,7 +267,6 @@ public class BooksDataProvider : IBooksDataProvider
             .ToList();
     }
 
-    // Skip, SkipWhile
     public List<Book> SkipBooks(int howMany)
     {
         var books = _bookRepository.GetAll();
@@ -294,7 +286,6 @@ public class BooksDataProvider : IBooksDataProvider
             .ToList();
     }
 
-    // Distinct, DistinctBy
     public List<string> DistinctAllOwners()
     {
         var books = _bookRepository.GetAll();

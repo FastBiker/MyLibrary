@@ -1,5 +1,5 @@
-﻿using MyLibrary.Components.ExceptionsHandler;
-using MyLibrary.UserCommunication;
+﻿using MyLibrary.UserCommunication;
+using MyLibrary.Components.ExceptionsHandler;
 
 namespace MyLibrary.Components.InputDataValidation;
 
@@ -15,35 +15,20 @@ public class InputDataValidation : IInputDataValidation
 
     public bool BoolValidation(string? input, string property)
     {
-        bool _isProperty;
-        if (input == "+")
-        {
-            input = "true";
-        }
-        else if (input == "-" || string.IsNullOrEmpty(input))
-        {
-            input = "false";
-        }
-        else
-        {
-            //_exceptionsHandler.InputInvalidValueException(property, "wpisz '+' jeśli jest (wy)pożyczona/na sprzedaż, '-' jeśli nie jest, albo zostaw pole puste");
-            throw new Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
+        bool _isProperty = input == "+" ? true : input == "-" || string.IsNullOrEmpty(input) ? false : throw new 
+            Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
                 "wpisz '+' jeśli jest wypożyczona, '-' jeśli nie jest, albo zostaw pole puste");
-        }
-        
-        return _isProperty = bool.Parse(input);
+
+        return _isProperty;
     }
 
     public void FileNameValidation(string? inputFileName, string forbiddenCharacters)
     {
-        //string forbiddenCharacters = ":*?\"<>/|\\";
         foreach (char c in forbiddenCharacters)
         {
             if (inputFileName.Contains(c) || inputFileName.EndsWith(".") || inputFileName.Length == 0)
-            {
                 throw new Exception($"Niewłaściwa nazwa pliku! \nNazwa pliku powinna mieć przynajmniej jeden znak, " +
                     $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy!");
-            }
         }
     }
 
@@ -58,11 +43,10 @@ public class InputDataValidation : IInputDataValidation
                 }
                 break;
             case "Podana wartość jest null / informacja opcjonalana":
-                if (string.IsNullOrEmpty(input))
-                {
-                    input = null;
-                    _userCommunication.MessageOptionalData(inf);
-                }
+
+                input = string.IsNullOrEmpty(input) ? null : input;
+                if (input == null) _userCommunication.MessageOptionalData(inf);
+
                 break;
         }
 
@@ -71,18 +55,24 @@ public class InputDataValidation : IInputDataValidation
 
     public int IntInputValidation(string? input, string property)
     {
-        int id;
-        if (int.TryParse(input, out int result) && result > 0)
-        {
-            id = result;
-        }
-        else
-        {
-            //_exceptionsHandler.InputInvalidValueException(property, "wpisz liczbę całkowitą większą od '0'!");
-            //id = -1;
-            throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
-        }
+        int id = int.TryParse(input, out int result) && result > 0 
+            ? result 
+            : throw new Exception($"\nPodane dane w '{property}' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'!");
         
         return id;
+    }
+
+    public bool ValidatePrice(string input, string inf2)
+    {
+        if (decimal.TryParse(input, out decimal result) && result > 0)
+        {
+            return true;
+        }
+        if (InputIsNullOrEmpty(input, inf2) == null)
+        {
+            return false;
+        }
+        _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
+        return false;
     }
 }

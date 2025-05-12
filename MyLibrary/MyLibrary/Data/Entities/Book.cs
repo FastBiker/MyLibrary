@@ -31,7 +31,7 @@ public class Book : EntityBase
 
     public string? Owner { get; set; }
 
-    public bool? IsForSale { get; set; }
+    public bool IsForSale { get; set; }
 
     public decimal? Price { get; set; }
 
@@ -87,16 +87,16 @@ public class Book : EntityBase
         {
             sb.AppendLine($"\tOwner: {Owner}");
         }
-        if (IsForSale == true)
+        if (IsForSale)
         {
             sb.AppendLine($"\tIsForSale: {IsForSale}");
             sb.AppendLine($"\tPrice: {Price:c}");
         }
-        if (IsLent == true)
+        if (IsLent)
         {
             sb.AppendLine($"\tIsLent: {IsLent}");
         }
-        if (IsBorrowed == true)
+        if (IsBorrowed)
         {
             sb.AppendLine($"\tIsBorrowed: {IsBorrowed}");
         }
