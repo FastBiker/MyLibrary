@@ -60,7 +60,7 @@ public class ProjectCsvReader : ICsvReader
     {
         if (!File.Exists(filePath))
         {
-            Console.WriteLine("Nie znalezion pliku!");
+            Console.WriteLine("Nie znaleziono pliku!");
             return new List<Book>();
         }
         var books =

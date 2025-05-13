@@ -90,7 +90,10 @@ public class Book : EntityBase
         if (IsForSale)
         {
             sb.AppendLine($"\tIsForSale: {IsForSale}");
-            sb.AppendLine($"\tPrice: {Price:c}");
+        }
+        if (Price.HasValue) 
+        { 
+            sb.AppendLine($"\tPrice: {Price:c}"); 
         }
         if (IsLent)
         {

@@ -290,20 +290,7 @@ public class App : IApp
                     {
                         input = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), " +
                             "wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
-                        _price = _inputValidation.ValidatePrice(input, inf2) ? decimal.Parse(input) : (decimal?)null;
-                        //if (decimal.TryParse(input, out decimal result3) && result3 > 0)
-                        //{
-                        //    _price = result3;
-                        //}
-                        //else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
-                        //{
-                        //    _price = null;
-                        //}
-                        //else
-                        //{
-                        //    _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
-                        //    return;
-                        //}
+                        _price = _inputValidation.ValidatePrice(input, inf2) ? decimal.Parse(input) : null;
                     }
                     else
                     {
@@ -324,19 +311,21 @@ public class App : IApp
                     if (_isBorrowed == true || _isLent == true)
                     {
                         input = _userCommunication.WriteBookProperties("datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
-                        if (DateTime.TryParse(input, out DateTime result4))
-                        {
-                            _dateOfBorrowedOrLent = result4;
-                        }
-                        else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
-                        {
-                            _dateOfBorrowedOrLent = null;
-                        }
-                        else
-                        {
-                            _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: rrrr,mm,dd");
-                            return;
-                        }
+
+                        _dateOfBorrowedOrLent = _inputValidation.ValidateDateTime(input, inf2) ? DateTime.Parse(input) : null;
+                        //if (DateTime.TryParse(input, out DateTime result4))
+                        //{
+                        //    _dateOfBorrowedOrLent = result4;
+                        //}
+                        //else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
+                        //{
+                        //    _dateOfBorrowedOrLent = null;
+                        //}
+                        //else
+                        //{
+                        //    _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: rrrr,mm,dd");
+                        //    return;
+                        //}
                     }
                     else
                     {
@@ -372,10 +361,8 @@ public class App : IApp
                     {
                         break;
                     }
-                    else
-                    {
-                        _userCommunication.MainMethodsHeaders("\nDodaj nową książkę:" + Environment.NewLine + "==================");
-                    }
+
+                    _userCommunication.MainMethodsHeaders("\nDodaj nową książkę:" + Environment.NewLine + "==================");
                 }
             }
 
@@ -618,16 +605,12 @@ public class App : IApp
                             break;
                         case "x":
                             input = _userCommunication.InputFilterData("Ile pierwszych książek chcesz pominąć?");
-                            if (int.TryParse(input, out int result7) && result7 > 0)
-                            {
-                                howMany = result7;
-                            }
-                            else
-                            {
-                                throw new Exception("\nPodane dane w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
-                            }
+                            howMany = int.TryParse(input, out int result7) && result7 > 0 ? result7 : throw new Exception("\nPodane dane " +
+                                "w 'ilość książek' mają niewłaściwą wartość; wpisz liczbę całkowitą większą od '0'");
+
                             _userCommunication.FilterHeader($"Pokaż książki pomijając pierwszych {howMany} w kolejności alfabetycznej:"
                                 + Environment.NewLine + "=================================================================");
+
                             foreach (var item in _booksDataProvider.SkipBooks(howMany))
                             {
                                 _userCommunication.WriteFilterBooksToConsole(item);
@@ -786,22 +769,12 @@ public class App : IApp
                             break;
                         case "m":
                             decimal? _price;
-                            if (updateBook.IsForSale == true)
+                            if (updateBook.IsForSale)
                             {
                                 input4 = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
-                                if (decimal.TryParse(input4, out decimal result3) && result3 > 0)
-                                {
-                                    _price = result3;
-                                }
-                                else if (_inputValidation.InputIsNullOrEmpty(input4, inf2) == null)
-                                {
-                                    _price = null;
-                                }
-                                else
-                                {
-                                    _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
-                                    return;
-                                }
+
+                                _price = _inputValidation.ValidatePrice(input4, inf2) ? decimal.Parse(input4) : (decimal?)null;
+
                             }
                             else
                             {
@@ -823,25 +796,12 @@ public class App : IApp
                             _isBorrowed = _inputValidation.BoolValidation(input4, propertyIsBorrowed);
                             dbRepository.UpdateProperty(updateBook, x => x.IsBorrowed = _isBorrowed);
                             break;
-                        case "p":
-                            input4 = _userCommunication.WriteBookProperties("poprawne miejsce wydania");
+                        case "p":         
                             DateTime? _dateOfBorrowedOrLent;
-                            if (updateBook.IsBorrowed == true || updateBook.IsLent == true)
+                            if (updateBook.IsBorrowed || updateBook.IsLent)
                             {
                                 input4 = _userCommunication.WriteBookProperties("poprawną datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
-                                if (DateTime.TryParse(input4, out DateTime result4))
-                                {
-                                    _dateOfBorrowedOrLent = result4;
-                                }
-                                else if (_inputValidation.InputIsNullOrEmpty(input4, inf2) == null)
-                                {
-                                    _dateOfBorrowedOrLent = null;
-                                }
-                                else
-                                {
-                                    _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę wypożyczenia wg wzoru: rrrr,mm,dd");
-                                    return;
-                                }
+                                _dateOfBorrowedOrLent = _inputValidation.ValidateDateTime(input4, inf2) ? DateTime.Parse(input4) : null;
                             }
                             else
                             {
@@ -866,9 +826,7 @@ public class App : IApp
                 _inputValidation.FileNameValidation(inputFileName, forbiddenCharacters);
 
                 if (File.Exists($"{inputFileName}.csv"))
-                {
                     throw new Exception($"Plik '{inputFileName}.csv' już istnieje! Podaj inną nazwę!");
-                }
 
                 var fileRepository = new FileRepository<Book>(inputFileName, BookAdded);
                 fileRepository.ItemAdded += BookOnItemAdded;
@@ -881,11 +839,10 @@ public class App : IApp
             {
                 var inputFilePath = _userCommunication.WriteInput();
                 var items = _csvReader.ProcessMyLibraryBook(inputFilePath).ToArray();
+
                 if (!File.Exists(inputFilePath))
-                {
                     throw new Exception($"Podany plik nie została znaleziony!");
-                }
-                //C:\Projekty\MyLibrary\MyLibrary\MyLibrary\Resources\Files\My_Home_Library.csv
+
                 dbRepository.AddBatch(items);
             }
         }

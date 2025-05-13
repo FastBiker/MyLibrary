@@ -75,4 +75,18 @@ public class InputDataValidation : IInputDataValidation
         _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
         return false;
     }
+
+    public bool ValidateDateTime(string input, string inf2)
+    {
+        if (DateTime.TryParse(input, out DateTime result4))
+        {
+            return true;
+        }
+        if (InputIsNullOrEmpty(input, inf2) == null)
+        {
+            return false;
+        }
+        _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: rrrr,mm,dd");
+        return false;
+    }
 }

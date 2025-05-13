@@ -11,4 +11,6 @@ public interface IInputDataValidation
     int IntInputValidation(string? input, string property);
 
     bool ValidatePrice(string input, string inf2);
+
+    bool ValidateDateTime(string input, string inf2);
 }
