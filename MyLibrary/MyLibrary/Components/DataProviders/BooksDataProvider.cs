@@ -343,7 +343,7 @@ public class BooksDataProvider : IBooksDataProvider
     public Book FindBookById(IRepository<Book> dbRepository)
     {
         var input = _userCommunication.WriteBookPropertyValue("Id");
-        int id = _inputValidation.IntInputValidation(input, "Id");
+        int id = _inputValidation.ValidateIntInput(input, "Id");
         Book foundBook;
 
         var book = dbRepository.GetById(id);

@@ -2,13 +2,17 @@
 
 public interface IInputDataValidation
 {
-    void FileNameValidation(string? inputFileName, string forbiddenCharacters);
+    void ValidateFileName(string? inputFileName, string forbiddenCharacters);
 
-    string InputIsNullOrEmpty(string? input, string inf);
+    string HandleInputWhenEmptyOrNull(string? input, string inf);
 
-    bool BoolValidation(string? input, string property);
+    bool ValidateBoolInput(string? input, string property);
 
-    int IntInputValidation(string? input, string property);
+    int ValidateIntInput(string? input, string property);
+
+    bool ValidateYearOfPublication(string input, string inf2);
+
+    bool ValidatePagesNumber(string input, string inf2);
 
     bool ValidatePrice(string input, string inf2);
 

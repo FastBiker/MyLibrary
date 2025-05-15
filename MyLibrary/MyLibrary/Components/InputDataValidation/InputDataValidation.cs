@@ -13,7 +13,7 @@ public class InputDataValidation : IInputDataValidation
         _exceptionsHandler = exceptionsHandler;
     }
 
-    public bool BoolValidation(string? input, string property)
+    public bool ValidateBoolInput(string? input, string property)
     {
         bool _isProperty = input == "+" ? true : input == "-" || string.IsNullOrEmpty(input) ? false : throw new 
             Exception($"Podane dane w '{property}' mają niewłaściwą wartość; " +
@@ -22,17 +22,22 @@ public class InputDataValidation : IInputDataValidation
         return _isProperty;
     }
 
-    public void FileNameValidation(string? inputFileName, string forbiddenCharacters)
+    public void ValidateFileName(string? inputFileName, string forbiddenCharacters)
     {
         foreach (char c in forbiddenCharacters)
         {
-            if (inputFileName.Contains(c) || inputFileName.EndsWith(".") || inputFileName.Length == 0)
+            if (IsValidFileName(inputFileName, c))
                 throw new Exception($"Niewłaściwa nazwa pliku! \nNazwa pliku powinna mieć przynajmniej jeden znak, " +
                     $"wykluczając znaki: '{forbiddenCharacters}' oraz '.' na końcu nazwy!");
         }
     }
 
-    public string InputIsNullOrEmpty(string? input, string inf)
+    private static bool IsValidFileName(string? inputFileName, char c)
+    {
+        return inputFileName.Contains(c) || inputFileName.EndsWith(".") || inputFileName.Length == 0;
+    }
+
+    public string HandleInputWhenEmptyOrNull(string? input, string inf)
     {
         switch (inf)
         {
@@ -53,7 +58,7 @@ public class InputDataValidation : IInputDataValidation
         return input;
     }
 
-    public int IntInputValidation(string? input, string property)
+    public int ValidateIntInput(string? input, string property)
     {
         int id = int.TryParse(input, out int result) && result > 0 
             ? result 
@@ -62,16 +67,38 @@ public class InputDataValidation : IInputDataValidation
         return id;
     }
 
+    public bool ValidateYearOfPublication(string input, string inf2)
+    {
+        if (int.TryParse(input, out int result) && result > 999 && result < 10000)
+            return true;
+
+        if (HandleInputWhenEmptyOrNull(input, inf2) == null)
+            return false;
+
+        _exceptionsHandler.InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
+        return false;
+    }
+
+    public bool ValidatePagesNumber(string input, string inf2)
+    {
+        if (int.TryParse(input, out int result2) && result2 > 0)
+            return true;
+
+        if (HandleInputWhenEmptyOrNull(input, inf2) == null)
+            return false;
+
+        _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
+        return false;
+    }
+
     public bool ValidatePrice(string input, string inf2)
     {
         if (decimal.TryParse(input, out decimal result) && result > 0)
-        {
             return true;
-        }
-        if (InputIsNullOrEmpty(input, inf2) == null)
-        {
+
+        if (HandleInputWhenEmptyOrNull(input, inf2) == null)
             return false;
-        }
+
         _exceptionsHandler.InputInvalidValueException("cena książki", "wpisz dowolną liczbę większą od 0 (00,00)");
         return false;
     }
@@ -79,14 +106,12 @@ public class InputDataValidation : IInputDataValidation
     public bool ValidateDateTime(string input, string inf2)
     {
         if (DateTime.TryParse(input, out DateTime result4))
-        {
             return true;
-        }
-        if (InputIsNullOrEmpty(input, inf2) == null)
-        {
+
+        if (HandleInputWhenEmptyOrNull(input, inf2) == null)
             return false;
-        }
-        _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: rrrr,mm,dd");
+
+        _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
         return false;
     }
 }

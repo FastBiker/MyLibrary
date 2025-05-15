@@ -14,7 +14,7 @@ namespace MyLibrary1.Tests
             string inf = "Podana wartoœæ jest null / informacja opcjonalana";
             string? input = "";
             // act
-            var testInput = _inputDataValidation.InputIsNullOrEmpty(input, inf);
+            var testInput = _inputDataValidation.HandleInputWhenEmptyOrNull(input, inf);
 
             // assert
             Assert.That(testInput, Is.EqualTo(null));
@@ -29,7 +29,7 @@ namespace MyLibrary1.Tests
             string property = "testProperty";
             int id;
             // act
-            id = _inputDataValidation.IntInputValidation(input, property);
+            id = _inputDataValidation.ValidateIntInput(input, property);
 
             // assert
             Assert.That(id, Is.EqualTo(67));
@@ -44,7 +44,7 @@ namespace MyLibrary1.Tests
             string property = "testProperty";
             int id;
             // act & assert
-            var ex = Assert.Throws<Exception>(() => _inputDataValidation.IntInputValidation(invalidInput, property));
+            var ex = Assert.Throws<Exception>(() => _inputDataValidation.ValidateIntInput(invalidInput, property));
 
             Assert.That(ex.Message, Is.EqualTo($"\nPodane dane w 'testProperty' maj¹ niew³aœciw¹ wartoœæ; " +
                 "wpisz liczbê ca³kowit¹ wiêksz¹ od '0'!"));
@@ -59,7 +59,7 @@ namespace MyLibrary1.Tests
             string property = "testProperty";
             bool _isTest;
             // act
-            _isTest = _inputDataValidation.BoolValidation(testInput, property);
+            _isTest = _inputDataValidation.ValidateBoolInput(testInput, property);
 
             // assert
             Assert.That(_isTest, Is.EqualTo(true));
@@ -74,7 +74,7 @@ namespace MyLibrary1.Tests
             string property = "testProperty";
             bool _isTest;
             // act
-            _isTest = _inputDataValidation.BoolValidation(testInput, property);
+            _isTest = _inputDataValidation.ValidateBoolInput(testInput, property);
 
             // assert
             Assert.That(_isTest, Is.EqualTo(false));
@@ -89,7 +89,7 @@ namespace MyLibrary1.Tests
             string property = "testProperty";
             bool _isTest;
             // act
-            _isTest = _inputDataValidation.BoolValidation(testInput, property);
+            _isTest = _inputDataValidation.ValidateBoolInput(testInput, property);
 
             // assert
             Assert.That(_isTest, Is.EqualTo(false));
@@ -103,7 +103,7 @@ namespace MyLibrary1.Tests
             string invalidInput = "test";
             string property = "testProperty";
             // act & assert
-            var ex = Assert.Throws<Exception>(() => _inputDataValidation.BoolValidation(invalidInput, property));
+            var ex = Assert.Throws<Exception>(() => _inputDataValidation.ValidateBoolInput(invalidInput, property));
 
             Assert.That(ex.Message, Is.EqualTo($"Podane dane w '{property}' maj¹ niew³aœciw¹ wartoœæ; " +
                 "wpisz '+' jeœli jest wypo¿yczona, '-' jeœli nie jest, albo zostaw pole puste"));

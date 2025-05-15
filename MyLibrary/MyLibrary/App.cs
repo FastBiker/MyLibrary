@@ -206,17 +206,17 @@ public class App : IApp
                     {
                         case "1":
                             input = _userCommunication.WriteBookProperties("imię autora(*)");
-                            _authorName = _inputValidation.InputIsNullOrEmpty(input, inf1);
+                            _authorName = _inputValidation.HandleInputWhenEmptyOrNull(input, inf1);
 
                             input = _userCommunication.WriteBookProperties("nazwisko autora(*)");
-                            _authorSurname = _inputValidation.InputIsNullOrEmpty(input, inf1);
+                            _authorSurname = _inputValidation.HandleInputWhenEmptyOrNull(input, inf1);
 
                             _collectiveAuthor = null;
                             break;
 
                         case "2":
                             input = _userCommunication.WriteBookProperties("autora zbiorowego(*)");
-                            _collectiveAuthor = _inputValidation.InputIsNullOrEmpty(input, inf1);
+                            _collectiveAuthor = _inputValidation.HandleInputWhenEmptyOrNull(input, inf1);
 
                             _authorName = null;
                             _authorSurname = null;
@@ -226,64 +226,35 @@ public class App : IApp
                     }
 
                     input = _userCommunication.WriteBookProperties("tytuł książki(*)");
-                    var _title = _inputValidation.InputIsNullOrEmpty(input, inf1);
+                    var _title = _inputValidation.HandleInputWhenEmptyOrNull(input, inf1);
 
                     input = _userCommunication.WriteBookProperties("nazwę wydawnictwa");
-                    var _publishingHouse = _inputValidation.InputIsNullOrEmpty(input, inf2);
+                    var _publishingHouse = _inputValidation.HandleInputWhenEmptyOrNull(input, inf2);
 
                     input = _userCommunication.WriteBookProperties("miejsce wydania");
-                    var _placeOfPublication = _inputValidation.InputIsNullOrEmpty(input, inf2);
+                    var _placeOfPublication = _inputValidation.HandleInputWhenEmptyOrNull(input, inf2);
 
                     input = _userCommunication.WriteBookProperties("rok wydania (rrrr)");
-                    int? _yearOfPublication;
-                    if (int.TryParse(input, out int result) && result > 999 && result < 10000)
-                    {
-                        _yearOfPublication = result;
-                    }
-                    else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
-                    {
-                        _yearOfPublication = null;
-                    }
-                    else
-                    {
-                        _exceptionsHandler.InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
-                        return;
-                    }
+
+                    int? _yearOfPublication = _inputValidation.ValidateYearOfPublication(input, inf2) ? int.Parse(input) : null;
 
                     input = _userCommunication.WriteBookProperties("liczbę stron");
-                    //int? _pageesNumber = int.TryParse(input, out int result2) && result2 > 0 ? result2
-                    //    : _inputValidation.InputIsNullOrEmpty(input, inf2) == null ? (int?)null
-                    //    : throw _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
 
-
-                    int? _pagesNumber;
-                    if (int.TryParse(input, out int result2) && result2 > 0)
-                    {
-                        _pagesNumber = result2;
-                    }
-                    else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
-                    {
-                        _pagesNumber = null;
-                    }
-                    else
-                    {
-                        _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
-                        return;
-                    }
+                    int? _pagesNumber = _inputValidation.ValidatePagesNumber(input, inf2) ? int.Parse(input) : null;
 
                     input = _userCommunication.WriteBookProperties("ISBN");
-                    var _iSBN = _inputValidation.InputIsNullOrEmpty(input, inf2);
+                    var _iSBN = _inputValidation.HandleInputWhenEmptyOrNull(input, inf2);
 
                     input = _userCommunication.WriteBookProperties("lokalizację książki w twojwj bibliotece");
-                    var _placeInLibrary = _inputValidation.InputIsNullOrEmpty(input, inf2);
+                    var _placeInLibrary = _inputValidation.HandleInputWhenEmptyOrNull(input, inf2);
 
                     input = _userCommunication.WriteBookProperties("właściciela książki");
-                    var _owner = _inputValidation.InputIsNullOrEmpty(input, inf2);
+                    var _owner = _inputValidation.HandleInputWhenEmptyOrNull(input, inf2);
 
                     bool _isForSale;
                     const string propertyForSale = "czy książka jest na sprzedaż";
                     input = _userCommunication.WriteBookProperties(propertyForSale);
-                    _isForSale = _inputValidation.BoolValidation(input, propertyForSale);
+                    _isForSale = _inputValidation.ValidateBoolInput(input, propertyForSale);
 
                     decimal? _price;
                     if (_isForSale)
@@ -300,12 +271,12 @@ public class App : IApp
                     bool _isLent;
                     const string propertyIsLent = "czy książka jest komuś pożyczona";
                     input = _userCommunication.WriteBookProperties(propertyIsLent);
-                    _isLent = _inputValidation.BoolValidation(input, propertyIsLent);
+                    _isLent = _inputValidation.ValidateBoolInput(input, propertyIsLent);
 
                     bool _isBorrowed;
                     const string propertyIsBorrowed = "czy książka jest wypożyczona";
                     input = _userCommunication.WriteBookProperties(propertyIsBorrowed);
-                    _isBorrowed = _inputValidation.BoolValidation(input, propertyIsBorrowed);
+                    _isBorrowed = _inputValidation.ValidateBoolInput(input, propertyIsBorrowed);
 
                     DateTime? _dateOfBorrowedOrLent;
                     if (_isBorrowed == true || _isLent == true)
@@ -313,19 +284,6 @@ public class App : IApp
                         input = _userCommunication.WriteBookProperties("datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
 
                         _dateOfBorrowedOrLent = _inputValidation.ValidateDateTime(input, inf2) ? DateTime.Parse(input) : null;
-                        //if (DateTime.TryParse(input, out DateTime result4))
-                        //{
-                        //    _dateOfBorrowedOrLent = result4;
-                        //}
-                        //else if (_inputValidation.InputIsNullOrEmpty(input, inf2) == null)
-                        //{
-                        //    _dateOfBorrowedOrLent = null;
-                        //}
-                        //else
-                        //{
-                        //    _exceptionsHandler.InputInvalidValueException("data (wy)pożyczenia", "podaj datę (wy)pożyczenia wg wzoru: rrrr,mm,dd");
-                        //    return;
-                        //}
                     }
                     else
                     {
@@ -494,7 +452,7 @@ public class App : IApp
                         case "l":
                             input = _userCommunication.InputFilterData("\nPodaj liczbę większą od '0'");
 
-                            int minPagesNumber = _inputValidation.IntInputValidation(input, "objętość książki");
+                            int minPagesNumber = _inputValidation.ValidateIntInput(input, "objętość książki");
 
                             _userCommunication.FilterHeader($"Książki, których objętość jest większa niż {minPagesNumber} stron(y):" + Environment.NewLine
                                 + "=======================================================");
@@ -550,7 +508,7 @@ public class App : IApp
                         case "t":
                             input = _userCommunication.InputFilterData("Podaj Id:");
 
-                            int id = _inputValidation.IntInputValidation(input, "Id");
+                            int id = _inputValidation.ValidateIntInput(input, "Id");
 
                             _userCommunication.FilterHeader($"Książka o ID: {id}:" + Environment.NewLine + "=================");
                             var book3 = _booksDataProvider.SingleOrDefaultById(id);
@@ -560,7 +518,7 @@ public class App : IApp
                         case "u":
                             input = _userCommunication.InputFilterData("Ile pierwszych książek chcesz wyświetlić?");
 
-                            int howMany = _inputValidation.IntInputValidation(input, "ilość książek");
+                            int howMany = _inputValidation.ValidateIntInput(input, "ilość książek");
 
                             _userCommunication.FilterHeader($"Pierwsze {howMany} książki(książek) z listy w kolejności alfabetycznej:"
                                 + Environment.NewLine + "==============================================================");
@@ -594,7 +552,7 @@ public class App : IApp
                         case "w":
                             input = _userCommunication.InputFilterData("Podaj Id:");
 
-                            id = _inputValidation.IntInputValidation(input, "Id");
+                            id = _inputValidation.ValidateIntInput(input, "Id");
 
                             _userCommunication.FilterHeader($"Książki o Id mniejszym od {id}:" + Environment.NewLine + "=============================");
 
@@ -635,7 +593,7 @@ public class App : IApp
                         case "ax":
                             input = _userCommunication.InputFilterData("Na ilu elementowe grupy / paczki chcesz podzielić wszystkie książki?");
 
-                            howMany = _inputValidation.IntInputValidation(input, "ilość książek w paczce/grupie");
+                            howMany = _inputValidation.ValidateIntInput(input, "ilość książek w paczce/grupie");
 
                             _userCommunication.FilterHeader($"Podział książek na paczki {howMany}-elementowe:"
                                 + Environment.NewLine + "=========================================");
@@ -648,7 +606,7 @@ public class App : IApp
                         case "bx":
                             input = _userCommunication.InputFilterData("Podaj Id ksiązki");
 
-                            id = _inputValidation.IntInputValidation(input, "Id");
+                            id = _inputValidation.ValidateIntInput(input, "Id");
 
                             _userCommunication.FilterHeader($"Książka o Id = {id}:"
                                 + Environment.NewLine + "===================");
@@ -702,7 +660,7 @@ public class App : IApp
                             break;
                         case "d":
                             input4 = _userCommunication.WriteBookProperties("poprawną tytuł(*)");
-                            dbRepository.UpdateProperty(updateBook, x => x.Title = _inputValidation.InputIsNullOrEmpty(input4, inf1));
+                            dbRepository.UpdateProperty(updateBook, x => x.Title = _inputValidation.HandleInputWhenEmptyOrNull(input4, inf1));
                             break;
                         case "e":
                             input4 = _userCommunication.WriteBookProperties("poprawną nazwę wydawnictwa");
@@ -714,38 +672,16 @@ public class App : IApp
                             break;
                         case "g":
                             input4 = _userCommunication.WriteBookProperties("poprawny rok wydania (rrrr)");
-                            int? _yearOfPublication;
-                            if (int.TryParse(input4, out int result) && result > 999 && result < 10000)
-                            {
-                                _yearOfPublication = result;
-                            }
-                            else if (_inputValidation.InputIsNullOrEmpty(input4, inf2) == null)
-                            {
-                                _yearOfPublication = null;
-                            }
-                            else
-                            {
-                                _exceptionsHandler.InputInvalidValueException("rok wydania", "wpisz liczbę czterocyfrową dodatnią (rrrr)");
-                                return;
-                            }
+                            
+                            int? _yearOfPublication = _inputValidation.ValidateYearOfPublication(input4, inf2) ? int.Parse(input4) : null;
+
                             dbRepository.UpdateProperty(updateBook, x => x.YearOfPublication = _yearOfPublication);
                             break;
                         case "h":
                             input4 = _userCommunication.WriteBookProperties("poprawną liczbę stron");
-                            int? _pagesNumber;
-                            if (int.TryParse(input4, out int result2) && result2 > 0)
-                            {
-                                _pagesNumber = result2;
-                            }
-                            else if (_inputValidation.InputIsNullOrEmpty(input4, inf2) == null)
-                            {
-                                _pagesNumber = null;
-                            }
-                            else
-                            {
-                                _exceptionsHandler.InputInvalidValueException("liczba stron", "wpisz liczbę całkowitą dodatnią");
-                                return;
-                            }
+
+                            int? _pagesNumber = _inputValidation.ValidatePagesNumber(input4, inf2) ? int.Parse(input4) : null;
+
                             dbRepository.UpdateProperty(updateBook, x => x.PageNumber = _pagesNumber);
                             break;
                         case "i":
@@ -764,7 +700,7 @@ public class App : IApp
                             bool _isForSale;
                             const string propertyForSale = "czy książka jest na sprzedaż";
                             input4 = _userCommunication.WriteBookProperties(propertyForSale);
-                            _isForSale = _inputValidation.BoolValidation(input4, propertyForSale);
+                            _isForSale = _inputValidation.ValidateBoolInput(input4, propertyForSale);
                             dbRepository.UpdateProperty(updateBook, x => x.IsForSale = _isForSale);
                             break;
                         case "m":
@@ -786,14 +722,14 @@ public class App : IApp
                             bool _isLent;
                             const string propertyIsLent = "czy książka jest komuś pożyczona";
                             input4 = _userCommunication.WriteBookProperties(propertyIsLent);
-                            _isLent = _inputValidation.BoolValidation(input4, propertyIsLent);
+                            _isLent = _inputValidation.ValidateBoolInput(input4, propertyIsLent);
                             dbRepository.UpdateProperty(updateBook, x => x.IsLent = _isLent);
                             break;
                         case "o":
                             bool _isBorrowed;
                             const string propertyIsBorrowed = "czy książka jest wypożyczona";
                             input4 = _userCommunication.WriteBookProperties(propertyIsBorrowed);
-                            _isBorrowed = _inputValidation.BoolValidation(input4, propertyIsBorrowed);
+                            _isBorrowed = _inputValidation.ValidateBoolInput(input4, propertyIsBorrowed);
                             dbRepository.UpdateProperty(updateBook, x => x.IsBorrowed = _isBorrowed);
                             break;
                         case "p":         
@@ -823,7 +759,7 @@ public class App : IApp
             {
                 var inputFileName = _userCommunication.WriteInput();
 
-                _inputValidation.FileNameValidation(inputFileName, forbiddenCharacters);
+                _inputValidation.ValidateFileName(inputFileName, forbiddenCharacters);
 
                 if (File.Exists($"{inputFileName}.csv"))
                     throw new Exception($"Plik '{inputFileName}.csv' już istnieje! Podaj inną nazwę!");
