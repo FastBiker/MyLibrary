@@ -705,16 +705,16 @@ public class App : IApp
                             break;
                         case "m":
                             decimal? _price;
-                            if (updateBook.IsForSale)
+                            if (!updateBook.IsForSale)
+                            {
+                                throw new Exception("Jeśli chcesz wpisać cenę ksiązki, najpierw zaznacz, że jest na sprzedaż");
+                            }
+                            else
                             {
                                 input4 = _userCommunication.WriteBookProperties("cenę książki (jeśli jest na sprzedaż), wpisując dowolną liczbę większą od O wg wzoru: '00,00'");
 
                                 _price = _inputValidation.ValidatePrice(input4, inf2) ? decimal.Parse(input4) : (decimal?)null;
 
-                            }
-                            else
-                            {
-                                throw new Exception("Jeśli chcesz wpisać cenę ksiązki, najpierw zaznacz, że jest na sprzedaż");
                             }
                             dbRepository.UpdateProperty(updateBook, x => x.Price = _price);
                             break;
@@ -734,15 +734,15 @@ public class App : IApp
                             break;
                         case "p":         
                             DateTime? _dateOfBorrowedOrLent;
-                            if (updateBook.IsBorrowed || updateBook.IsLent)
-                            {
-                                input4 = _userCommunication.WriteBookProperties("poprawną datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
-                                _dateOfBorrowedOrLent = _inputValidation.ValidateDateTime(input4, inf2) ? DateTime.Parse(input4) : null;
-                            }
-                            else
+                            if (!updateBook.IsBorrowed && !updateBook.IsLent)
                             {
                                 throw new Exception("Aby wpisać datę (wy)pożyczenia, należy najpierw zaznaczyć, że książka jest " +
                                     "komuć pożyczona albo od kogoś wypożyczona");
+                            }
+                            else
+                            {
+                                input4 = _userCommunication.WriteBookProperties("poprawną datę (wy)pożyczenia wg wzoru: dd.mm.rrrr");
+                                _dateOfBorrowedOrLent = _inputValidation.ValidateDateTime(input4, inf2) ? DateTime.Parse(input4) : null;
                             }
                             dbRepository.UpdateProperty(updateBook, x => x.DateOfBorrowedOrLent = _dateOfBorrowedOrLent);
                             break;

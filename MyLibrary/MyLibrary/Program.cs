@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using MyLibrary;
 using MyLibrary.Components.CsvHandler;
 using MyLibrary.Components.DataProviders;
@@ -8,8 +7,6 @@ using MyLibrary.Data.Entities;
 using MyLibrary.Data.Repositories;
 using MyLibrary.UserCommunication;
 using MyLibrary.Data;
-using Microsoft.EntityFrameworkCore;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using MyLibrary.Components.InputDataValidation;
 using MyLibrary.Components.ExceptionsHandler;
 

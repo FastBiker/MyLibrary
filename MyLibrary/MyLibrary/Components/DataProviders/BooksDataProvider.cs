@@ -348,13 +348,13 @@ public class BooksDataProvider : IBooksDataProvider
 
         var book = dbRepository.GetById(id);
 
-        if (book != null)
+        if (book == null)
         {
-            foundBook = book;
+            throw new Exception($"Book with Id: {id} not found in your library");
         }
         else
         {
-            throw new Exception($"Book with Id: {id} not found in your library");
+            foundBook = book;
         }
         return foundBook;
     }

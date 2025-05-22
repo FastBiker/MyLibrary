@@ -1,9 +1,5 @@
-﻿using Microsoft.SqlServer.Server;
-using System;
-using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Threading.Tasks;
-using static Azure.Core.HttpHeader;
+﻿using System.Text;
+
 
 namespace MyLibrary.Data.Entities;
 
